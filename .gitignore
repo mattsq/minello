@@ -1,0 +1,83 @@
+# Swift Build Artifacts
+.build/
+.swiftpm/
+*.swiftmodule
+*.swiftdoc
+*.o
+*.a
+*.dylib
+*.so
+
+# Xcode
+xcuserdata/
+*.xcworkspace
+!default.xcworkspace
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift Package Manager
+Packages/
+Package.pins
+Package.resolved
+.swiftpm/
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+
+# Build and Test Output
+*.xcresult
+.build-artifacts/
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Temporary Files
+*.tmp
+*.temp
+*.log
+*.cache
+
+# Environment and Configuration
+.env
+.env.local
+*.local
+
+# Codex (local toolchain installation)
+# Note: ~/.codex/ is in home directory, not tracked by this repo
+
+# Dependencies
+node_modules/
+vendor/
+
+# Coverage and Profiling
+*.profdata
+*.profraw
+coverage/
+*.gcda
+*.gcno
+
+# Documentation Build
+docs/_build/
+.jazzy/
