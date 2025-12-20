@@ -73,7 +73,7 @@ class LogParser:
         re.compile(r'(?i)exception:', re.MULTILINE),
         re.compile(r'(?i)traceback', re.MULTILINE),
         re.compile(r'❌', re.MULTILINE),
-        re.compile(r'⚠️.*(?i)(error|fail)', re.MULTILINE),
+        re.compile(r'(?i)⚠️.*(error|fail)', re.MULTILINE),
     ]
 
     # Patterns to exclude (noise)
