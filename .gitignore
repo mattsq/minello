@@ -8,10 +8,13 @@
 *~
 
 # Xcode
-*.xcodeproj/
 *.xcworkspace/
 xcuserdata/
 DerivedData/
+# Keep our project files but ignore user-specific data
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/
 *.moved-aside
 *.pbxuser
 !default.pbxuser
