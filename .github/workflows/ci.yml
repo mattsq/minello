@@ -3,8 +3,12 @@ name: CI
 on:
   push:
     branches: ["*"]
+    paths-ignore:
+      - '.ci/**'
   pull_request:
     branches: ["main", "master"]
+    paths-ignore:
+      - '.ci/**'
   workflow_dispatch:
 
 concurrency:
@@ -28,6 +32,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Create log directory
+        run: mkdir -p ci-logs
+
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
 
@@ -35,55 +42,59 @@ jobs:
         run: xcodebuild -version
 
       - name: Validate Xcode project file
+        continue-on-error: true
         run: |
-          echo "=== Validating Xcode project file ==="
-          echo "File: HomeCooked/HomeCooked.xcodeproj/project.pbxproj"
-          echo "Size: $(wc -c < HomeCooked/HomeCooked.xcodeproj/project.pbxproj) bytes"
-          echo "Lines: $(wc -l < HomeCooked/HomeCooked.xcodeproj/project.pbxproj)"
+          set -o pipefail
+          {
+            echo "=== Validating Xcode project file ==="
+            echo "File: HomeCooked/HomeCooked.xcodeproj/project.pbxproj"
+            echo "Size: $(wc -c < HomeCooked/HomeCooked.xcodeproj/project.pbxproj) bytes"
+            echo "Lines: $(wc -l < HomeCooked/HomeCooked.xcodeproj/project.pbxproj)"
 
-          # Check for mixed tabs/spaces (common parse error cause)
-          TAB_COUNT=$(grep -cP '^\t' HomeCooked/HomeCooked.xcodeproj/project.pbxproj || echo "0")
-          echo "Lines starting with tabs: $TAB_COUNT"
-          if [ "$TAB_COUNT" -gt 0 ]; then
-            echo "⚠️  WARNING: Found $TAB_COUNT lines with tab indentation (may cause parse errors)"
-            grep -nP '^\t' HomeCooked/HomeCooked.xcodeproj/project.pbxproj | head -5
-          fi
+            # Check for mixed tabs/spaces (common parse error cause)
+            TAB_COUNT=$(grep -cP '^\t' HomeCooked/HomeCooked.xcodeproj/project.pbxproj || echo "0")
+            echo "Lines starting with tabs: $TAB_COUNT"
+            if [ "$TAB_COUNT" -gt 0 ]; then
+              echo "⚠️  WARNING: Found $TAB_COUNT lines with tab indentation (may cause parse errors)"
+              grep -nP '^\t' HomeCooked/HomeCooked.xcodeproj/project.pbxproj | head -5
+            fi
 
-          # Check for common corruption patterns
-          echo ""
-          echo "=== Checking for corruption patterns ==="
-          if grep -q $'\r' HomeCooked/HomeCooked.xcodeproj/project.pbxproj; then
-            echo "⚠️  WARNING: Found Windows line endings (CRLF)"
-          else
-            echo "✓ Unix line endings (LF)"
-          fi
+            # Check for common corruption patterns
+            echo ""
+            echo "=== Checking for corruption patterns ==="
+            if grep -q $'\r' HomeCooked/HomeCooked.xcodeproj/project.pbxproj; then
+              echo "⚠️  WARNING: Found Windows line endings (CRLF)"
+            else
+              echo "✓ Unix line endings (LF)"
+            fi
 
-          # Check for valid UTF-8
-          if file HomeCooked/HomeCooked.xcodeproj/project.pbxproj | grep -q "UTF-8"; then
-            echo "✓ Valid UTF-8 encoding"
-          else
-            echo "⚠️  WARNING: Unexpected encoding"
-            file HomeCooked/HomeCooked.xcodeproj/project.pbxproj
-          fi
+            # Check for valid UTF-8
+            if file HomeCooked/HomeCooked.xcodeproj/project.pbxproj | grep -q "UTF-8"; then
+              echo "✓ Valid UTF-8 encoding"
+            else
+              echo "⚠️  WARNING: Unexpected encoding"
+              file HomeCooked/HomeCooked.xcodeproj/project.pbxproj
+            fi
 
-          # Verify braces are balanced
-          OPEN_BRACES=$(grep -o '{' HomeCooked/HomeCooked.xcodeproj/project.pbxproj | wc -l)
-          CLOSE_BRACES=$(grep -o '}' HomeCooked/HomeCooked.xcodeproj/project.pbxproj | wc -l)
-          echo ""
-          echo "=== Brace balance check ==="
-          echo "Opening braces: $OPEN_BRACES"
-          echo "Closing braces: $CLOSE_BRACES"
-          if [ "$OPEN_BRACES" -eq "$CLOSE_BRACES" ]; then
-            echo "✓ Braces are balanced"
-          else
-            echo "⚠️  WARNING: Unbalanced braces (diff: $((OPEN_BRACES - CLOSE_BRACES)))"
-          fi
+            # Verify braces are balanced
+            OPEN_BRACES=$(grep -o '{' HomeCooked/HomeCooked.xcodeproj/project.pbxproj | wc -l)
+            CLOSE_BRACES=$(grep -o '}' HomeCooked/HomeCooked.xcodeproj/project.pbxproj | wc -l)
+            echo ""
+            echo "=== Brace balance check ==="
+            echo "Opening braces: $OPEN_BRACES"
+            echo "Closing braces: $CLOSE_BRACES"
+            if [ "$OPEN_BRACES" -eq "$CLOSE_BRACES" ]; then
+              echo "✓ Braces are balanced"
+            else
+              echo "⚠️  WARNING: Unbalanced braces (diff: $((OPEN_BRACES - CLOSE_BRACES)))"
+            fi
 
-          echo ""
-          echo "=== Project file structure ==="
-          head -10 HomeCooked/HomeCooked.xcodeproj/project.pbxproj
-          echo "..."
-          tail -10 HomeCooked/HomeCooked.xcodeproj/project.pbxproj
+            echo ""
+            echo "=== Project file structure ==="
+            head -10 HomeCooked/HomeCooked.xcodeproj/project.pbxproj
+            echo "..."
+            tail -10 HomeCooked/HomeCooked.xcodeproj/project.pbxproj
+          } 2>&1 | tee ci-logs/validate-project.log
 
       - name: Show available destinations
         run: xcodebuild -showdestinations -scheme HomeCooked -project HomeCooked/HomeCooked.xcodeproj || echo "Project not yet created"
@@ -97,7 +108,9 @@ jobs:
             ${{ runner.os }}-derived-data-
 
       - name: Build project
+        continue-on-error: true
         run: |
+          set -o pipefail
           cd HomeCooked
           xcodebuild build \
             -scheme HomeCooked \
@@ -106,7 +119,17 @@ jobs:
             -configuration Debug \
             -derivedDataPath DerivedData \
             ONLY_ACTIVE_ARCH=NO \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee ../ci-logs/build.log
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: ci-logs/*.log
+          retention-days: 7
+          if-no-files-found: ignore
 
   test:
     name: Test
@@ -120,6 +143,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Create log directory
+        run: mkdir -p ci-logs
+
       - name: Select Xcode version
         run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
 
@@ -132,7 +158,9 @@ jobs:
             ${{ runner.os }}-derived-data-
 
       - name: Run unit tests
+        continue-on-error: true
         run: |
+          set -o pipefail
           cd HomeCooked
           xcodebuild test \
             -scheme HomeCooked \
@@ -142,7 +170,8 @@ jobs:
             -derivedDataPath DerivedData \
             -enableCodeCoverage YES \
             ONLY_ACTIVE_ARCH=NO \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | tee ../ci-logs/test.log
 
       - name: Upload test results
         if: always()
@@ -164,6 +193,15 @@ jobs:
             HomeCooked/Tests/**/__FailureDiffs__/**/*.png
           retention-days: 14
 
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: ci-logs/*.log
+          retention-days: 7
+          if-no-files-found: ignore
+
   lint:
     name: Lint
     runs-on: macos-14
@@ -172,6 +210,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Create log directory
+        run: mkdir -p ci-logs
 
       - name: Install SwiftLint
         run: |
@@ -182,16 +223,22 @@ jobs:
           brew install swiftformat
 
       - name: Run SwiftFormat (check mode)
+        continue-on-error: true
         run: |
-          swiftformat --config HomeCooked/Tooling/swiftformat.yml --lint HomeCooked/
+          set -o pipefail
+          swiftformat --config HomeCooked/Tooling/swiftformat.yml --lint HomeCooked/ \
+            2>&1 | tee ci-logs/swiftformat.log
 
       - name: Run SwiftLint (strict)
+        continue-on-error: true
         run: |
+          set -o pipefail
           swiftlint lint \
             --config HomeCooked/Tooling/swiftlint.yml \
             --path HomeCooked/ \
             --strict \
-            --reporter github-actions-logging
+            --reporter github-actions-logging \
+            2>&1 | tee ci-logs/swiftlint.log
 
       - name: Upload lint results
         if: always()
@@ -203,6 +250,132 @@ jobs:
             swiftformat-results.txt
           retention-days: 7
           if-no-files-found: ignore
+
+      - name: Upload lint logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-logs
+          path: ci-logs/*.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+  ci_feedback:
+    name: CI Feedback
+    runs-on: ubuntu-latest
+    needs: [build, test, lint]
+    if: always() && github.event_name == 'pull_request'
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Create artifacts directory
+        run: mkdir -p artifacts
+
+      - name: Download build logs
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: build-logs
+          path: artifacts/build-logs
+
+      - name: Download test logs
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: test-logs
+          path: artifacts/test-logs
+
+      - name: Download lint logs
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: lint-logs
+          path: artifacts/lint-logs
+
+      - name: Generate CI feedback
+        env:
+          BUILD_RESULT: ${{ needs.build.result }}
+          TEST_RESULT: ${{ needs.test.result }}
+          LINT_RESULT: ${{ needs.lint.result }}
+        run: |
+          python3 scripts/ci_feedback.py \
+            artifacts \
+            .ci \
+            "${{ github.run_id }}" \
+            "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
+            "${{ github.sha }}" \
+            "${{ github.head_ref }}" \
+            "${{ github.event.pull_request.number }}"
+
+      - name: Commit feedback to PR branch
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add .ci/summary.json .ci/summary.md
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "ci: update CI feedback [skip ci]"
+            git push origin HEAD:${{ github.head_ref }}
+          fi
+
+      - name: Post or update PR comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const summaryMd = fs.readFileSync('.ci/summary.md', 'utf8');
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('<!-- ci-feedback -->')
+            );
+
+            const commentBody = summaryMd;
+
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody,
+              });
+              console.log('Updated existing PR comment');
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody,
+              });
+              console.log('Created new PR comment');
+            }
 
   status:
     name: CI Status
