@@ -1,5 +1,5 @@
-import XCTest
 import SwiftData
+import XCTest
 @testable import HomeCooked
 
 @MainActor
@@ -75,12 +75,16 @@ final class CardMigrationTests: XCTestCase {
             FetchDescriptor<Board>(predicate: #Predicate { $0.id == board.id })
         ).first
 
-        let col1Cards = fetchedBoard?.columns.first(where: { $0.title == "To Do" })?.cards.sorted { $0.sortKey < $1.sortKey }
+        let col1Cards = fetchedBoard?.columns
+            .first(where: { $0.title == "To Do" })?
+            .cards.sorted { $0.sortKey < $1.sortKey }
         XCTAssertEqual(col1Cards?.count, 2)
         XCTAssertEqual(col1Cards?[0].sortKey, 0)
         XCTAssertEqual(col1Cards?[1].sortKey, 100)
 
-        let col2Cards = fetchedBoard?.columns.first(where: { $0.title == "Done" })?.cards.sorted { $0.sortKey < $1.sortKey }
+        let col2Cards = fetchedBoard?.columns
+            .first(where: { $0.title == "Done" })?
+            .cards.sorted { $0.sortKey < $1.sortKey }
         XCTAssertEqual(col2Cards?.count, 1)
         XCTAssertEqual(col2Cards?[0].sortKey, 0)
     }

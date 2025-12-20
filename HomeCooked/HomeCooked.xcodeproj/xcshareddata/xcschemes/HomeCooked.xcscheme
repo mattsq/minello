@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "HomeCooked"
+               BlueprintIdentifier = "A886D3D5C1BCB52056E9C2FC29C24467"
                BuildableName = "HomeCooked.app"
                BlueprintName = "HomeCooked"
                ReferencedContainer = "container:HomeCooked.xcodeproj">
@@ -54,7 +54,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "HomeCooked"
+            BlueprintIdentifier = "A886D3D5C1BCB52056E9C2FC29C24467"
             BuildableName = "HomeCooked.app"
             BlueprintName = "HomeCooked"
             ReferencedContainer = "container:HomeCooked.xcodeproj">
@@ -71,7 +71,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "HomeCooked"
+            BlueprintIdentifier = "A886D3D5C1BCB52056E9C2FC29C24467"
             BuildableName = "HomeCooked.app"
             BlueprintName = "HomeCooked"
             ReferencedContainer = "container:HomeCooked.xcodeproj">

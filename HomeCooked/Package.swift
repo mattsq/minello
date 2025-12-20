@@ -7,7 +7,7 @@ let package = Package(
     name: "HomeCooked",
     platforms: [
         .iOS(.v17),
-        .macOS(.v14)
+        .macOS(.v14),
     ],
     products: [
         .library(
@@ -26,16 +26,16 @@ let package = Package(
             exclude: [
                 "Tests",
                 "Tooling",
-                "Package.swift"
+                "Package.swift",
             ],
             sources: [
                 "App",
-                "Persistence"
+                "Persistence",
             ],
             swiftSettings: [
                 .enableUpcomingFeature("BareSlashRegexLiterals"),
                 .enableExperimentalFeature("StrictConcurrency"),
-                .unsafeFlags(["-warnings-as-errors"])
+                .unsafeFlags(["-warnings-as-errors"]),
             ]
         ),
         .testTarget(
@@ -45,7 +45,7 @@ let package = Package(
             swiftSettings: [
                 .enableUpcomingFeature("BareSlashRegexLiterals"),
                 .enableExperimentalFeature("StrictConcurrency"),
-                .unsafeFlags(["-warnings-as-errors"])
+                .unsafeFlags(["-warnings-as-errors"]),
             ]
         ),
     ]
