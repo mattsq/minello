@@ -65,14 +65,56 @@ HomeCooked/
 
 ### Beads (bd) - Issue Tracking
 
-• **Find ready work**: `$HOME/go/bin/bd ready` - Show unblocked, open tasks
-• **Create issue**: `$HOME/go/bin/bd create "Issue title" -d "Description" -p 0` (priority 0-4, 0=highest)
-• **List issues**: `$HOME/go/bin/bd list --status open --json`
-• **Show details**: `$HOME/go/bin/bd show <issue-id>`
-• **Update status**: `$HOME/go/bin/bd update <issue-id> --status in_progress`
-• **Add dependency**: `$HOME/go/bin/bd dep add <blocked-issue> <blocking-issue>` (blocking-issue must complete first)
-• **Close issue**: `$HOME/go/bin/bd close <issue-id> --reason "Completion note"`
-• **Sync with git**: `$HOME/go/bin/bd sync` (auto-syncs to .beads/issues.jsonl)
+#### Setup for Claude Code Web (CRITICAL - Read First)
+
+**One-time setup per session:**
+
+```bash
+# 1. Install beads (only if not already installed)
+curl -sSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash
+
+# 2. Initialize database (only if .beads/beads.db doesn't exist)
+/root/go/bin/bd init
+```
+
+**IMPORTANT for Claude Code Web environments:**
+• Always use full path `/root/go/bin/bd` (not just `bd`) since it's not in PATH
+• Use `--no-db` flag for READ operations to avoid SQLite locking issues
+• Use regular commands (without `--no-db`) for WRITE operations (create, update, close)
+• Always add `--json` flag for programmatic parsing - saves tokens and easier to parse
+
+**Token-efficient command patterns:**
+
+```bash
+# READ operations - use --no-db --json (most token-efficient)
+/root/go/bin/bd --no-db list --json
+/root/go/bin/bd --no-db ready --json
+/root/go/bin/bd --no-db show <issue-id> --json
+/root/go/bin/bd --no-db blocked --json
+
+# WRITE operations - no --no-db flag needed
+/root/go/bin/bd create "Title" -d "Description" -p 0
+/root/go/bin/bd update <issue-id> --status in_progress
+/root/go/bin/bd close <issue-id> --reason "Completion note"
+/root/go/bin/bd dep add <blocked-issue> <blocking-issue>
+```
+
+**Commands that may fail in Claude Code Web:**
+• `bd sync` - May fail with locking errors (auto-sync happens on write operations anyway)
+• `bd graph <issue-id>` - May crash in --no-db mode
+• `bd dep tree <issue-id>` - May fail with locking errors
+• `bd doctor` - Long-running, use only for debugging
+
+**Quick reference:**
+
+• **Find ready work**: `/root/go/bin/bd --no-db ready --json`
+• **Create issue**: `/root/go/bin/bd create "Issue title" -d "Description" -p 0` (priority 0-4, 0=highest)
+• **List issues**: `/root/go/bin/bd --no-db list --json`
+• **Show details**: `/root/go/bin/bd --no-db show <issue-id> --json`
+• **Update status**: `/root/go/bin/bd update <issue-id> --status in_progress`
+• **Add dependency**: `/root/go/bin/bd dep add <blocked-issue> <blocking-issue>` (blocking-issue must complete first)
+• **Close issue**: `/root/go/bin/bd close <issue-id> --reason "Completion note"`
+• **Show blocked**: `/root/go/bin/bd --no-db blocked --json`
 
 ⸻
 
@@ -86,14 +128,16 @@ SwiftData @Model types: Board(id,title,columns,createdAt,updatedAt), Column(id,t
 
 This project uses **beads** (bd) for distributed, git-backed issue tracking. All issues live in `.beads/issues.jsonl` and sync via git.
 
+**FIRST TIME?** See "Setup for Claude Code Web" section above for installation and configuration.
+
 ### Core workflow
 
-1. **Start session**: Run `$HOME/go/bin/bd ready --json` to find available work
-2. **Claim task**: Update status to in_progress: `$HOME/go/bin/bd update <id> --status in_progress`
+1. **Start session**: Run `/root/go/bin/bd --no-db ready --json` to find available work
+2. **Claim task**: Update status to in_progress: `/root/go/bin/bd update <id> --status in_progress`
 3. **Discover new work**: Create issues immediately when you find bugs, missing features, or tech debt
-4. **Track dependencies**: Use `$HOME/go/bin/bd dep add` to chain tasks (e.g., "write tests" depends on "implement feature")
-5. **Complete work**: Close with context: `$HOME/go/bin/bd close <id> --reason "Fixed in commit abc123"`
-6. **Sync regularly**: Run `$HOME/go/bin/bd sync` before git push (auto-syncs in most cases)
+4. **Track dependencies**: Use `/root/go/bin/bd dep add` to chain tasks (e.g., "write tests" depends on "implement feature")
+5. **Complete work**: Close with context: `/root/go/bin/bd close <id> --reason "Fixed in commit abc123"`
+6. **Sync**: Auto-syncs on write operations; manual sync (`bd sync`) may fail in Claude Code Web but is usually not needed
 
 ### Best practices
 
@@ -385,16 +429,16 @@ Context:
 - See Agents.md ticket <#> for requirements and acceptance tests.
 - Target iOS 17+, Swift 5.10+, SwiftUI + SwiftData.
 - Repositories live under Persistence/Repositories.
-- Use beads for task tracking: $HOME/go/bin/bd
+- Use beads for task tracking: /root/go/bin/bd
 
 Workflow:
-1. Check for ready work: bd ready --json
-2. Create beads issue for this ticket (or claim existing)
-3. Update to in_progress: bd update <id> --status in_progress
+1. Check for ready work: /root/go/bin/bd --no-db ready --json
+2. Create beads issue for this ticket (or claim existing): /root/go/bin/bd create "Title" -d "Description" -p 1
+3. Update to in_progress: /root/go/bin/bd update <id> --status in_progress
 4. Implement (create sub-issues for bugs/tech debt discovered)
 5. Run tests, lint, build
-6. Close issue: bd close <id> --reason "Completed in PR #X"
-7. Sync: bd sync
+6. Close issue: /root/go/bin/bd close <id> --reason "Completed in PR #X"
+7. Sync happens automatically on write operations
 
 Deliver:
 - Code changes under the listed files.
@@ -405,6 +449,7 @@ Deliver:
 Do not:
 - Change unrelated files.
 - Add dependencies or new targets.
+- Waste tokens on failed bd commands (use --no-db for reads, use --json always)
 ```
 
 ⸻
@@ -414,8 +459,9 @@ Do not:
 • **SwiftData + CloudKit conflicts**: acceptable LWW for family usage; we normalize sortKey to reduce merge churn.
 • **DnD & SwiftUI Lists**: prefer LazyVStack + custom reorder to avoid List quirks.
 • **Trello export variance**: older exports differ—keep JSON decoding tolerant (optional fields).
-• **Beads + git workflow**: Issues auto-sync to `.beads/issues.jsonl` on CRUD operations. Always `bd sync` before `git push` to ensure issue state is committed. If multiple agents/sessions work concurrently, git merge handles JSONL conflicts via beads merge driver.
-• **Beads binary location**: Use `$HOME/go/bin/bd` as full path since `bd` may not be in PATH. Consider adding to PATH for convenience: `export PATH=$PATH:$HOME/go/bin`
+• **Beads + git workflow**: Issues auto-sync to `.beads/issues.jsonl` on CRUD operations. Manual `bd sync` may fail in Claude Code Web environments but is usually unnecessary as auto-sync happens on write operations. If multiple agents/sessions work concurrently, git merge handles JSONL conflicts via beads merge driver.
+• **Beads binary location**: Use `/root/go/bin/bd` as full path since `bd` is not in PATH in Claude Code Web environments. Use `--no-db` flag for all read operations to avoid SQLite locking protocol errors. Use `--json` flag always for token efficiency.
+• **Beads commands to avoid in Claude Code Web**: `bd doctor` (long-running), `bd graph` (crashes in --no-db mode), `bd dep tree` (locking errors), `bd sync` (locking errors). Stick to: list, ready, show, blocked (with --no-db), create, update, close, dep add (without --no-db).
 
 ⸻
 
