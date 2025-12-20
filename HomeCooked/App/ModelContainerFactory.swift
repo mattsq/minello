@@ -19,7 +19,7 @@ enum ModelContainerFactory {
         let configuration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
-            cloudKitDatabase: cloudKitContainerIdentifier.map { .private($0) }
+            cloudKitDatabase: cloudKitContainerIdentifier.map { .private($0) } ?? .none
         )
         return try ModelContainer(
             for: schema,
