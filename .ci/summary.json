@@ -1,11 +1,11 @@
 {
-  "run_id": "20390405121",
-  "run_url": "https://github.com/mattsq/minello/actions/runs/20390405121",
-  "sha": "3f002dd6808d8581a564f8589649f6bb3b1db5b1",
+  "run_id": "20390556181",
+  "run_url": "https://github.com/mattsq/minello/actions/runs/20390556181",
+  "sha": "28e8a2c129ba648276f2aee08f0be3b413063eb0",
   "branch": "claude/plan-ci-fixes-ygU3O",
   "pr_number": "13",
   "overall_conclusion": "success",
-  "timestamp": "2025-12-20T06:22:57.953426Z",
+  "timestamp": "2025-12-20T06:36:27.666689Z",
   "jobs": [
     {
       "job_name": "build",
@@ -15,7 +15,7 @@
         {
           "step_name": "build",
           "log_excerpt": [
-            "2025-12-20 06:22:27.159 xcodebuild[39461:167111] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-22-0027.xcresult",
+            "2025-12-20 06:35:57.100 xcodebuild[17935:78903] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-35-0057.xcresult",
             "xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.",
             "Reason: The project \u2018HomeCooked\u2019 is damaged and cannot be opened due to a parse error. Examine the project file for invalid edits or unresolved source control conflicts."
           ]
@@ -44,7 +44,7 @@
         {
           "step_name": "test",
           "log_excerpt": [
-            "2025-12-20 06:22:42.198 xcodebuild[6349:31341] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-22-0042.xcresult",
+            "2025-12-20 06:36:12.316 xcodebuild[5427:26654] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-36-0012.xcresult",
             "xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.",
             "Reason: The project \u2018HomeCooked\u2019 is damaged and cannot be opened due to a parse error. Examine the project file for invalid edits or unresolved source control conflicts."
           ]

@@ -1,10 +1,10 @@
 # ✅ CI Passed
 
-**Run**: [20390405121](https://github.com/mattsq/minello/actions/runs/20390405121)
-**Commit**: `3f002dd6`
+**Run**: [20390556181](https://github.com/mattsq/minello/actions/runs/20390556181)
+**Commit**: `28e8a2c1`
 **Branch**: `claude/plan-ci-fixes-ygU3O`
 **PR**: #13
-**Time**: 2025-12-20T06:22:57.953426Z
+**Time**: 2025-12-20T06:36:27.666689Z
 
 ## Job Results
 
@@ -19,7 +19,7 @@
 #### Step: `build`
 
 ```
-2025-12-20 06:22:27.159 xcodebuild[39461:167111] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-22-0027.xcresult
+2025-12-20 06:35:57.100 xcodebuild[17935:78903] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-35-0057.xcresult
 xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.
 Reason: The project ‘HomeCooked’ is damaged and cannot be opened due to a parse error. Examine the project file for invalid edits or unresolved source control conflicts.
 ```
@@ -43,7 +43,7 @@ rootObject = D0134771BAD2644D1A9FEB723C2633B0 /* Project object */;
 #### Step: `test`
 
 ```
-2025-12-20 06:22:42.198 xcodebuild[6349:31341] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-22-0042.xcresult
+2025-12-20 06:36:12.316 xcodebuild[5427:26654] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-36-0012.xcresult
 xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.
 Reason: The project ‘HomeCooked’ is damaged and cannot be opened due to a parse error. Examine the project file for invalid edits or unresolved source control conflicts.
 ```
@@ -68,7 +68,7 @@ SwiftFormat completed in 0.05s.
 
 ## 🔍 Top Errors
 
-- `2025-12-20 06:22:27.159 xcodebuild[39461:167111] Writing error result bundle to /var/folders/sm/xrr7`
+- `2025-12-20 06:35:57.100 xcodebuild[17935:78903] Writing error result bundle to /var/folders/sm/xrr7t`
 - `xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.`
 - `Reason: The project ‘HomeCooked’ is damaged and cannot be opened due to a parse error. Examine the p`
 - `9FE81F10FC0F5C68CD205C09 /* Release */,`
@@ -76,7 +76,7 @@ SwiftFormat completed in 0.05s.
 - `defaultConfigurationIsVisible = 0;`
 - `defaultConfigurationName = Release;`
 - `};`
-- `2025-12-20 06:22:42.198 xcodebuild[6349:31341] Writing error result bundle to /var/folders/sm/xrr7tm`
+- `2025-12-20 06:36:12.316 xcodebuild[5427:26654] Writing error result bundle to /var/folders/sm/xrr7tm`
 - `xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.`
 - `Reason: The project ‘HomeCooked’ is damaged and cannot be opened due to a parse error. Examine the p`
 - `Linting Swift files at paths HomeCooked/`
