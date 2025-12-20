@@ -43,17 +43,17 @@
 
                 0AFC05FF70360B9C87100A28AC8D3E43 /* HomeCookedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeCookedApp.swift"; sourceTree = "<group>"; };
                 8B15DAFF64CAF45D6DFA849E027DE2F3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView.swift"; sourceTree = "<group>"; };
-                7347EC8C937AA1A71C66A72B22FB0B8E /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelContainerFactory.swift"; sourceTree = "<group>"; };
-                0BCEE0301A351FA857FDC2C6CB08A80B /* RecipesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RecipesRepository.swift"; sourceTree = "<group>"; };
-                A294EC984F1CC5334FB40A6403AF4BFB /* BoardsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BoardsRepository.swift"; sourceTree = "<group>"; };
-                8C562B17B92BB09770D2713781BDD9A8 /* ListsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ListsRepository.swift"; sourceTree = "<group>"; };
-                0C9C69EB0FCEF8F2C4279A4F217DF8A1 /* CardSortKeyMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardSortKeyMigration.swift"; sourceTree = "<group>"; };
-                9ED084E8DD9EA675B98C76D287035379 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Card.swift"; sourceTree = "<group>"; };
-                8BCF0B7457D35C34AAC7D879EB187382 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Board.swift"; sourceTree = "<group>"; };
-                A2DD7A94A28847353307469E566C908F /* ChecklistItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChecklistItem.swift"; sourceTree = "<group>"; };
-                0BF72473363AF3756BBAD21CD15C8F79 /* Column.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Column.swift"; sourceTree = "<group>"; };
-                5B4BD65C991892C51225608EAC17C689 /* PersonalList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersonalList.swift"; sourceTree = "<group>"; };
-                E87C6CCD322B28EF6BC7A6D211168663 /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Recipe.swift"; sourceTree = "<group>"; };
+                7347EC8C937AA1A71C66A72B22FB0B8E /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/ModelContainerFactory.swift"; sourceTree = "<group>"; };
+                0BCEE0301A351FA857FDC2C6CB08A80B /* RecipesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Repositories/RecipesRepository.swift"; sourceTree = "<group>"; };
+                A294EC984F1CC5334FB40A6403AF4BFB /* BoardsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Repositories/BoardsRepository.swift"; sourceTree = "<group>"; };
+                8C562B17B92BB09770D2713781BDD9A8 /* ListsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Repositories/ListsRepository.swift"; sourceTree = "<group>"; };
+                0C9C69EB0FCEF8F2C4279A4F217DF8A1 /* CardSortKeyMigration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Migrations/CardSortKeyMigration.swift"; sourceTree = "<group>"; };
+                9ED084E8DD9EA675B98C76D287035379 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Models/Card.swift"; sourceTree = "<group>"; };
+                8BCF0B7457D35C34AAC7D879EB187382 /* Board.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Models/Board.swift"; sourceTree = "<group>"; };
+                A2DD7A94A28847353307469E566C908F /* ChecklistItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Models/ChecklistItem.swift"; sourceTree = "<group>"; };
+                0BF72473363AF3756BBAD21CD15C8F79 /* Column.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Models/Column.swift"; sourceTree = "<group>"; };
+                5B4BD65C991892C51225608EAC17C689 /* PersonalList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Models/PersonalList.swift"; sourceTree = "<group>"; };
+                E87C6CCD322B28EF6BC7A6D211168663 /* Recipe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Models/Recipe.swift"; sourceTree = "<group>"; };
 
                 9EB51AD503B3A73EC5125C2D /* HomeCookedTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HomeCookedTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
                 DB805F64E8178620C45A3C4C /* BoardsRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoardsRepositoryTests.swift; sourceTree = "<group>"; };
@@ -99,7 +99,6 @@
                         5AC6AB0DC2614D1831C820E01C9B86A4 /* Assets.xcassets */,
                         394460B69DDF10C5921272BAEF1D328E /* Preview Content */,
                 );
-                path = HomeCooked;
                 sourceTree = "<group>";
         };
         394460B69DDF10C5921272BAEF1D328E /* Preview Content */ = {
