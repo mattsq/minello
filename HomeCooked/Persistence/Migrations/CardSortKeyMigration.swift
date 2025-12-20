@@ -22,8 +22,13 @@ enum CardSortKeyMigration {
             var createdAt: Date
             var updatedAt: Date
 
-            init(id: UUID = UUID(), title: String, columns: [Column] = [],
-                 createdAt: Date = Date(), updatedAt: Date = Date()) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                columns: [Column] = [],
+                createdAt: Date = Date(),
+                updatedAt: Date = Date()
+            ) {
                 self.id = id
                 self.title = title
                 self.columns = columns
@@ -41,7 +46,13 @@ enum CardSortKeyMigration {
             var cards: [Card]
             var board: Board?
 
-            init(id: UUID = UUID(), title: String, index: Int, cards: [Card] = [], board: Board? = nil) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                index: Int,
+                cards: [Card] = [],
+                board: Board? = nil
+            ) {
                 self.id = id
                 self.title = title
                 self.index = index
@@ -64,9 +75,17 @@ enum CardSortKeyMigration {
             var createdAt: Date
             var updatedAt: Date
 
-            init(id: UUID = UUID(), title: String, details: String = "", due: Date? = nil,
-                 tags: [String] = [], checklist: [ChecklistItem] = [], column: Column? = nil,
-                 createdAt: Date = Date(), updatedAt: Date = Date()) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                details: String = "",
+                due: Date? = nil,
+                tags: [String] = [],
+                checklist: [ChecklistItem] = [],
+                column: Column? = nil,
+                createdAt: Date = Date(),
+                updatedAt: Date = Date()
+            ) {
                 self.id = id
                 self.title = title
                 self.details = details
@@ -90,8 +109,16 @@ enum CardSortKeyMigration {
             var card: Card?
             var personalList: PersonalList?
 
-            init(id: UUID = UUID(), text: String, isDone: Bool = false, quantity: Double? = nil,
-                 unit: String? = nil, note: String? = nil, card: Card? = nil, personalList: PersonalList? = nil) {
+            init(
+                id: UUID = UUID(),
+                text: String,
+                isDone: Bool = false,
+                quantity: Double? = nil,
+                unit: String? = nil,
+                note: String? = nil,
+                card: Card? = nil,
+                personalList: PersonalList? = nil
+            ) {
                 self.id = id
                 self.text = text
                 self.isDone = isDone
@@ -110,7 +137,11 @@ enum CardSortKeyMigration {
             @Relationship(deleteRule: .cascade, inverse: \ChecklistItem.personalList)
             var items: [ChecklistItem]
 
-            init(id: UUID = UUID(), title: String, items: [ChecklistItem] = []) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                items: [ChecklistItem] = []
+            ) {
                 self.id = id
                 self.title = title
                 self.items = items
@@ -125,8 +156,13 @@ enum CardSortKeyMigration {
             var methodMarkdown: String
             var tags: [String]
 
-            init(id: UUID = UUID(), title: String, ingredients: String = "",
-                 methodMarkdown: String = "", tags: [String] = []) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                ingredients: String = "",
+                methodMarkdown: String = "",
+                tags: [String] = []
+            ) {
                 self.id = id
                 self.title = title
                 self.ingredients = ingredients
@@ -153,8 +189,13 @@ enum CardSortKeyMigration {
             var createdAt: Date
             var updatedAt: Date
 
-            init(id: UUID = UUID(), title: String, columns: [Column] = [],
-                 createdAt: Date = Date(), updatedAt: Date = Date()) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                columns: [Column] = [],
+                createdAt: Date = Date(),
+                updatedAt: Date = Date()
+            ) {
                 self.id = id
                 self.title = title
                 self.columns = columns
@@ -172,7 +213,13 @@ enum CardSortKeyMigration {
             var cards: [Card]
             var board: Board?
 
-            init(id: UUID = UUID(), title: String, index: Int, cards: [Card] = [], board: Board? = nil) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                index: Int,
+                cards: [Card] = [],
+                board: Board? = nil
+            ) {
                 self.id = id
                 self.title = title
                 self.index = index
@@ -195,9 +242,18 @@ enum CardSortKeyMigration {
             var createdAt: Date
             var updatedAt: Date
 
-            init(id: UUID = UUID(), title: String, details: String = "", due: Date? = nil,
-                 tags: [String] = [], checklist: [ChecklistItem] = [], column: Column? = nil,
-                 sortKey: Double = 0, createdAt: Date = Date(), updatedAt: Date = Date()) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                details: String = "",
+                due: Date? = nil,
+                tags: [String] = [],
+                checklist: [ChecklistItem] = [],
+                column: Column? = nil,
+                sortKey: Double = 0,
+                createdAt: Date = Date(),
+                updatedAt: Date = Date()
+            ) {
                 self.id = id
                 self.title = title
                 self.details = details
@@ -222,8 +278,16 @@ enum CardSortKeyMigration {
             var card: Card?
             var personalList: PersonalList?
 
-            init(id: UUID = UUID(), text: String, isDone: Bool = false, quantity: Double? = nil,
-                 unit: String? = nil, note: String? = nil, card: Card? = nil, personalList: PersonalList? = nil) {
+            init(
+                id: UUID = UUID(),
+                text: String,
+                isDone: Bool = false,
+                quantity: Double? = nil,
+                unit: String? = nil,
+                note: String? = nil,
+                card: Card? = nil,
+                personalList: PersonalList? = nil
+            ) {
                 self.id = id
                 self.text = text
                 self.isDone = isDone
@@ -242,7 +306,11 @@ enum CardSortKeyMigration {
             @Relationship(deleteRule: .cascade, inverse: \ChecklistItem.personalList)
             var items: [ChecklistItem]
 
-            init(id: UUID = UUID(), title: String, items: [ChecklistItem] = []) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                items: [ChecklistItem] = []
+            ) {
                 self.id = id
                 self.title = title
                 self.items = items
@@ -257,8 +325,13 @@ enum CardSortKeyMigration {
             var methodMarkdown: String
             var tags: [String]
 
-            init(id: UUID = UUID(), title: String, ingredients: String = "",
-                 methodMarkdown: String = "", tags: [String] = []) {
+            init(
+                id: UUID = UUID(),
+                title: String,
+                ingredients: String = "",
+                methodMarkdown: String = "",
+                tags: [String] = []
+            ) {
                 self.id = id
                 self.title = title
                 self.ingredients = ingredients
