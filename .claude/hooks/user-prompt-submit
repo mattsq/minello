@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+# Claude Code Hook: Dependency Validation
+# This hook runs before processing any user prompt to ensure all required dependencies are available.
+# It validates that beads and other critical tools are installed and accessible.
+
+set -euo pipefail
+
+# Configuration
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+BEADS_BIN="${BEADS_BIN:-$HOME/go/bin/bd}"
+MIN_GO_VERSION="1.19"
+
+# Color codes for output
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Track validation status
+VALIDATION_ERRORS=0
+VALIDATION_WARNINGS=0
+
+log_error() {
+    echo -e "${RED}[dependency-check] ERROR: $*${NC}" >&2
+    ((VALIDATION_ERRORS++))
+}
+
+log_warn() {
+    echo -e "${YELLOW}[dependency-check] WARNING: $*${NC}" >&2
+    ((VALIDATION_WARNINGS++))
+}
+
+log_success() {
+    echo -e "${GREEN}[dependency-check] ✓ $*${NC}" >&2
+}
+
+log_info() {
+    echo -e "${BLUE}[dependency-check] $*${NC}" >&2
+}
+
+# Check if beads is installed and accessible
+check_beads() {
+    if [[ -x "$BEADS_BIN" ]]; then
+        log_success "Beads found at $BEADS_BIN"
+
+        # Verify beads can run
+        if "$BEADS_BIN" --version >/dev/null 2>&1; then
+            log_success "Beads is functional"
+        else
+            log_warn "Beads binary exists but may not be working properly"
+        fi
+
+        # Check if beads is initialized in this repo
+        if [[ -d "$REPO_ROOT/.beads" ]]; then
+            log_success "Beads initialized in repository"
+        else
+            log_warn "Beads not initialized in this repository"
+            log_info "Run: $BEADS_BIN init"
+        fi
+    else
+        log_error "Beads not found at $BEADS_BIN"
+        log_info "Install beads by running: bash $REPO_ROOT/scripts/codex-build.sh"
+        log_info "Or manually: go install github.com/beadsland/beads/cmd/bd@latest"
+    fi
+}
+
+# Check if Go is installed (needed for beads)
+check_go() {
+    if command -v go >/dev/null 2>&1; then
+        local go_version=$(go version | awk '{print $3}' | sed 's/go//')
+        log_success "Go installed: $go_version"
+
+        # Check Go version (basic check)
+        if [[ -n "$go_version" ]]; then
+            log_success "Go version appears valid"
+        fi
+    else
+        log_warn "Go not found in PATH (needed for beads)"
+        log_info "Install Go: https://go.dev/doc/install"
+    fi
+}
+
+# Check if git is available
+check_git() {
+    if command -v git >/dev/null 2>&1; then
+        log_success "Git is available"
+
+        # Verify we're in a git repository
+        if git -C "$REPO_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
+            log_success "Inside git repository"
+        else
+            log_warn "Not inside a git repository"
+        fi
+    else
+        log_error "Git not found (required for version control)"
+    fi
+}
+
+# Check for required project files
+check_project_structure() {
+    local required_files=(
+        "CLAUDE.md"
+        "AGENTS.md"
+    )
+
+    for file in "${required_files[@]}"; do
+        if [[ -f "$REPO_ROOT/$file" ]]; then
+            log_success "Found $file"
+        else
+            log_warn "Missing $file"
+        fi
+    done
+}
+
+# Check if jq is available (useful for JSON parsing)
+check_jq() {
+    if command -v jq >/dev/null 2>&1; then
+        log_success "jq available for JSON processing"
+    else
+        log_warn "jq not found (recommended for JSON processing)"
+    fi
+}
+
+# Main validation function
+main() {
+    log_info "Running dependency validation..."
+    log_info "Repository: $REPO_ROOT"
+    echo "" >&2
+
+    # Run all checks
+    check_git
+    check_go
+    check_beads
+    check_jq
+    check_project_structure
+
+    echo "" >&2
+
+    # Report results
+    if [[ $VALIDATION_ERRORS -gt 0 ]]; then
+        log_error "Dependency validation failed with $VALIDATION_ERRORS error(s)"
+        log_info "Please install missing dependencies before continuing"
+        log_info "Run: bash $REPO_ROOT/scripts/codex-build.sh"
+        echo "" >&2
+        exit 1
+    elif [[ $VALIDATION_WARNINGS -gt 0 ]]; then
+        log_warn "Validation completed with $VALIDATION_WARNINGS warning(s)"
+        log_info "You may continue, but some features may not work optimally"
+        echo "" >&2
+        exit 0
+    else
+        log_success "All dependency checks passed!"
+        echo "" >&2
+        exit 0
+    fi
+}
+
+# Only run validation if not disabled
+if [[ "${CLAUDE_SKIP_DEPENDENCY_CHECK:-0}" != "1" ]]; then
+    main
+else
+    log_info "Dependency check skipped (CLAUDE_SKIP_DEPENDENCY_CHECK=1)"
+fi

@@ -1,38 +1,41 @@
 #!/usr/bin/env bash
+# Codex Web Agent Setup Script for HomeCooked iOS Project
+# This script prepares the environment for Codex Web agents to work on this repository.
+# Since this is an iOS project, we focus on validation tools and task tracking rather than building.
+
 set -euo pipefail
 
-if [[ $(uname -s) != "Linux" ]]; then
-    echo "[codex-setup] This script only supports Linux hosts." >&2
-    exit 1
-fi
-
 REPO_ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-HOMECOOKED_ROOT="$REPO_ROOT/HomeCooked"
-CODEX_HOME="$HOME/.codex"
-TOOLCHAIN_ROOT="$CODEX_HOME/toolchains"
+CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 BIN_DIR="$CODEX_HOME/bin"
 ENV_FILE="$CODEX_HOME/env.sh"
-SWIFT_VERSION="5.10.1"
-UBUNTU_VERSION="22.04"
-SWIFT_ARCHIVE="swift-${SWIFT_VERSION}-RELEASE-ubuntu${UBUNTU_VERSION}.tar.gz"
-SWIFT_DIR="$TOOLCHAIN_ROOT/${SWIFT_ARCHIVE%.tar.gz}"
-APT_PACKAGES=(
-    build-essential
-    clang
-    curl
+GO_VERSION="1.22.0"
+BEADS_VERSION="v0.3.0"
+
+# Core dependencies needed for this project
+REQUIRED_TOOLS=(
     git
-    libblocksruntime-dev
-    libcurl4-openssl-dev
-    libicu-dev
-    libncurses5-dev
-    libsqlite3-dev
-    libssl-dev
-    libxml2-dev
-    pkg-config
-    tar
-    unzip
-    xz-utils
+    curl
+    jq
 )
+
+# Color output helpers
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${GREEN}[codex-setup]${NC} $*" >&2
+}
+
+log_warn() {
+    echo -e "${YELLOW}[codex-setup]${NC} $*" >&2
+}
+
+log_error() {
+    echo -e "${RED}[codex-setup]${NC} $*" >&2
+}
 
 run_sudo() {
     if [[ $EUID -ne 0 ]]; then
@@ -42,85 +45,281 @@ run_sudo() {
     fi
 }
 
-ensure_apt_packages() {
-    if ! command -v apt-get >/dev/null 2>&1; then
-        echo "[codex-setup] Only apt-based distributions are supported." >&2
+# Detect OS and package manager
+detect_os() {
+    if [[ -f /etc/os-release ]]; then
+        . /etc/os-release
+        OS=$ID
+        OS_VERSION=$VERSION_ID
+    elif [[ "$(uname -s)" == "Darwin" ]]; then
+        OS="macos"
+        OS_VERSION=$(sw_vers -productVersion)
+    else
+        log_error "Unable to detect OS"
         exit 1
     fi
-
-    run_sudo apt-get update -y
-    run_sudo apt-get install -y --no-install-recommends "${APT_PACKAGES[@]}"
+    log_info "Detected OS: $OS $OS_VERSION"
 }
 
-install_swift() {
-    mkdir -p "$TOOLCHAIN_ROOT"
-    if [[ -x "$SWIFT_DIR/usr/bin/swift" ]]; then
+# Install core system dependencies
+ensure_system_packages() {
+    log_info "Installing system dependencies..."
+
+    if command -v apt-get >/dev/null 2>&1; then
+        run_sudo apt-get update -y
+        run_sudo apt-get install -y --no-install-recommends git curl jq sqlite3
+    elif command -v yum >/dev/null 2>&1; then
+        run_sudo yum install -y git curl jq sqlite
+    elif command -v brew >/dev/null 2>&1; then
+        brew install git curl jq sqlite3
+    else
+        log_warn "No supported package manager found. Ensure git, curl, jq, and sqlite3 are installed manually."
+    fi
+}
+
+# Install Go for beads dependency
+install_go() {
+    if command -v go >/dev/null 2>&1; then
+        local current_version=$(go version | awk '{print $3}' | sed 's/go//')
+        log_info "Go already installed: $current_version"
         return
     fi
 
-    tmp_dir=$(mktemp -d)
-    trap 'rm -rf "$tmp_dir"' EXIT
+    log_info "Installing Go ${GO_VERSION}..."
+    local arch=$(uname -m)
+    local os=$(uname -s | tr '[:upper:]' '[:lower:]')
 
-    SWIFT_URL="https://download.swift.org/swift-${SWIFT_VERSION}-release/ubuntu${UBUNTU_VERSION}/${SWIFT_ARCHIVE}"
-    echo "[codex-setup] Downloading Swift ${SWIFT_VERSION} from ${SWIFT_URL}" >&2
-    curl -L "$SWIFT_URL" -o "$tmp_dir/$SWIFT_ARCHIVE"
-    tar -xzf "$tmp_dir/$SWIFT_ARCHIVE" -C "$TOOLCHAIN_ROOT"
+    # Map architecture names
+    case "$arch" in
+        x86_64) arch="amd64" ;;
+        aarch64|arm64) arch="arm64" ;;
+        *) log_error "Unsupported architecture: $arch"; exit 1 ;;
+    esac
+
+    local go_archive="go${GO_VERSION}.${os}-${arch}.tar.gz"
+    local go_url="https://go.dev/dl/${go_archive}"
+    local tmp_dir=$(mktemp -d)
+
+    log_info "Downloading Go from ${go_url}..."
+    curl -fsSL "$go_url" -o "$tmp_dir/$go_archive"
+
+    run_sudo rm -rf /usr/local/go
+    run_sudo tar -C /usr/local -xzf "$tmp_dir/$go_archive"
     rm -rf "$tmp_dir"
-    trap - EXIT
+
+    export PATH="/usr/local/go/bin:$PATH"
+    export GOPATH="$HOME/go"
+    export PATH="$GOPATH/bin:$PATH"
 }
 
-install_swift_tool() {
-    local repo=$1
-    local tag=$2
-    local product=$3
+# Install beads task tracker
+install_beads() {
+    local beads_path="$HOME/go/bin/bd"
 
-    mkdir -p "$BIN_DIR"
-    if [[ -x "$BIN_DIR/$product" ]]; then
+    if [[ -x "$beads_path" ]]; then
+        log_info "Beads already installed at $beads_path"
         return
     fi
 
-    local work_dir
-    work_dir=$(mktemp -d)
-    git clone --depth=1 --branch "$tag" "$repo" "$work_dir/src"
-    pushd "$work_dir/src" >/dev/null
-    export PATH="$SWIFT_DIR/usr/bin:$PATH"
-    export LD_LIBRARY_PATH="$SWIFT_DIR/usr/lib/swift/linux:${LD_LIBRARY_PATH:-}"
-    swift build -c release --product "$product"
-    cp ".build/release/$product" "$BIN_DIR/$product"
-    popd >/dev/null
-    rm -rf "$work_dir"
+    log_info "Installing beads task tracker..."
+
+    # Ensure Go is in PATH
+    export PATH="/usr/local/go/bin:$PATH"
+    export GOPATH="$HOME/go"
+    export PATH="$GOPATH/bin:$PATH"
+
+    # Install beads via go install
+    go install github.com/beadsland/beads/cmd/bd@latest || {
+        log_error "Failed to install beads. Ensure Go is properly installed."
+        exit 1
+    }
+
+    if [[ -x "$beads_path" ]]; then
+        log_info "Beads installed successfully at $beads_path"
+    else
+        log_error "Beads installation verification failed"
+        exit 1
+    fi
 }
 
+# Initialize beads if needed
+init_beads() {
+    local beads_path="$HOME/go/bin/bd"
+
+    if [[ ! -d "$REPO_ROOT/.beads" ]]; then
+        log_info "Initializing beads in repository..."
+        cd "$REPO_ROOT"
+        "$beads_path" init || log_warn "Beads init failed or already initialized"
+    fi
+
+    # Verify beads is working
+    cd "$REPO_ROOT"
+    "$beads_path" list --status open >/dev/null 2>&1 || log_warn "Beads verification failed"
+}
+
+# Create validation script for project structure
+create_validation_script() {
+    mkdir -p "$BIN_DIR"
+    local validator="$BIN_DIR/validate-homecooked"
+
+    cat >"$validator" <<'VALIDATOR_EOF'
+#!/usr/bin/env bash
+# Validates HomeCooked project structure and requirements
+
+set -euo pipefail
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || pwd)
+ERRORS=0
+
+check_file() {
+    if [[ ! -f "$1" ]]; then
+        echo "❌ Missing required file: $1"
+        ((ERRORS++))
+    else
+        echo "✓ Found: $1"
+    fi
+}
+
+check_dir() {
+    if [[ ! -d "$1" ]]; then
+        echo "❌ Missing required directory: $1"
+        ((ERRORS++))
+    else
+        echo "✓ Found: $1"
+    fi
+}
+
+echo "Validating HomeCooked project structure..."
+echo "Repository root: $REPO_ROOT"
+echo ""
+
+# Check required documentation
+check_file "$REPO_ROOT/CLAUDE.md"
+check_file "$REPO_ROOT/AGENTS.md"
+check_file "$REPO_ROOT/README.md"
+
+# Check beads setup
+check_dir "$REPO_ROOT/.beads"
+check_file "$REPO_ROOT/.beads/issues.jsonl"
+
+# Check for Git
+if ! git -C "$REPO_ROOT" rev-parse --git-dir >/dev/null 2>&1; then
+    echo "❌ Not a git repository"
+    ((ERRORS++))
+else
+    echo "✓ Git repository initialized"
+fi
+
+# Check for beads binary
+if ! command -v "$HOME/go/bin/bd" >/dev/null 2>&1; then
+    echo "❌ Beads (bd) not found at $HOME/go/bin/bd"
+    ((ERRORS++))
+else
+    echo "✓ Beads binary available"
+fi
+
+echo ""
+if [[ $ERRORS -eq 0 ]]; then
+    echo "✅ All validation checks passed!"
+    exit 0
+else
+    echo "❌ Validation failed with $ERRORS error(s)"
+    exit 1
+fi
+VALIDATOR_EOF
+
+    chmod +x "$validator"
+    log_info "Created validation script at $validator"
+}
+
+# Write environment configuration
 write_env_file() {
     mkdir -p "$CODEX_HOME"
-    cat >"$ENV_FILE" <<EOF2
+
+    cat >"$ENV_FILE" <<'ENV_EOF'
 # shellcheck shell=bash
-export PATH="$SWIFT_DIR/usr/bin:$BIN_DIR:\$PATH"
-export LD_LIBRARY_PATH="$SWIFT_DIR/usr/lib/swift/linux:\${LD_LIBRARY_PATH:-}"
-export HOMECOOKED_ROOT="$HOMECOOKED_ROOT"
-export HOMECOOKED_TOOLING="$HOMECOOKED_ROOT/Tooling"
-EOF2
+# Codex Web Agent Environment for HomeCooked Project
+
+export PATH="/usr/local/go/bin:$HOME/go/bin:$PATH"
+export GOPATH="$HOME/go"
+export BEADS_BIN="$HOME/go/bin/bd"
+
+# Project-specific variables
+export HOMECOOKED_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+export HOMECOOKED_BEADS="$HOMECOOKED_ROOT/.beads"
+
+# Helper aliases for common tasks
+alias bd="$HOME/go/bin/bd"
+alias validate-project="$HOME/.codex/bin/validate-homecooked"
+
+# Display current project info
+echo "HomeCooked Development Environment"
+echo "  Root: $HOMECOOKED_ROOT"
+echo "  Beads: $BEADS_BIN"
+echo ""
+echo "Commands:"
+echo "  bd ready        - Show ready tasks"
+echo "  bd list         - List all issues"
+echo "  validate-project - Validate project structure"
+ENV_EOF
+
     chmod +x "$ENV_FILE"
+    log_info "Created environment file at $ENV_FILE"
 }
 
+# Run validation to ensure everything is set up correctly
+run_validation() {
+    log_info "Running project validation..."
+
+    if [[ -x "$BIN_DIR/validate-homecooked" ]]; then
+        "$BIN_DIR/validate-homecooked" || log_warn "Validation found issues (this is normal for initial setup)"
+    fi
+}
+
+# Print setup summary
 print_summary() {
-    cat <<EOF2
-[codex-setup] Environment prepared.
-- Swift toolchain: $SWIFT_DIR
-- Tools directory: $BIN_DIR (swiftlint, swift-format)
-- Repo root: $REPO_ROOT
+    cat <<SUMMARY
 
-Activate with: source "$ENV_FILE"
-EOF2
+╔════════════════════════════════════════════════════════════════╗
+║              Codex Web Setup Complete                          ║
+╚════════════════════════════════════════════════════════════════╝
+
+Environment prepared for HomeCooked iOS project.
+
+📍 Repository: $REPO_ROOT
+🔧 Tools Directory: $BIN_DIR
+📝 Beads Binary: $HOME/go/bin/bd
+✅ Validator: $BIN_DIR/validate-homecooked
+
+To activate this environment:
+  source "$ENV_FILE"
+
+Quick Start:
+  1. Check ready tasks: $HOME/go/bin/bd ready
+  2. Validate project: $BIN_DIR/validate-homecooked
+  3. Read instructions: cat $REPO_ROOT/CLAUDE.md
+
+Note: This is an iOS/SwiftUI project. Actual building requires macOS/Xcode.
+      This setup provides task tracking and validation for Codex Web agents.
+
+SUMMARY
 }
 
+# Main setup flow
 main() {
-    ensure_apt_packages
-    install_swift
-    install_swift_tool "https://github.com/realm/SwiftLint.git" "0.55.1" swiftlint
-    install_swift_tool "https://github.com/apple/swift-format.git" "swift-510.0.0-RELEASE" swift-format
+    log_info "Starting Codex Web setup for HomeCooked project..."
+
+    detect_os
+    ensure_system_packages
+    install_go
+    install_beads
+    init_beads
+    create_validation_script
     write_env_file
+    run_validation
     print_summary
+
+    log_info "Setup complete! Run: source $ENV_FILE"
 }
 
 main "$@"
