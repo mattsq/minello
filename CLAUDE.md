@@ -15,6 +15,7 @@ Home-cooked, local-first iOS app to replace Trello for family use. Core entities
 • **Docs**: Update this file's "Deliverables" checklist per ticket; keep CHANGELOG.md.
 • **Commits/PRs**: Conventional Commits (feat:, fix:, refactor:, test:). Include screenshots for UI PRs.
 • **No scope creep**. If unsure, implement the minimal version described in the ticket.
+• **Task tracking**: Use beads (bd) for all task and issue tracking. Create issues for discovered work, update status as you progress, track dependencies between tasks.
 
 ⸻
 
@@ -41,7 +42,13 @@ HomeCooked/
   Tooling/
     swiftlint.yml
     swiftformat.yml
-  Agents.md
+  .beads/              // Beads issue tracker (git-backed)
+    beads.db           // SQLite cache
+    issues.jsonl       // Issue data (version controlled)
+    config.yaml        // Beads configuration
+  Agents.md            // Pointer to CLAUDE.md
+  CLAUDE.md            // This file - agent instructions
+  GEMINI.md            // Pointer to CLAUDE.md
   CHANGELOG.md
   LICENSE
   README.md
@@ -56,11 +63,62 @@ HomeCooked/
 • **Lint/format**: `swiftformat . && swiftlint --strict`
 • **Snapshots (record)**: set RECORD_SNAPSHOTS=1 env var for UI test target
 
+### Beads (bd) - Issue Tracking
+
+• **Find ready work**: `$HOME/go/bin/bd ready` - Show unblocked, open tasks
+• **Create issue**: `$HOME/go/bin/bd create "Issue title" -d "Description" -p 0` (priority 0-4, 0=highest)
+• **List issues**: `$HOME/go/bin/bd list --status open --json`
+• **Show details**: `$HOME/go/bin/bd show <issue-id>`
+• **Update status**: `$HOME/go/bin/bd update <issue-id> --status in_progress`
+• **Add dependency**: `$HOME/go/bin/bd dep add <blocked-issue> <blocking-issue>` (blocking-issue must complete first)
+• **Close issue**: `$HOME/go/bin/bd close <issue-id> --reason "Completion note"`
+• **Sync with git**: `$HOME/go/bin/bd sync` (auto-syncs to .beads/issues.jsonl)
+
 ⸻
 
 ## Data model sketch (for reference)
 
 SwiftData @Model types: Board(id,title,columns,createdAt,updatedAt), Column(id,title,index,cards,board), Card(id,title,details,due,tags:[String],checklist:[ChecklistItem],column,sortKey,createdAt,updatedAt), ChecklistItem(id,text,isDone,quantity?,unit?,note?), PersonalList(id,title,items), Recipe(id,title,ingredients,methodMarkdown,tags).
+
+⸻
+
+## Beads workflow for agents
+
+This project uses **beads** (bd) for distributed, git-backed issue tracking. All issues live in `.beads/issues.jsonl` and sync via git.
+
+### Core workflow
+
+1. **Start session**: Run `$HOME/go/bin/bd ready --json` to find available work
+2. **Claim task**: Update status to in_progress: `$HOME/go/bin/bd update <id> --status in_progress`
+3. **Discover new work**: Create issues immediately when you find bugs, missing features, or tech debt
+4. **Track dependencies**: Use `$HOME/go/bin/bd dep add` to chain tasks (e.g., "write tests" depends on "implement feature")
+5. **Complete work**: Close with context: `$HOME/go/bin/bd close <id> --reason "Fixed in commit abc123"`
+6. **Sync regularly**: Run `$HOME/go/bin/bd sync` before git push (auto-syncs in most cases)
+
+### Best practices
+
+• **JSON output**: Always use `--json` flag for programmatic parsing in scripts
+• **Issue naming**: Issues auto-named as `minello-<hash>` (e.g., minello-a3f2dd)
+• **Priority levels**: 0=critical, 1=high, 2=medium (default), 3=low, 4=backlog
+• **Status values**: open, in_progress, closed, blocked
+• **Dependencies prevent duplicates**: Before starting work, check if an issue exists or is blocked
+• **Create issues liberally**: Better to track than forget; close duplicates if found
+• **Tie to commits**: Reference issue IDs in commit messages (e.g., "fix: resolve minello-a3f2dd")
+
+### Agent collaboration patterns
+
+• **Serial work**: Agent A creates issue → Agent B claims via `bd ready` → marks in_progress → completes
+• **Parallel work**: Multiple agents can work on independent issues (no blocking deps)
+• **Discovery chains**: Agent finds issue X needs prerequisite Y → creates both, links with `bd dep add X Y`
+• **Hand-offs**: Closing issue with detailed reason provides context for next agent/session
+
+### Integration with tickets below
+
+The numbered tickets (1-8) below are the main feature deliverables. Use beads to:
+- Break tickets into subtasks if needed (e.g., ticket 1 → multiple issues for models, repos, migrations)
+- Track bugs found during implementation
+- Manage test failures and fixes
+- Document tech debt discovered while working
 
 ⸻
 
@@ -306,6 +364,7 @@ Create .github/workflows/ci.yml:
 • Lint/format pass.
 • Screenshots for UI changes in PR.
 • CHANGELOG.md entry.
+• Beads issues updated: close completed work, create issues for discovered follow-ups, sync before push.
 
 ⸻
 
@@ -314,6 +373,8 @@ Create .github/workflows/ci.yml:
 ### System prompt (use for code-gen agents)
 
 You are a senior iOS engineer. Produce small, composable PRs. Prefer clarity over cleverness. Follow Swift API Design Guidelines, SOLID, and dependency injection where needed. Always include tests, update CI if necessary, and keep public APIs documented. Do not add third-party deps without explicit instruction.
+
+Use beads (bd) to track your work: claim tasks with `bd ready`, update status as you progress, create issues for discovered work, link dependencies, and close with detailed completion notes. Issues live in `.beads/issues.jsonl` and sync via git.
 
 ### Task prompt template
 
@@ -324,11 +385,22 @@ Context:
 - See Agents.md ticket <#> for requirements and acceptance tests.
 - Target iOS 17+, Swift 5.10+, SwiftUI + SwiftData.
 - Repositories live under Persistence/Repositories.
+- Use beads for task tracking: $HOME/go/bin/bd
+
+Workflow:
+1. Check for ready work: bd ready --json
+2. Create beads issue for this ticket (or claim existing)
+3. Update to in_progress: bd update <id> --status in_progress
+4. Implement (create sub-issues for bugs/tech debt discovered)
+5. Run tests, lint, build
+6. Close issue: bd close <id> --reason "Completed in PR #X"
+7. Sync: bd sync
 
 Deliver:
 - Code changes under the listed files.
 - Tests that pass headlessly.
 - Update CHANGELOG.md.
+- Beads issues closed/created as needed.
 
 Do not:
 - Change unrelated files.
@@ -342,6 +414,8 @@ Do not:
 • **SwiftData + CloudKit conflicts**: acceptable LWW for family usage; we normalize sortKey to reduce merge churn.
 • **DnD & SwiftUI Lists**: prefer LazyVStack + custom reorder to avoid List quirks.
 • **Trello export variance**: older exports differ—keep JSON decoding tolerant (optional fields).
+• **Beads + git workflow**: Issues auto-sync to `.beads/issues.jsonl` on CRUD operations. Always `bd sync` before `git push` to ensure issue state is committed. If multiple agents/sessions work concurrently, git merge handles JSONL conflicts via beads merge driver.
+• **Beads binary location**: Use `$HOME/go/bin/bd` as full path since `bd` may not be in PATH. Consider adding to PATH for convenience: `export PATH=$PATH:$HOME/go/bin`
 
 ⸻
 
