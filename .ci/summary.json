@@ -1,11 +1,11 @@
 {
-  "run_id": "20391677269",
-  "run_url": "https://github.com/mattsq/minello/actions/runs/20391677269",
-  "sha": "73ff705afb66a25a8790539ef849809d2f70da15",
-  "branch": "claude/fix-ci-summary-issues-zB4gO",
-  "pr_number": "14",
+  "run_id": "20391975339",
+  "run_url": "https://github.com/mattsq/minello/actions/runs/20391975339",
+  "sha": "9145f9c3c53c404d2e1259d550974b9c64de9652",
+  "branch": "claude/resolve-ci-issues-uj6Op",
+  "pr_number": "15",
   "overall_conclusion": "success",
-  "timestamp": "2025-12-20T08:19:51.986760Z",
+  "timestamp": "2025-12-20T08:47:37.818597Z",
   "jobs": [
     {
       "job_name": "build",
@@ -15,11 +15,13 @@
         {
           "step_name": "build",
           "log_excerpt": [
-            "2025-12-20 08:19:18.244 xcodebuild[13650:61645] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_08-19-0018.xcresult",
-            "xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.",
-            "Reason: The project \u2018HomeCooked\u2019 is damaged and cannot be opened. Examine the project file for invalid edits or unresolved source control conflicts.",
-            "Path: /Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj",
-            "Exception: -[PBXFileReference buildPhase]: unrecognized selector sent to instance 0x6000024ce220"
+            "builtin-validate-development-assets --validate YES_ERROR /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview /Users/runner/work/minello/minello/HomeCooked/Content",
+            "/Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj: error: One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview (in target 'HomeCooked' from project 'HomeCooked')",
+            "/Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj: error: One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeCooked/Content (in target 'HomeCooked' from project 'HomeCooked')",
+            "** BUILD FAILED **",
+            "The following build commands failed:",
+            "ValidateDevelopmentAssets /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build (in target 'HomeCooked' from project 'HomeCooked')",
+            "(1 failure)"
           ]
         },
         {
@@ -46,11 +48,16 @@
         {
           "step_name": "test",
           "log_excerpt": [
-            "2025-12-20 08:19:35.315 xcodebuild[2651:13668] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_08-19-0035.xcresult",
-            "xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.",
-            "Reason: The project \u2018HomeCooked\u2019 is damaged and cannot be opened. Examine the project file for invalid edits or unresolved source control conflicts.",
-            "Path: /Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj",
-            "Exception: -[PBXFileReference buildPhase]: unrecognized selector sent to instance 0x6000015a7dc0"
+            "builtin-validate-development-assets --validate YES_ERROR /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview /Users/runner/work/minello/minello/HomeCooked/Content",
+            "/Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj: error: One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview (in target 'HomeCooked' from project 'HomeCooked')",
+            "/Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj: error: One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeCooked/Content (in target 'HomeCooked' from project 'HomeCooked')",
+            "Testing failed:",
+            "One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview",
+            "One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeCooked/Content",
+            "** TEST FAILED **",
+            "The following build commands failed:",
+            "ValidateDevelopmentAssets /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build (in target 'HomeCooked' from project 'HomeCooked')",
+            "(1 failure)"
           ]
         }
       ]
@@ -72,7 +79,7 @@
           "log_excerpt": [
             "Running SwiftFormat...",
             "(lint mode - no files will be changed.)",
-            "SwiftFormat completed in 0.08s.",
+            "SwiftFormat completed in 0.07s.",
             "0/28 files require formatting."
           ]
         }

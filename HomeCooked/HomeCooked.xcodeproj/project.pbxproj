@@ -10,13 +10,9 @@
                 D9839F67DE5610596C9B2FED /* BoardsRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB805F64E8178620C45A3C4C /* BoardsRepositoryTests.swift */; };
                 CBCB3321ABCD2D49F087C81A /* CardMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B413E36C3DFBD56A5F564EBD /* CardMigrationTests.swift */; };
                 9A0547AF851DA8A2D41DA81F /* PersistenceIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AD39AE7C69D0009B1A588ED /* PersistenceIntegrationTests.swift */; };
-
-        FE880E4CBB5745B81B6C518D3312999A /* HomeCookedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC05FF70360B9C87100A28AC8D3E43 /* HomeCookedApp.swift */; };
-        08CFCB314F6772F2C038B6F8CEB49122 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B15DAFF64CAF45D6DFA849E027DE2F3 /* ContentView.swift */; };
-        0358E36BC266D5ACD5889206F0851E6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AC6AB0DC2614D1831C820E01C9B86A4 /* Assets.xcassets */; };
-
                 71F6394085422BD14C6C56132A83C261 /* HomeCookedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFC05FF70360B9C87100A28AC8D3E43 /* HomeCookedApp.swift */; };
                 A20D9AF9652F86306173E88FD46CE079 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B15DAFF64CAF45D6DFA849E027DE2F3 /* ContentView.swift */; };
+                0358E36BC266D5ACD5889206F0851E6C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5AC6AB0DC2614D1831C820E01C9B86A4 /* Assets.xcassets */; };
                 F9CB0BB00A40914B157B6CD8FB02A142 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7347EC8C937AA1A71C66A72B22FB0B8E /* ModelContainerFactory.swift */; };
                 60999A20FA064C1EFA0C7006234C3B26 /* RecipesRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BCEE0301A351FA857FDC2C6CB08A80B /* RecipesRepository.swift */; };
                 FB1CE88C46B48F33332C923D119FE7A3 /* BoardsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A294EC984F1CC5334FB40A6403AF4BFB /* BoardsRepository.swift */; };
@@ -232,22 +228,19 @@
                 isa = PBXSourcesBuildPhase;
                 buildActionMask = 2147483647;
                 files = (
-                        08CFCB314F6772F2C038B6F8CEB49122 /* ContentView.swift in Sources */,
-                        FE880E4CBB5745B81B6C518D3312999A /* HomeCookedApp.swift in Sources */,
-
-                        0AFC05FF70360B9C87100A28AC8D3E43 /* HomeCookedApp.swift in Sources */,
-                        8B15DAFF64CAF45D6DFA849E027DE2F3 /* ContentView.swift in Sources */,
-                        7347EC8C937AA1A71C66A72B22FB0B8E /* ModelContainerFactory.swift in Sources */,
-                        0BCEE0301A351FA857FDC2C6CB08A80B /* RecipesRepository.swift in Sources */,
-                        A294EC984F1CC5334FB40A6403AF4BFB /* BoardsRepository.swift in Sources */,
-                        8C562B17B92BB09770D2713781BDD9A8 /* ListsRepository.swift in Sources */,
-                        0C9C69EB0FCEF8F2C4279A4F217DF8A1 /* CardSortKeyMigration.swift in Sources */,
-                        9ED084E8DD9EA675B98C76D287035379 /* Card.swift in Sources */,
-                        8BCF0B7457D35C34AAC7D879EB187382 /* Board.swift in Sources */,
-                        A2DD7A94A28847353307469E566C908F /* ChecklistItem.swift in Sources */,
-                        0BF72473363AF3756BBAD21CD15C8F79 /* Column.swift in Sources */,
-                        5B4BD65C991892C51225608EAC17C689 /* PersonalList.swift in Sources */,
-                        E87C6CCD322B28EF6BC7A6D211168663 /* Recipe.swift in Sources */,
+                        71F6394085422BD14C6C56132A83C261 /* HomeCookedApp.swift in Sources */,
+                        A20D9AF9652F86306173E88FD46CE079 /* ContentView.swift in Sources */,
+                        F9CB0BB00A40914B157B6CD8FB02A142 /* ModelContainerFactory.swift in Sources */,
+                        60999A20FA064C1EFA0C7006234C3B26 /* RecipesRepository.swift in Sources */,
+                        FB1CE88C46B48F33332C923D119FE7A3 /* BoardsRepository.swift in Sources */,
+                        C2C30AB0C842BB7D77C2EB743601F35B /* ListsRepository.swift in Sources */,
+                        DB4987949ADCC023EF336857FC8EBCD2 /* CardSortKeyMigration.swift in Sources */,
+                        AFB758585A7FDFCA3CAA0D1F4947D60F /* Card.swift in Sources */,
+                        37EAF6884A6FC3D0CAF598990B579AD8 /* Board.swift in Sources */,
+                        9054FDE68ACA97F165C874B3E311D6BD /* ChecklistItem.swift in Sources */,
+                        84EE8812535485B51A911E316ADC9F4C /* Column.swift in Sources */,
+                        087F4453CCC0A08286BCF7434CF4DF73 /* PersonalList.swift in Sources */,
+                        69DD237FE56A17212A4DDC03D0A63407 /* Recipe.swift in Sources */,
                 );
                 runOnlyForDeploymentPostprocessing = 0;
         };
