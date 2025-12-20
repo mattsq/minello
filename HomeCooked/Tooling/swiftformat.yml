@@ -40,7 +40,7 @@
 
 # Enabled Rules
 --enable isEmpty
---enable sortedImports
+--enable sortImports
 --enable duplicateImports
 --enable redundantNilInit
 --enable redundantParens

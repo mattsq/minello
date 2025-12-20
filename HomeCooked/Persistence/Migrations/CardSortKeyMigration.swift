@@ -6,7 +6,7 @@ import SwiftData
 enum CardSortKeyMigration {
     /// Defines the migration plan for adding Card.sortKey
     static let migrationPlan = SchemaMigrationPlan([
-        MigrateV0toV1()
+        MigrateV0toV1(),
     ])
 
     /// Migration stage that adds sortKey field and initializes it based on card position in column
