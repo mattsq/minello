@@ -12,6 +12,7 @@ enum ModelContainerFactory {
     ])
 
     /// Creates a persistent ModelContainer for production use
+    /// Uses the CardSortKeyMigration.MigrationPlan to handle schema migrations
     static func create(
         cloudKitContainerIdentifier: String? = nil
     ) throws -> ModelContainer {
@@ -22,11 +23,13 @@ enum ModelContainerFactory {
         )
         return try ModelContainer(
             for: schema,
+            migrationPlan: CardSortKeyMigration.MigrationPlan.self,
             configurations: [configuration]
         )
     }
 
     /// Creates an in-memory ModelContainer for testing
+    /// Note: In-memory containers don't need migration plans as they start fresh each time
     static func createInMemory() throws -> ModelContainer {
         let configuration = ModelConfiguration(
             schema: schema,
