@@ -235,9 +235,9 @@ jobs:
           set -o pipefail
           swiftlint lint \
             --config HomeCooked/Tooling/swiftlint.yml \
-            --path HomeCooked/ \
             --strict \
             --reporter github-actions-logging \
+            HomeCooked/ \
             2>&1 | tee ci-logs/swiftlint.log
 
       - name: Upload lint results
