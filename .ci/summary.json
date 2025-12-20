@@ -1,0 +1,105 @@
+{
+  "run_id": "20389926754",
+  "run_url": "https://github.com/mattsq/minello/actions/runs/20389926754",
+  "sha": "9bc6ecf24dc8ee9e8ca8421c0b5d72dcad4f59f4",
+  "branch": "claude/ci-feedback-system-Jan4B",
+  "pr_number": "12",
+  "overall_conclusion": "success",
+  "timestamp": "2025-12-20T05:46:16.734243Z",
+  "jobs": [
+    {
+      "job_name": "build",
+      "conclusion": "success",
+      "duration_seconds": null,
+      "failed_steps": [
+        {
+          "step_name": "build",
+          "log_excerpt": [
+            "2025-12-20 05:39:03.757 xcodebuild[2822:14258] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_05-39-0003.xcresult",
+            "xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.",
+            "Reason: The project \u2018HomeCooked\u2019 is damaged and cannot be opened due to a parse error. Examine the project file for invalid edits or unresolved source control conflicts."
+          ]
+        },
+        {
+          "step_name": "validate-project",
+          "log_excerpt": [
+            "9FE81F10FC0F5C68CD205C09 /* Release */,",
+            ");",
+            "defaultConfigurationIsVisible = 0;",
+            "defaultConfigurationName = Release;",
+            "};",
+            "/* End XCConfigurationList section */",
+            "};",
+            "rootObject = D0134771BAD2644D1A9FEB723C2633B0 /* Project object */;",
+            "}"
+          ]
+        }
+      ]
+    },
+    {
+      "job_name": "test",
+      "conclusion": "success",
+      "duration_seconds": null,
+      "failed_steps": [
+        {
+          "step_name": "test",
+          "log_excerpt": [
+            "2025-12-20 05:39:23.634 xcodebuild[7500:35863] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_05-39-0023.xcresult",
+            "xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.",
+            "Reason: The project \u2018HomeCooked\u2019 is damaged and cannot be opened due to a parse error. Examine the project file for invalid edits or unresolved source control conflicts."
+          ]
+        }
+      ]
+    },
+    {
+      "job_name": "lint",
+      "conclusion": "success",
+      "duration_seconds": null,
+      "failed_steps": [
+        {
+          "step_name": "swiftlint",
+          "log_excerpt": [
+            "Error: Unknown option '--path'",
+            "Usage: swiftlint lint [<options>] [<paths> ...]",
+            "See 'swiftlint lint --help' for more information."
+          ]
+        },
+        {
+          "step_name": "swiftformat",
+          "log_excerpt": [
+            "(lint mode - no files will be changed.)",
+            "/Users/runner/work/minello/minello/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:9:1: error: (trailingCommas) Add or remove trailing commas in comma-separated lists.",
+            "warning: sortedImports rule is deprecated. Use sortImports instead.",
+            "SwiftFormat completed in 0.06s."
+          ]
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "test-results",
+      "path": ".ci/test-results"
+    },
+    {
+      "name": "failed-snapshots",
+      "path": ".ci/failed-snapshots"
+    },
+    {
+      "name": "lint-results",
+      "path": ".ci/lint-results"
+    },
+    {
+      "name": "build-logs",
+      "path": ".ci/build-logs"
+    },
+    {
+      "name": "test-logs",
+      "path": ".ci/test-logs"
+    },
+    {
+      "name": "lint-logs",
+      "path": ".ci/lint-logs"
+    }
+  ]
+}
