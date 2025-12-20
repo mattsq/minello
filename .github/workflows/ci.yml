@@ -226,19 +226,20 @@ jobs:
         continue-on-error: true
         run: |
           set -o pipefail
-          swiftformat --config HomeCooked/Tooling/swiftformat.yml --lint HomeCooked/ \
-            2>&1 | tee ci-logs/swiftformat.log
+          cd HomeCooked
+          swiftformat --config Tooling/swiftformat.yml --lint . \
+            2>&1 | tee ../ci-logs/swiftformat.log
 
       - name: Run SwiftLint (strict)
         continue-on-error: true
         run: |
           set -o pipefail
+          cd HomeCooked
           swiftlint lint \
-            --config HomeCooked/Tooling/swiftlint.yml \
+            --config Tooling/swiftlint.yml \
             --strict \
             --reporter github-actions-logging \
-            HomeCooked/ \
-            2>&1 | tee ci-logs/swiftlint.log
+            2>&1 | tee ../ci-logs/swiftlint.log
 
       - name: Upload lint results
         if: always()
