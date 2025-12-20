@@ -1,0 +1,177 @@
+name: CI
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DEVELOPER_DIR: /Applications/Xcode_15.4.app/Contents/Developer
+  IOS_SIMULATOR_DEVICE: "iPhone 15"
+  IOS_SIMULATOR_OS: "17.5"
+
+jobs:
+  build:
+    name: Build
+    runs-on: macos-14
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Show available destinations
+        run: xcodebuild -showdestinations -scheme HomeCooked -project HomeCooked/HomeCooked.xcodeproj || echo "Project not yet created"
+
+      - name: Cache derived data
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-derived-data-${{ hashFiles('**/Package.resolved', '**/*.pbxproj') }}
+          restore-keys: |
+            ${{ runner.os }}-derived-data-
+
+      - name: Build project
+        run: |
+          cd HomeCooked
+          xcodebuild build \
+            -scheme HomeCooked \
+            -project HomeCooked.xcodeproj \
+            -destination 'platform=iOS Simulator,name=${{ env.IOS_SIMULATOR_DEVICE }},OS=${{ env.IOS_SIMULATOR_OS }}' \
+            -configuration Debug \
+            -derivedDataPath DerivedData \
+            ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+  test:
+    name: Test
+    runs-on: macos-14
+    timeout-minutes: 30
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Select Xcode version
+        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+
+      - name: Cache derived data
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Developer/Xcode/DerivedData
+          key: ${{ runner.os }}-derived-data-${{ hashFiles('**/Package.resolved', '**/*.pbxproj') }}
+          restore-keys: |
+            ${{ runner.os }}-derived-data-
+
+      - name: Run unit tests
+        run: |
+          cd HomeCooked
+          xcodebuild test \
+            -scheme HomeCooked \
+            -project HomeCooked.xcodeproj \
+            -destination 'platform=iOS Simulator,name=${{ env.IOS_SIMULATOR_DEVICE }},OS=${{ env.IOS_SIMULATOR_OS }}' \
+            -configuration Debug \
+            -derivedDataPath DerivedData \
+            -enableCodeCoverage YES \
+            ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            HomeCooked/DerivedData/Logs/Test/*.xcresult
+            HomeCooked/DerivedData/Logs/Test/*.log
+          retention-days: 7
+
+      - name: Upload snapshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-snapshots
+          path: |
+            HomeCooked/Tests/**/__Snapshots__/**/*.png
+            HomeCooked/Tests/**/__FailureDiffs__/**/*.png
+          retention-days: 14
+
+  lint:
+    name: Lint
+    runs-on: macos-14
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SwiftLint
+        run: |
+          brew install swiftlint
+
+      - name: Install SwiftFormat
+        run: |
+          brew install swiftformat
+
+      - name: Run SwiftFormat (check mode)
+        run: |
+          swiftformat --config HomeCooked/Tooling/swiftformat.yml --lint HomeCooked/
+
+      - name: Run SwiftLint (strict)
+        run: |
+          swiftlint lint \
+            --config HomeCooked/Tooling/swiftlint.yml \
+            --path HomeCooked/ \
+            --strict \
+            --reporter github-actions-logging
+
+      - name: Upload lint results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-results
+          path: |
+            swiftlint-results.json
+            swiftformat-results.txt
+          retention-days: 7
+          if-no-files-found: ignore
+
+  status:
+    name: CI Status
+    runs-on: ubuntu-latest
+    needs: [build, test, lint]
+    if: always()
+
+    steps:
+      - name: Check job results
+        run: |
+          if [[ "${{ needs.build.result }}" != "success" ]]; then
+            echo "❌ Build failed"
+            exit 1
+          fi
+          if [[ "${{ needs.test.result }}" != "success" ]]; then
+            echo "❌ Tests failed"
+            exit 1
+          fi
+          if [[ "${{ needs.lint.result }}" != "success" ]]; then
+            echo "❌ Lint failed"
+            exit 1
+          fi
+          echo "✅ All CI checks passed!"

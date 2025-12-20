@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SwiftFormat configuration for consistent code formatting
 - SwiftLint configuration with strict rules and warnings as errors
 - Project directory structure following feature-based organization
+- Swift Package Manager package definition (Package.swift) for build infrastructure
+- GitHub Actions CI/CD pipeline with build, test, and lint jobs
+- Comprehensive README.md with project setup, development workflow, and CI documentation
+- Beads issue tracking fully integrated with detailed task management
 
 ### Changed
 - N/A
@@ -35,6 +39,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 - N/A
+
+### Notes
+- ⚠️ Xcode project file needs to be created on macOS before the app can be built (issue minello-hwp)
+- ⚠️ CI pipeline is configured but will not run successfully until Xcode project is created
 
 ## [0.0.0] - 2025-12-20
 
