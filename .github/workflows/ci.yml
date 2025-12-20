@@ -34,6 +34,57 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
+      - name: Validate Xcode project file
+        run: |
+          echo "=== Validating Xcode project file ==="
+          echo "File: HomeCooked/HomeCooked.xcodeproj/project.pbxproj"
+          echo "Size: $(wc -c < HomeCooked/HomeCooked.xcodeproj/project.pbxproj) bytes"
+          echo "Lines: $(wc -l < HomeCooked/HomeCooked.xcodeproj/project.pbxproj)"
+
+          # Check for mixed tabs/spaces (common parse error cause)
+          TAB_COUNT=$(grep -cP '^\t' HomeCooked/HomeCooked.xcodeproj/project.pbxproj || echo "0")
+          echo "Lines starting with tabs: $TAB_COUNT"
+          if [ "$TAB_COUNT" -gt 0 ]; then
+            echo "⚠️  WARNING: Found $TAB_COUNT lines with tab indentation (may cause parse errors)"
+            grep -nP '^\t' HomeCooked/HomeCooked.xcodeproj/project.pbxproj | head -5
+          fi
+
+          # Check for common corruption patterns
+          echo ""
+          echo "=== Checking for corruption patterns ==="
+          if grep -q $'\r' HomeCooked/HomeCooked.xcodeproj/project.pbxproj; then
+            echo "⚠️  WARNING: Found Windows line endings (CRLF)"
+          else
+            echo "✓ Unix line endings (LF)"
+          fi
+
+          # Check for valid UTF-8
+          if file HomeCooked/HomeCooked.xcodeproj/project.pbxproj | grep -q "UTF-8"; then
+            echo "✓ Valid UTF-8 encoding"
+          else
+            echo "⚠️  WARNING: Unexpected encoding"
+            file HomeCooked/HomeCooked.xcodeproj/project.pbxproj
+          fi
+
+          # Verify braces are balanced
+          OPEN_BRACES=$(grep -o '{' HomeCooked/HomeCooked.xcodeproj/project.pbxproj | wc -l)
+          CLOSE_BRACES=$(grep -o '}' HomeCooked/HomeCooked.xcodeproj/project.pbxproj | wc -l)
+          echo ""
+          echo "=== Brace balance check ==="
+          echo "Opening braces: $OPEN_BRACES"
+          echo "Closing braces: $CLOSE_BRACES"
+          if [ "$OPEN_BRACES" -eq "$CLOSE_BRACES" ]; then
+            echo "✓ Braces are balanced"
+          else
+            echo "⚠️  WARNING: Unbalanced braces (diff: $((OPEN_BRACES - CLOSE_BRACES)))"
+          fi
+
+          echo ""
+          echo "=== Project file structure ==="
+          head -10 HomeCooked/HomeCooked.xcodeproj/project.pbxproj
+          echo "..."
+          tail -10 HomeCooked/HomeCooked.xcodeproj/project.pbxproj
+
       - name: Show available destinations
         run: xcodebuild -showdestinations -scheme HomeCooked -project HomeCooked/HomeCooked.xcodeproj || echo "Project not yet created"
 
