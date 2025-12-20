@@ -1,10 +1,10 @@
 # ✅ CI Passed
 
-**Run**: [20389926754](https://github.com/mattsq/minello/actions/runs/20389926754)
-**Commit**: `9bc6ecf2`
-**Branch**: `claude/ci-feedback-system-Jan4B`
-**PR**: #12
-**Time**: 2025-12-20T05:46:16.734243Z
+**Run**: [20390405121](https://github.com/mattsq/minello/actions/runs/20390405121)
+**Commit**: `3f002dd6`
+**Branch**: `claude/plan-ci-fixes-ygU3O`
+**PR**: #13
+**Time**: 2025-12-20T06:22:57.953426Z
 
 ## Job Results
 
@@ -19,7 +19,7 @@
 #### Step: `build`
 
 ```
-2025-12-20 05:39:03.757 xcodebuild[2822:14258] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_05-39-0003.xcresult
+2025-12-20 06:22:27.159 xcodebuild[39461:167111] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-22-0027.xcresult
 xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.
 Reason: The project ‘HomeCooked’ is damaged and cannot be opened due to a parse error. Examine the project file for invalid edits or unresolved source control conflicts.
 ```
@@ -43,7 +43,7 @@ rootObject = D0134771BAD2644D1A9FEB723C2633B0 /* Project object */;
 #### Step: `test`
 
 ```
-2025-12-20 05:39:23.634 xcodebuild[7500:35863] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_05-39-0023.xcresult
+2025-12-20 06:22:42.198 xcodebuild[6349:31341] Writing error result bundle to /var/folders/sm/xrr7tmqj20s7hrsh1qhfl1d40000gn/T/ResultBundle_2025-20-12_06-22-0042.xcresult
 xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.
 Reason: The project ‘HomeCooked’ is damaged and cannot be opened due to a parse error. Examine the project file for invalid edits or unresolved source control conflicts.
 ```
@@ -53,23 +53,22 @@ Reason: The project ‘HomeCooked’ is damaged and cannot be opened due to a pa
 #### Step: `swiftlint`
 
 ```
-Error: Unknown option '--path'
-Usage: swiftlint lint [<options>] [<paths> ...]
-See 'swiftlint lint --help' for more information.
+Linting Swift files at paths HomeCooked/
+Error: No lintable files found at paths: 'HomeCooked/'
 ```
 
 #### Step: `swiftformat`
 
 ```
+Running SwiftFormat...
 (lint mode - no files will be changed.)
-/Users/runner/work/minello/minello/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:9:1: error: (trailingCommas) Add or remove trailing commas in comma-separated lists.
-warning: sortedImports rule is deprecated. Use sortImports instead.
-SwiftFormat completed in 0.06s.
+SwiftFormat completed in 0.05s.
+0/28 files require formatting.
 ```
 
 ## 🔍 Top Errors
 
-- `2025-12-20 05:39:03.757 xcodebuild[2822:14258] Writing error result bundle to /var/folders/sm/xrr7tm`
+- `2025-12-20 06:22:27.159 xcodebuild[39461:167111] Writing error result bundle to /var/folders/sm/xrr7`
 - `xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.`
 - `Reason: The project ‘HomeCooked’ is damaged and cannot be opened due to a parse error. Examine the p`
 - `9FE81F10FC0F5C68CD205C09 /* Release */,`
@@ -77,16 +76,15 @@ SwiftFormat completed in 0.06s.
 - `defaultConfigurationIsVisible = 0;`
 - `defaultConfigurationName = Release;`
 - `};`
-- `2025-12-20 05:39:23.634 xcodebuild[7500:35863] Writing error result bundle to /var/folders/sm/xrr7tm`
+- `2025-12-20 06:22:42.198 xcodebuild[6349:31341] Writing error result bundle to /var/folders/sm/xrr7tm`
 - `xcodebuild: error: Unable to read project 'HomeCooked.xcodeproj'.`
 - `Reason: The project ‘HomeCooked’ is damaged and cannot be opened due to a parse error. Examine the p`
-- `Error: Unknown option '--path'`
-- `Usage: swiftlint lint [<options>] [<paths> ...]`
-- `See 'swiftlint lint --help' for more information.`
+- `Linting Swift files at paths HomeCooked/`
+- `Error: No lintable files found at paths: 'HomeCooked/'`
+- `Running SwiftFormat...`
 - `(lint mode - no files will be changed.)`
-- `/Users/runner/work/minello/minello/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:9:1:`
-- `warning: sortedImports rule is deprecated. Use sortImports instead.`
-- `SwiftFormat completed in 0.06s.`
+- `SwiftFormat completed in 0.05s.`
+- `0/28 files require formatting.`
 
 ## 📦 Artifacts
 
@@ -100,7 +98,7 @@ The following artifacts may be available:
 
 ## 📄 Detailed Results
 
-Full structured results: `.ci/summary.json` in branch `claude/ci-feedback-system-Jan4B`
+Full structured results: `.ci/summary.json` in branch `claude/plan-ci-fixes-ygU3O`
 
 ---
 <!-- ci-feedback -->
