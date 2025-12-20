@@ -83,10 +83,19 @@ This project uses [Beads](https://github.com/steveyegge/beads) for git-native is
 
 ### Task Management with Beads
 
+**Quick setup:**
+
 ```bash
 # Install beads (if not already installed)
 curl -sSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash
 
+# Initialize beads (first time only)
+bd init  # or /root/go/bin/bd init on Claude Code Web
+```
+
+**Common commands:**
+
+```bash
 # View ready tasks
 bd ready
 
@@ -99,9 +108,18 @@ bd update <issue-id> --status in_progress
 # Close an issue
 bd close <issue-id> --reason "Completion note"
 
-# Sync with git
+# Sync with git (may fail in Claude Code Web - auto-sync happens on writes)
 bd sync
 ```
+
+**For Claude Code Web environments:**
+
+Beads works great but requires specific flags due to sandboxing. Use:
+- Full path: `/root/go/bin/bd` instead of just `bd`
+- Add `--no-db --json` for read operations (list, ready, show, blocked)
+- Regular commands work for writes (create, update, close)
+
+See `CLAUDE.md` for detailed Claude Code Web setup instructions.
 
 ### Agent Instructions
 
