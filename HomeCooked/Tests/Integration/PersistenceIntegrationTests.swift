@@ -30,7 +30,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         // Test Board round trip
         let board = Board(title: "Integration Test Board")
         let column = Column(title: "Testing", index: 0, board: board)
-        let card = Card(title: "Test Card", sortKey: 100, column: column)
+        let card = Card(title: "Test Card", column: column, sortKey: 100)
         column.cards = [card]
         board.columns = [column]
 
@@ -88,7 +88,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         // Given: Board with columns and cards
         let board = Board(title: "Test Board")
         let column = Column(title: "Column", index: 0, board: board)
-        let card = Card(title: "Card", sortKey: 100, column: column)
+        let card = Card(title: "Card", column: column, sortKey: 100)
         column.cards = [card]
         board.columns = [column]
 
@@ -99,11 +99,13 @@ final class PersistenceIntegrationTests: XCTestCase {
 
         // Then: Columns and cards should be deleted (cascade)
         let context = container.mainContext
+        let columnID = column.id
+        let cardID = card.id
         let columnDescriptor = FetchDescriptor<Column>(
-            predicate: #Predicate { $0.id == column.id }
+            predicate: #Predicate { $0.id == columnID }
         )
         let cardDescriptor = FetchDescriptor<Card>(
-            predicate: #Predicate { $0.id == card.id }
+            predicate: #Predicate { $0.id == cardID }
         )
 
         let fetchedColumns = try context.fetch(columnDescriptor)
