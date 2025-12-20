@@ -8,7 +8,7 @@ enum ModelContainerFactory {
         Card.self,
         ChecklistItem.self,
         PersonalList.self,
-        Recipe.self
+        Recipe.self,
     ])
 
     /// Creates a persistent ModelContainer for production use
