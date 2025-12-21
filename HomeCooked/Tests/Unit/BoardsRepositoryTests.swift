@@ -28,13 +28,13 @@ final class BoardsRepositoryTests: XCTestCase {
         let column2 = Column(title: "Done", index: 1, board: board)
         let card1 = Card(
             title: "Buy milk",
-            sortKey: 100,
-            column: column1
+            column: column1,
+            sortKey: 100
         )
         let card2 = Card(
             title: "Call plumber",
-            sortKey: 200,
-            column: column1
+            column: column1,
+            sortKey: 200
         )
 
         board.columns = [column1, column2]
