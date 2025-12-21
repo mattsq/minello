@@ -18,6 +18,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func create(board: Board) async throws {
+        linkRelationships(for: board)
         modelContext.insert(board)
         try modelContext.save()
     }
@@ -44,5 +45,17 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     func delete(board: Board) async throws {
         modelContext.delete(board)
         try modelContext.save()
+    }
+
+    private func linkRelationships(for board: Board) {
+        for column in board.columns {
+            column.board = board
+            for card in column.cards {
+                card.column = column
+                for item in card.checklist {
+                    item.card = card
+                }
+            }
+        }
     }
 }
