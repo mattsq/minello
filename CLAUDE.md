@@ -6,6 +6,37 @@ Home-cooked, local-first iOS app to replace Trello for family use. Core entities
 
 ⸻
 
+## Agent Memory System
+
+This repository uses a layered memory system to help agents share context across sessions:
+
+**🔹 Start here (always read first)**:
+1. **CLAUDE.md** (this file) → Agent instructions, tickets, beads workflow
+2. **KNOWLEDGEBASE.md** → Durable knowledge (architecture, conventions, workflows, pitfalls)
+3. **CONTINUITY.md** → Session state (current focus, recent decisions, next steps)
+
+**🔹 When to read what**:
+- **At session start**: CLAUDE.md (overview) → KNOWLEDGEBASE.md (how things work) → CONTINUITY.md (what's in flight)
+- **During work**: Update CONTINUITY.md with decisions and progress
+- **At session end**: Log session in CONTINUITY.md, promote durable lessons to KNOWLEDGEBASE.md
+
+**🔹 Other resources**:
+- **docs/adr/** → Architecture Decision Records (the "why" behind major decisions)
+- **docs/agent-workflow.md** → Detailed workflow for agents (how to resume, what to update)
+- **notes/sessions/** → Optional long-form session notes (don't clutter CONTINUITY)
+
+**🔹 How to resume work**:
+1. Check `bd --no-db ready --json` for available tasks (or `bd --no-db list --json` for all)
+2. Read CONTINUITY.md "Current Focus" and recent session log
+3. Claim task: `bd update <id> --status in_progress`
+4. Implement, test, commit
+5. Update CONTINUITY.md with decisions made
+6. Close task: `bd close <id> --reason "Completed in commit <hash>"`
+
+See **docs/agent-workflow.md** for full details.
+
+⸻
+
 ## Ground rules for agents
 
 • **Privacy & safety**: Never commit secrets, provisioning profiles, or personal data. Don't add analytics or third-party SDKs.
