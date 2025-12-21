@@ -121,13 +121,24 @@ Beads works great but requires specific flags due to sandboxing. Use:
 
 See `CLAUDE.md` for detailed Claude Code Web setup instructions.
 
-### Agent Instructions
+### AI / Agent Workflow
 
-For AI agents working on this project:
-- See `CLAUDE.md` for comprehensive agent instructions
-- All tasks tracked in Beads (`.beads/issues.jsonl`)
-- Follow strict quality bar: compile with warnings as errors, comprehensive tests
+This repository uses a **layered memory system** for AI agents to share context across sessions:
+
+- **[CLAUDE.md](CLAUDE.md)** – Primary agent instructions, tickets, beads workflow
+- **[KNOWLEDGEBASE.md](KNOWLEDGEBASE.md)** – Durable project knowledge (architecture, conventions, workflows)
+- **[CONTINUITY.md](CONTINUITY.md)** – Session-to-session state (current focus, recent decisions)
+- **[docs/agent-workflow.md](docs/agent-workflow.md)** – Detailed workflow guide for agents
+
+**Quick start for agents**:
+1. Read CLAUDE.md → KNOWLEDGEBASE.md → CONTINUITY.md
+2. Check `bd --no-db ready --json` for available tasks
+3. Claim task, implement, update CONTINUITY.md, close task
+
+**Quality requirements**:
+- Compile with warnings as errors, comprehensive tests
 - Commit messages follow Conventional Commits (feat:, fix:, test:, etc.)
+- All tasks tracked in Beads (`.beads/issues.jsonl`)
 
 ## Continuous Integration
 
