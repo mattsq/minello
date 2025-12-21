@@ -83,17 +83,26 @@ class LogParser:
     ]
 
     @staticmethod
-    def extract_errors(log_content: str, max_lines: int = 10) -> List[str]:
+    def extract_errors(log_content: str, max_lines: int = 10, max_size: int = 200_000) -> List[str]:
         """
         Extract relevant error lines from log content
 
         Args:
             log_content: Full log text
             max_lines: Maximum number of error lines to extract
+            max_size: Maximum size of log content to process (bytes)
 
         Returns:
             List of error lines (cleaned)
         """
+        # Truncate very large logs to avoid memory issues
+        if len(log_content) > max_size:
+            # Take first 50% and last 50% for very large logs
+            half_size = max_size // 2
+            header = log_content[:half_size]
+            footer = log_content[-half_size:]
+            log_content = header + "\n\n[... log truncated ...]\n\n" + footer
+
         lines = log_content.split('\n')
         error_lines = []
 
@@ -141,8 +150,13 @@ def parse_job_logs(artifacts_dir: Path, job_name: str, job_conclusion: str) -> J
     # Look for log files for this job
     job_log_dir = artifacts_dir / f"{job_name}-logs"
 
-    if job_log_dir.exists():
-        for log_file in job_log_dir.glob("*.log"):
+    if job_log_dir.exists() and job_log_dir.is_dir():
+        log_files = list(job_log_dir.glob("*.log"))
+
+        if not log_files:
+            print(f"Warning: No log files found in {job_log_dir}", file=sys.stderr)
+
+        for log_file in log_files:
             step_name = log_file.stem
 
             try:
@@ -159,12 +173,20 @@ def parse_job_logs(artifacts_dir: Path, job_name: str, job_conclusion: str) -> J
                     ))
             except Exception as e:
                 print(f"Warning: Could not parse {log_file}: {e}", file=sys.stderr)
+                # Add a failed step noting the parse error
+                if job_conclusion == 'failure':
+                    failed_steps.append(FailedStep(
+                        step_name=step_name,
+                        log_excerpt=[f"Log file exists but could not be parsed: {e}"]
+                    ))
+    else:
+        print(f"Warning: Log directory not found: {job_log_dir}", file=sys.stderr)
 
     # If job failed but we found no specific step logs, create a generic entry
     if job_conclusion == 'failure' and not failed_steps:
         failed_steps.append(FailedStep(
             step_name=f"{job_name} (general)",
-            log_excerpt=[f"Job {job_name} failed but no detailed logs were captured"]
+            log_excerpt=[f"Job {job_name} failed but no detailed logs were captured or downloaded"]
         ))
 
     return JobResult(

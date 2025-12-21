@@ -263,7 +263,7 @@ jobs:
     name: CI Feedback
     runs-on: ubuntu-latest
     needs: [build, test, lint]
-    if: always() && github.event_name == 'pull_request'
+    if: always()
     permissions:
       contents: write
       pull-requests: write
@@ -272,7 +272,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -306,6 +306,8 @@ jobs:
           path: artifacts/lint-logs
 
       - name: Generate CI feedback
+        id: feedback_script
+        continue-on-error: true
         env:
           BUILD_RESULT: ${{ needs.build.result }}
           TEST_RESULT: ${{ needs.test.result }}
@@ -317,10 +319,74 @@ jobs:
             "${{ github.run_id }}" \
             "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" \
             "${{ github.sha }}" \
-            "${{ github.head_ref }}" \
-            "${{ github.event.pull_request.number }}"
+            "${{ github.head_ref || github.ref_name }}" \
+            "${{ github.event.pull_request.number || 'none' }}"
 
-      - name: Commit feedback to PR branch
+      - name: Fallback feedback generation
+        if: always() && steps.feedback_script.outcome != 'success'
+        run: |
+          mkdir -p .ci
+
+          # Determine overall conclusion
+          OVERALL="unknown"
+          if [[ "${{ needs.build.result }}" == "failure" ]] || [[ "${{ needs.test.result }}" == "failure" ]] || [[ "${{ needs.lint.result }}" == "failure" ]]; then
+            OVERALL="failure"
+          elif [[ "${{ needs.build.result }}" == "success" ]] && [[ "${{ needs.test.result }}" == "success" ]] && [[ "${{ needs.lint.result }}" == "success" ]]; then
+            OVERALL="success"
+          fi
+
+          # Generate minimal JSON summary
+          cat > .ci/summary.json <<EOF
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "sha": "${{ github.sha }}",
+            "branch": "${{ github.head_ref || github.ref_name }}",
+            "pr_number": ${{ github.event.pull_request.number || 'null' }},
+            "overall_conclusion": "${OVERALL}",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "jobs": [
+              {"job_name": "build", "conclusion": "${{ needs.build.result }}", "failed_steps": []},
+              {"job_name": "test", "conclusion": "${{ needs.test.result }}", "failed_steps": []},
+              {"job_name": "lint", "conclusion": "${{ needs.lint.result }}", "failed_steps": []}
+            ],
+            "artifacts": [],
+            "error": "Primary feedback script failed; this is a fallback summary"
+          }
+          EOF
+
+          # Generate minimal markdown summary
+          ICON="⚠️"
+          if [[ "${OVERALL}" == "success" ]]; then
+            ICON="✅"
+          elif [[ "${OVERALL}" == "failure" ]]; then
+            ICON="❌"
+          fi
+
+          cat > .ci/summary.md <<EOF
+          # ${ICON} CI Feedback (Fallback)
+
+          **Run**: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          **Commit**: \`${{ github.sha }}\`
+          **Branch**: \`${{ github.head_ref || github.ref_name }}\`
+          ${{ github.event.pull_request.number && format('**PR**: #{0}', github.event.pull_request.number) || '' }}
+
+          ## Job Results
+
+          - Build: ${{ needs.build.result }}
+          - Test: ${{ needs.test.result }}
+          - Lint: ${{ needs.lint.result }}
+
+          ⚠️ The primary feedback script failed. This is a minimal fallback summary.
+          Check the [workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for detailed logs.
+
+          ---
+          <!-- ci-feedback -->
+          EOF
+
+          echo "✓ Generated fallback feedback"
+
+      - name: Commit feedback to branch
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -331,10 +397,11 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "ci: update CI feedback [skip ci]"
-            git push origin HEAD:${{ github.head_ref }}
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
           fi
 
       - name: Post or update PR comment
+        if: github.event_name == 'pull_request'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
