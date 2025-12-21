@@ -4,20 +4,14 @@
 # Paths
 included:
   - App
-  - Features
-  - DesignSystem
   - Persistence
-  - ImportExport
-  - Intents
   - Tests
-  - HomeCooked
 
 excluded:
   - .build
   - .swiftpm
   - DerivedData
   - Tests/Fixtures
-  - HomeCooked/Tests/Fixtures
 
 # Configuration
 analyzer_rules:

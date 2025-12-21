@@ -238,7 +238,7 @@ enum CardSortKeyMigration {
             @Relationship(deleteRule: .cascade, inverse: \ChecklistItem.card)
             var checklist: [ChecklistItem]
             var column: Column?
-            var sortKey: Double  // New in V2
+            var sortKey: Double // New in V2
             var createdAt: Date
             var updatedAt: Date
 
@@ -373,9 +373,9 @@ enum CardSortKeyMigration {
         )
     }
 
-    /// Helper struct for testing migration logic
+    /// Helper enum for testing migration logic
     /// Provides a way to test the migration apply logic without full ModelContainer setup
-    struct MigrateV0toV1 {
+    enum MigrateV0toV1 {
         /// Applies the sortKey initialization logic to a context
         /// This is primarily for testing purposes
         static func apply(to context: ModelContext) throws {
