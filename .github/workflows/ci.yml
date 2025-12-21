@@ -108,7 +108,6 @@ jobs:
             ${{ runner.os }}-derived-data-
 
       - name: Build project
-        continue-on-error: true
         run: |
           set -o pipefail
           cd HomeCooked
@@ -158,7 +157,6 @@ jobs:
             ${{ runner.os }}-derived-data-
 
       - name: Run unit tests
-        continue-on-error: true
         run: |
           set -o pipefail
           cd HomeCooked
