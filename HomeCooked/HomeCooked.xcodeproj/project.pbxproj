@@ -39,10 +39,10 @@
 
 /* Begin PBXFileReference section */
         577938E37FE6F84B99EF57E5AACC28F1 /* HomeCooked.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HomeCooked.app; sourceTree = BUILT_PRODUCTS_DIR; };
-        5AC6AB0DC2614D1831C820E01C9B86A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "HomeCooked/Assets.xcassets"; sourceTree = "<group>"; };
+        5AC6AB0DC2614D1831C820E01C9B86A4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
 
-                0AFC05FF70360B9C87100A28AC8D3E43 /* HomeCookedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeCooked/HomeCookedApp.swift"; sourceTree = "<group>"; };
-                8B15DAFF64CAF45D6DFA849E027DE2F3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeCooked/ContentView.swift"; sourceTree = "<group>"; };
+                0AFC05FF70360B9C87100A28AC8D3E43 /* HomeCookedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/HomeCookedApp.swift"; sourceTree = "<group>"; };
+                8B15DAFF64CAF45D6DFA849E027DE2F3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/ContentView.swift"; sourceTree = "<group>"; };
                 7347EC8C937AA1A71C66A72B22FB0B8E /* ModelContainerFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "App/ModelContainerFactory.swift"; sourceTree = "<group>"; };
                 0BCEE0301A351FA857FDC2C6CB08A80B /* RecipesRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Repositories/RecipesRepository.swift"; sourceTree = "<group>"; };
                 A294EC984F1CC5334FB40A6403AF4BFB /* BoardsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Persistence/Repositories/BoardsRepository.swift"; sourceTree = "<group>"; };
