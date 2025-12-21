@@ -24,6 +24,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - GitHub Actions CI/CD pipeline with build, test, and lint jobs
 - Comprehensive README.md with project setup, development workflow, and CI documentation
 - Beads issue tracking fully integrated with detailed task management
+- Kanban board UI with horizontally scrollable columns (BoardDetailView)
+- Drag-and-drop card reordering within and across columns using floating sortKey midpoint insertion
+- CardReorderService with background normalization to prevent sortKey precision issues
+- CardRow component with accessible drag handles and VoiceOver support
+- ColumnView component with drop zone indicators and haptic feedback
+- Haptics utility for success, error, and selection feedback during drag-and-drop
+- Comprehensive unit tests for CardReorderService (midpoint insertion, cross-column moves, normalization)
+- UI snapshot tests for BoardDetailView in light and dark modes
+- Integration tests for drag-and-drop persistence (DragAndDropIntegrationTests)
 
 ### Changed
 - N/A
