@@ -1,11 +1,11 @@
 {
-  "run_id": "20402895742",
-  "run_url": "https://github.com/mattsq/minello/actions/runs/20402895742",
-  "sha": "d3165270e9432ed18734c2a297df60ce33bf1a2e",
-  "branch": "claude/research-build-failures-vYbRs",
-  "pr_number": "23",
+  "run_id": "20403315049",
+  "run_url": "https://github.com/mattsq/minello/actions/runs/20403315049",
+  "sha": "87d0bb926c5b21773d85722ea08b48b5a8079c70",
+  "branch": "claude/plan-test-fixes-tHHMf",
+  "pr_number": "24",
   "overall_conclusion": "success",
-  "timestamp": "2025-12-21T01:39:55.190221Z",
+  "timestamp": "2025-12-21T02:23:13.531572Z",
   "jobs": [
     {
       "job_name": "build",
@@ -47,16 +47,8 @@
         {
           "step_name": "test",
           "log_excerpt": [
-            "^",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:32:13: error: argument 'column' must precede argument 'sortKey'",
-            "column: column1",
-            "~~~~~~~~~~~~^~~~~~~~~~~~~~~",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:37:13: error: argument 'column' must precede argument 'sortKey'",
-            "Testing failed:",
-            "Argument 'column' must precede argument 'sortKey'",
             "** TEST FAILED **",
-            "The following build commands failed:",
-            "SwiftCompile normal x86_64 /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')"
+            "Testing started"
           ]
         }
       ]
@@ -79,7 +71,7 @@
             "(lint mode - no files will be changed.)",
             "/Users/runner/work/minello/minello/HomeCooked/App/HomeCookedApp.swift:1:1: error: (sortImports) Sort import statements alphabetically.",
             "/Users/runner/work/minello/minello/HomeCooked/App/HomeCookedApp.swift:2:1: error: (sortImports) Sort import statements alphabetically.",
-            "SwiftFormat completed in 0.05s.",
+            "SwiftFormat completed in 0.06s.",
             "Source input did not pass lint check."
           ]
         }
