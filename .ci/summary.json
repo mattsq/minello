@@ -1,107 +1,16 @@
 {
-  "run_id": "20403315049",
-  "run_url": "https://github.com/mattsq/minello/actions/runs/20403315049",
-  "sha": "87d0bb926c5b21773d85722ea08b48b5a8079c70",
-  "branch": "claude/plan-test-fixes-tHHMf",
-  "pr_number": "24",
-  "overall_conclusion": "success",
-  "timestamp": "2025-12-21T02:23:13.531572Z",
+  "run_id": "20404447658",
+  "run_url": "https://github.com/mattsq/minello/actions/runs/20404447658",
+  "sha": "081137118a78e4f963d534aa08b79897ec82ec19",
+  "branch": "claude/plan-cicd-feedback-logs-4RjMI",
+  "pr_number": 26,
+  "overall_conclusion": "failure",
+  "timestamp": "2025-12-21T04:11:14Z",
   "jobs": [
-    {
-      "job_name": "build",
-      "conclusion": "success",
-      "duration_seconds": null,
-      "failed_steps": [
-        {
-          "step_name": "build",
-          "log_excerpt": [
-            "cd /Users/runner/work/minello/minello/HomeCooked",
-            "builtin-validationUtility /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app",
-            "Touch /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')",
-            "cd /Users/runner/work/minello/minello/HomeCooked",
-            "/usr/bin/touch -c /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app",
-            "** BUILD SUCCEEDED **"
-          ]
-        },
-        {
-          "step_name": "validate-project",
-          "log_excerpt": [
-            "9FE81F10FC0F5C68CD205C09 /* Release */,",
-            ");",
-            "defaultConfigurationIsVisible = 0;",
-            "defaultConfigurationName = Release;",
-            "};",
-            "/* End XCConfigurationList section */",
-            "};",
-            "rootObject = D0134771BAD2644D1A9FEB723C2633B0 /* Project object */;",
-            "}"
-          ]
-        }
-      ]
-    },
-    {
-      "job_name": "test",
-      "conclusion": "success",
-      "duration_seconds": null,
-      "failed_steps": [
-        {
-          "step_name": "test",
-          "log_excerpt": [
-            "** TEST FAILED **",
-            "Testing started"
-          ]
-        }
-      ]
-    },
-    {
-      "job_name": "lint",
-      "conclusion": "success",
-      "duration_seconds": null,
-      "failed_steps": [
-        {
-          "step_name": "swiftlint",
-          "log_excerpt": [
-            "Linting Swift files in current working directory",
-            "Error: No lintable files found at paths: ''"
-          ]
-        },
-        {
-          "step_name": "swiftformat",
-          "log_excerpt": [
-            "(lint mode - no files will be changed.)",
-            "/Users/runner/work/minello/minello/HomeCooked/App/HomeCookedApp.swift:1:1: error: (sortImports) Sort import statements alphabetically.",
-            "/Users/runner/work/minello/minello/HomeCooked/App/HomeCookedApp.swift:2:1: error: (sortImports) Sort import statements alphabetically.",
-            "SwiftFormat completed in 0.06s.",
-            "Source input did not pass lint check."
-          ]
-        }
-      ]
-    }
+    {"job_name": "build", "conclusion": "success", "failed_steps": []},
+    {"job_name": "test", "conclusion": "failure", "failed_steps": []},
+    {"job_name": "lint", "conclusion": "success", "failed_steps": []}
   ],
-  "artifacts": [
-    {
-      "name": "test-results",
-      "path": ".ci/test-results"
-    },
-    {
-      "name": "failed-snapshots",
-      "path": ".ci/failed-snapshots"
-    },
-    {
-      "name": "lint-results",
-      "path": ".ci/lint-results"
-    },
-    {
-      "name": "build-logs",
-      "path": ".ci/build-logs"
-    },
-    {
-      "name": "test-logs",
-      "path": ".ci/test-logs"
-    },
-    {
-      "name": "lint-logs",
-      "path": ".ci/lint-logs"
-    }
-  ]
+  "artifacts": [],
+  "error": "Primary feedback script failed; this is a fallback summary"
 }
