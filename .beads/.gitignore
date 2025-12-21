@@ -11,6 +11,9 @@ daemon.log
 daemon.pid
 bd.sock
 
+# Agent interaction logs (not tracked in git)
+interactions.jsonl
+
 # Local version tracking (prevents upgrade notification spam after git ops)
 .local_version
 
