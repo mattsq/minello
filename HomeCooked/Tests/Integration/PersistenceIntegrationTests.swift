@@ -29,8 +29,9 @@ final class PersistenceIntegrationTests: XCTestCase {
     func testRoundTripCreateFetchDelete() async throws {
         // Test Board round trip
         let board = Board(title: "Integration Test Board")
-        let column = Column(title: "Testing", index: 0, board: board)
-        let card = Card(title: "Test Card", column: column, sortKey: 100)
+        let column = Column(title: "Testing", index: 0)
+        let card = Card(title: "Test Card", sortKey: 100)
+        // Set up relationships (SwiftData maintains inverse relationships)
         column.cards = [card]
         board.columns = [column]
 
@@ -49,9 +50,9 @@ final class PersistenceIntegrationTests: XCTestCase {
         let item = ChecklistItem(
             text: "Milk",
             quantity: 2,
-            unit: "L",
-            personalList: list
+            unit: "L"
         )
+        // Set up relationship (SwiftData maintains inverse)
         list.items = [item]
 
         try await listsRepo.create(list: list)
@@ -87,8 +88,9 @@ final class PersistenceIntegrationTests: XCTestCase {
     func testCascadingDelete() async throws {
         // Given: Board with columns and cards
         let board = Board(title: "Test Board")
-        let column = Column(title: "Column", index: 0, board: board)
-        let card = Card(title: "Card", column: column, sortKey: 100)
+        let column = Column(title: "Column", index: 0)
+        let card = Card(title: "Card", sortKey: 100)
+        // Set up relationships (SwiftData maintains inverse relationships)
         column.cards = [card]
         board.columns = [column]
 

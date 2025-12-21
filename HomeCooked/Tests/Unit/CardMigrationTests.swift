@@ -22,12 +22,12 @@ final class CardMigrationTests: XCTestCase {
     func testSortKeyInitializedAscending() async throws {
         // Given: Create a column with cards with different sortKeys
         let board = Board(title: "Test Board")
-        let column = Column(title: "To Do", index: 0, board: board)
-        let card1 = Card(title: "First", column: column, sortKey: 100)
-        let card2 = Card(title: "Second", column: column, sortKey: 200)
-        let card3 = Card(title: "Third", column: column, sortKey: 300)
+        let column = Column(title: "To Do", index: 0)
+        let card1 = Card(title: "First", sortKey: 100)
+        let card2 = Card(title: "Second", sortKey: 200)
+        let card3 = Card(title: "Third", sortKey: 300)
 
-        // Add cards out of order to test sorting
+        // Add cards out of order to test sorting (SwiftData maintains inverse relationships)
         column.cards = [card3, card1, card2]
         board.columns = [column]
 
@@ -56,13 +56,14 @@ final class CardMigrationTests: XCTestCase {
     func testMigrationHandlesMultipleColumns() async throws {
         // Given: Multiple columns with cards that have different sortKeys
         let board = Board(title: "Test Board")
-        let column1 = Column(title: "To Do", index: 0, board: board)
-        let column2 = Column(title: "Done", index: 1, board: board)
+        let column1 = Column(title: "To Do", index: 0)
+        let column2 = Column(title: "Done", index: 1)
 
-        let card1 = Card(title: "Card 1", column: column1, sortKey: 50)
-        let card2 = Card(title: "Card 2", column: column1, sortKey: 150)
-        let card3 = Card(title: "Card 3", column: column2, sortKey: 75)
+        let card1 = Card(title: "Card 1", sortKey: 50)
+        let card2 = Card(title: "Card 2", sortKey: 150)
+        let card3 = Card(title: "Card 3", sortKey: 75)
 
+        // Set up relationships (SwiftData maintains inverse relationships)
         column1.cards = [card1, card2]
         column2.cards = [card3]
         board.columns = [column1, column2]

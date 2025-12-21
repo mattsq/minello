@@ -24,19 +24,18 @@ final class BoardsRepositoryTests: XCTestCase {
     func testCreateBoardWithColumnsAndCards() async throws {
         // Given
         let board = Board(title: "Test Board")
-        let column1 = Column(title: "To Do", index: 0, board: board)
-        let column2 = Column(title: "Done", index: 1, board: board)
+        let column1 = Column(title: "To Do", index: 0)
+        let column2 = Column(title: "Done", index: 1)
         let card1 = Card(
             title: "Buy milk",
-            column: column1,
             sortKey: 100
         )
         let card2 = Card(
             title: "Call plumber",
-            column: column1,
             sortKey: 200
         )
 
+        // Set up relationships (only set one side, SwiftData maintains inverse)
         board.columns = [column1, column2]
         column1.cards = [card1, card2]
 
