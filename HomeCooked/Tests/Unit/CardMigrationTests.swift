@@ -23,9 +23,9 @@ final class CardMigrationTests: XCTestCase {
         // Given: Create a column with cards (simulating pre-migration state)
         let board = Board(title: "Test Board")
         let column = Column(title: "To Do", index: 0, board: board)
-        let card1 = Card(title: "First", sortKey: 0, column: column)
-        let card2 = Card(title: "Second", sortKey: 0, column: column)
-        let card3 = Card(title: "Third", sortKey: 0, column: column)
+        let card1 = Card(title: "First", column: column, sortKey: 0)
+        let card2 = Card(title: "Second", column: column, sortKey: 0)
+        let card3 = Card(title: "Third", column: column, sortKey: 0)
 
         column.cards = [card1, card2, card3]
         board.columns = [column]
@@ -37,8 +37,9 @@ final class CardMigrationTests: XCTestCase {
         try CardSortKeyMigration.MigrateV0toV1.apply(to: context)
 
         // Then: SortKeys should be initialized in ascending order
+        let columnID = column.id
         let fetchedColumn = try context.fetch(
-            FetchDescriptor<Column>(predicate: #Predicate { $0.id == column.id })
+            FetchDescriptor<Column>(predicate: #Predicate { $0.id == columnID })
         ).first
 
         XCTAssertNotNil(fetchedColumn)
@@ -56,9 +57,9 @@ final class CardMigrationTests: XCTestCase {
         let column1 = Column(title: "To Do", index: 0, board: board)
         let column2 = Column(title: "Done", index: 1, board: board)
 
-        let card1 = Card(title: "Card 1", sortKey: 0, column: column1)
-        let card2 = Card(title: "Card 2", sortKey: 0, column: column1)
-        let card3 = Card(title: "Card 3", sortKey: 0, column: column2)
+        let card1 = Card(title: "Card 1", column: column1, sortKey: 0)
+        let card2 = Card(title: "Card 2", column: column1, sortKey: 0)
+        let card3 = Card(title: "Card 3", column: column2, sortKey: 0)
 
         column1.cards = [card1, card2]
         column2.cards = [card3]
@@ -71,8 +72,9 @@ final class CardMigrationTests: XCTestCase {
         try CardSortKeyMigration.MigrateV0toV1.apply(to: context)
 
         // Then: Each column's cards should have independent sortKey sequences
+        let boardID = board.id
         let fetchedBoard = try context.fetch(
-            FetchDescriptor<Board>(predicate: #Predicate { $0.id == board.id })
+            FetchDescriptor<Board>(predicate: #Predicate { $0.id == boardID })
         ).first
 
         let col1Cards = fetchedBoard?.columns

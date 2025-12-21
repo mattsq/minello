@@ -1,10 +1,10 @@
 # ✅ CI Passed
 
-**Run**: [20400979228](https://github.com/mattsq/minello/actions/runs/20400979228)
-**Commit**: `2cb8f91e`
-**Branch**: `claude/resolve-ci-issues-aQiQu`
-**PR**: #20
-**Time**: 2025-12-20T22:36:33.001165Z
+**Run**: [20401820429](https://github.com/mattsq/minello/actions/runs/20401820429)
+**Commit**: `0b88053a`
+**Branch**: `claude/resolve-ci-issues-Y9c3O`
+**PR**: #21
+**Time**: 2025-12-20T23:59:19.877810Z
 
 ## Job Results
 
@@ -19,12 +19,12 @@
 #### Step: `build`
 
 ```
-cd /Users/runner/work/minello/minello/HomeCooked
-builtin-validationUtility /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
-Touch /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
-cd /Users/runner/work/minello/minello/HomeCooked
-/usr/bin/touch -c /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
-** BUILD SUCCEEDED **
+builtin-validate-development-assets --validate YES_ERROR /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview\ Content
+/Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj: error: One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview Content (in target 'HomeCooked' from project 'HomeCooked')
+** BUILD FAILED **
+The following build commands failed:
+ValidateDevelopmentAssets /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build (in target 'HomeCooked' from project 'HomeCooked')
+(1 failure)
 ```
 
 #### Step: `validate-project`
@@ -46,16 +46,16 @@ rootObject = D0134771BAD2644D1A9FEB723C2633B0 /* Project object */;
 #### Step: `test`
 
 ```
-^
-/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift:33:59: error: argument 'column' must precede argument 'sortKey'
-let card = Card(title: "Test Card", sortKey: 100, column: column)
-~~~~~~~~~~~~~~^~~~~~~~~~~~~~
-column: column,
-/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift:91:54: error: argument 'column' must precede argument 'sortKey'
-let card = Card(title: "Card", sortKey: 100, column: column)
-@__swiftmacro_15HomeCookedTests022PersistenceIntegrationC0C19testCascadingDeleteyyYaKF9PredicatefMf_.swift:2:26: error: cannot convert value of type 'PredicateExpressions.Equal<PredicateExpressions.KeyPath<PredicateExpressions.Variable<Column>, UUID>, PredicateExpressions.KeyPath<PredicateExpressions.Value<Column>, UUID>>' to closure result type 'any StandardPredicateExpression<Bool>'
-PredicateExpressions.build_Equal(
-~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+builtin-validate-development-assets --validate YES_ERROR /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview\ Content
+/Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj: error: One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview Content (in target 'HomeCooked' from project 'HomeCooked')
+WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/all-product-headers.yaml (in target 'HomeCooked' from project 'HomeCooked')
+Testing failed:
+One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeCooked/HomeCooked/Preview Content
+Testing cancelled because the build failed.
+** TEST FAILED **
+The following build commands failed:
+ValidateDevelopmentAssets /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build (in target 'HomeCooked' from project 'HomeCooked')
+(1 failure)
 ```
 
 ### lint
@@ -73,39 +73,34 @@ Error: No lintable files found at paths: ''
 (lint mode - no files will be changed.)
 /Users/runner/work/minello/minello/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:241:1: error: (consecutiveSpaces) Replace consecutive spaces with a single space.
 /Users/runner/work/minello/minello/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:378:1: error: (enumNamespaces) Convert types used for hosting only static members into enums (an empty enum is the canonical way to create a namespace in Swift as it can't be instantiated).
-/Users/runner/work/minello/minello/HomeCooked/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:25:1: error: (wrap) Wrap lines that exceed the specified maximum width.
-/Users/runner/work/minello/minello/HomeCooked/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:26:1: error: (wrap) Wrap lines that exceed the specified maximum width.
-/Users/runner/work/minello/minello/HomeCooked/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:27:1: error: (wrap) Wrap lines that exceed the specified maximum width.
-/Users/runner/work/minello/minello/HomeCooked/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:67:1: error: (wrap) Wrap lines that exceed the specified maximum width.
-/Users/runner/work/minello/minello/HomeCooked/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:68:1: error: (wrap) Wrap lines that exceed the specified maximum width.
-/Users/runner/work/minello/minello/HomeCooked/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:69:1: error: (wrap) Wrap lines that exceed the specified maximum width.
-/Users/runner/work/minello/minello/HomeCooked/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:70:1: error: (wrap) Wrap lines that exceed the specified maximum width.
+SwiftFormat completed in 0.07s.
+Source input did not pass lint check.
 ```
 
 ## 🔍 Top Errors
 
-- `cd /Users/runner/work/minello/minello/HomeCooked`
-- `builtin-validationUtility /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/D`
-- `Touch /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator`
-- `cd /Users/runner/work/minello/minello/HomeCooked`
-- `/usr/bin/touch -c /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iph`
+- `builtin-validate-development-assets --validate YES_ERROR /Users/runner/work/minello/minello/HomeCook`
+- `/Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj: error: One of the paths in DEVEL`
+- `** BUILD FAILED **`
+- `The following build commands failed:`
+- `ValidateDevelopmentAssets /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermedia`
 - `9FE81F10FC0F5C68CD205C09 /* Release */,`
 - `);`
 - `defaultConfigurationIsVisible = 0;`
 - `defaultConfigurationName = Release;`
 - `};`
-- `^`
-- `/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift:33`
-- `let card = Card(title: "Test Card", sortKey: 100, column: column)`
-- `~~~~~~~~~~~~~~^~~~~~~~~~~~~~`
-- `column: column,`
+- `builtin-validate-development-assets --validate YES_ERROR /Users/runner/work/minello/minello/HomeCook`
+- `/Users/runner/work/minello/minello/HomeCooked/HomeCooked.xcodeproj: error: One of the paths in DEVEL`
+- `WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noi`
+- `Testing failed:`
+- `One of the paths in DEVELOPMENT_ASSET_PATHS does not exist: /Users/runner/work/minello/minello/HomeC`
 - `Linting Swift files in current working directory`
 - `Error: No lintable files found at paths: ''`
 - `(lint mode - no files will be changed.)`
 - `/Users/runner/work/minello/minello/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:241:`
 - `/Users/runner/work/minello/minello/HomeCooked/Persistence/Migrations/CardSortKeyMigration.swift:378:`
-- `/Users/runner/work/minello/minello/HomeCooked/HomeCooked/Persistence/Migrations/CardSortKeyMigration`
-- `/Users/runner/work/minello/minello/HomeCooked/HomeCooked/Persistence/Migrations/CardSortKeyMigration`
+- `SwiftFormat completed in 0.07s.`
+- `Source input did not pass lint check.`
 
 ## 📦 Artifacts
 
@@ -119,7 +114,7 @@ The following artifacts may be available:
 
 ## 📄 Detailed Results
 
-Full structured results: `.ci/summary.json` in branch `claude/resolve-ci-issues-aQiQu`
+Full structured results: `.ci/summary.json` in branch `claude/resolve-ci-issues-Y9c3O`
 
 ---
 <!-- ci-feedback -->
