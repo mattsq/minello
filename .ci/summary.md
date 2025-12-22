@@ -1,14 +1,14 @@
 # ❌ CI Failed (cancelled)
 
-**Run**: [20426557017](https://github.com/mattsq/minello/actions/runs/20426557017)
-**Commit**: `14224299`
+**Run**: [20426572830](https://github.com/mattsq/minello/actions/runs/20426572830)
+**Commit**: `760dd45e`
 **Branch**: `claude/fix-ci-cascading-delete`
 **PR**: #33
-**Time**: 2025-12-22T08:42:39.899075Z
+**Time**: 2025-12-22T08:47:02.643864Z
 
 ## Job Results
 
-- 🚫 **build**: cancelled
+- ✅ **build**: success
 - 🚫 **test**: cancelled
 - ✅ **lint**: success
 
@@ -32,8 +32,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 08:42:24.144 appintentsnltrainingprocessor[2391:12123] Parsing options for appintentsnltrainingprocessor
-2025-12-22 08:42:24.147 appintentsnltrainingprocessor[2391:12123] No AppShortcuts found - Skipping.
+2025-12-22 08:43:40.199 appintentsnltrainingprocessor[2584:12492] Parsing options for appintentsnltrainingprocessor
+2025-12-22 08:43:40.201 appintentsnltrainingprocessor[2584:12492] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -76,8 +76,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 08:42:24.144 appintentsnltrainingprocessor[2391:12123] Parsing options for appintentsnltrainingprocessor
-2025-12-22 08:42:24.147 appintentsnltrainingprocessor[2391:12123] No AppShortcuts found - Skipping.
+2025-12-22 08:43:40.199 appintentsnltrainingprocessor[2584:12492] Parsing options for appintentsnltrainingprocessor
+2025-12-22 08:43:40.201 appintentsnltrainingprocessor[2584:12492] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -172,6 +172,94 @@ Closing braces:       72
 ```
 </details>
 
+### test
+
+#### Step: `test`
+
+<details>
+<summary><b>Error Excerpt</b></summary>
+
+```
+	 Executed 4 tests, with 1 failure (0 unexpected) in 0.065 (0.074) seconds
+Test Suite 'CardMigrationTests' started at 2025-12-22 08:46:26.689.
+Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' started.
+Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.019 seconds).
+Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' started.
+Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.007 seconds).
+Test Suite 'CardMigrationTests' passed at 2025-12-22 08:46:26.724.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.026 (0.035) seconds
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:46:26.724.
+Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' started.
+Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testCascadingDelete(); summary will include totals from previous launches.
+Test Suite 'Selected tests' started at 2025-12-22 08:46:28.375.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:46:28.376.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:46:28.377.
+Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' started.
+Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testRoundTripCreateFetchDelete(); summary will include totals from previous launches.
+Test Suite 'Selected tests' started at 2025-12-22 08:46:29.556.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:46:29.557.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:46:29.557.
+Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 08:46:29.558.
+	 Executed 2 tests, with 2 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 08:46:29.558.
+	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'Selected tests' failed at 2025-12-22 08:46:29.559.
+	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.003) seconds
+```
+</details>
+
+<details>
+<summary><b>Full Log Tail (Last 50 Lines)</b></summary>
+
+```
+[BoardsRepository] fetchColumns board=78A522F1-0552-4EC5-B06D-94C24A52A44A fallback matching on UUID
+[BoardsRepository] fetchColumns board=78A522F1-0552-4EC5-B06D-94C24A52A44A fallback descriptor by UUID
+[BoardsRepository] fetchColumns board=78A522F1-0552-4EC5-B06D-94C24A52A44A matched=0
+[BoardsRepository] fetchAll board=78A522F1-0552-4EC5-B06D-94C24A52A44A title=Board 1 columns=0
+[BoardsRepository] fetchColumns board=7798985F-32BF-4D48-AF73-47B24DF505AC boardModelID=PersistentIdentifier(id: SwiftData.PersistentIdentifier.ID(url: x-coredata://1E8004A8-C096-413C-AAB5-FF406CA5D0BA/Board/p2), implementation: SwiftData.PersistentIdentifierImplementation) fetched=0
+[BoardsRepository] fetchColumns board=7798985F-32BF-4D48-AF73-47B24DF505AC fallback matching on UUID
+[BoardsRepository] fetchColumns board=7798985F-32BF-4D48-AF73-47B24DF505AC fallback descriptor by UUID
+[BoardsRepository] fetchColumns board=7798985F-32BF-4D48-AF73-47B24DF505AC matched=0
+[BoardsRepository] fetchAll board=7798985F-32BF-4D48-AF73-47B24DF505AC title=Board 2 columns=0
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' passed (0.017 seconds).
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' started.
+[BoardsRepository] create(board:) board=DD057269-F843-43AB-AFE6-1C87A438BC22 title=Original Title columns=0
+[BoardsRepository] post-create totalColumns=0
+[BoardsRepository] fetchColumns board=DD057269-F843-43AB-AFE6-1C87A438BC22 boardModelID=PersistentIdentifier(id: SwiftData.PersistentIdentifier.ID(url: x-coredata://B1697104-E982-4715-A7CF-B016E0DD999C/Board/p1), implementation: SwiftData.PersistentIdentifierImplementation) fetched=0
+[BoardsRepository] fetchColumns board=DD057269-F843-43AB-AFE6-1C87A438BC22 fallback matching on UUID
+[BoardsRepository] fetchColumns board=DD057269-F843-43AB-AFE6-1C87A438BC22 fallback descriptor by UUID
+[BoardsRepository] fetchColumns board=DD057269-F843-43AB-AFE6-1C87A438BC22 matched=0
+[BoardsRepository] fetch(id:) board=DD057269-F843-43AB-AFE6-1C87A438BC22 title=Updated Title columns=0
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.008 seconds).
+Test Suite 'BoardsRepositoryTests' failed at 2025-12-22 08:46:26.689.
+	 Executed 4 tests, with 1 failure (0 unexpected) in 0.065 (0.074) seconds
+Test Suite 'CardMigrationTests' started at 2025-12-22 08:46:26.689.
+Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' started.
+Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.019 seconds).
+Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' started.
+Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.007 seconds).
+Test Suite 'CardMigrationTests' passed at 2025-12-22 08:46:26.724.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.026 (0.035) seconds
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:46:26.724.
+Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' started.
+Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testCascadingDelete(); summary will include totals from previous launches.
+Test Suite 'Selected tests' started at 2025-12-22 08:46:28.375.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:46:28.376.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:46:28.377.
+Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' started.
+Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testRoundTripCreateFetchDelete(); summary will include totals from previous launches.
+Test Suite 'Selected tests' started at 2025-12-22 08:46:29.556.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:46:29.557.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:46:29.557.
+Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 08:46:29.558.
+	 Executed 2 tests, with 2 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 08:46:29.558.
+	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.001) seconds
+Test Suite 'Selected tests' failed at 2025-12-22 08:46:29.559.
+	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.003) seconds
+```
+</details>
+
 ### lint
 
 #### Step: `swiftlint`
@@ -202,7 +290,7 @@ Error: No lintable files found at paths: ''
 ```
 Running SwiftFormat...
 (lint mode - no files will be changed.)
-SwiftFormat completed in 0.15s.
+SwiftFormat completed in 0.22s.
 0/25 files require formatting.
 ```
 </details>
@@ -213,7 +301,7 @@ SwiftFormat completed in 0.15s.
 ```
 Running SwiftFormat...
 (lint mode - no files will be changed.)
-SwiftFormat completed in 0.15s.
+SwiftFormat completed in 0.22s.
 0/25 files require formatting.
 ```
 </details>
