@@ -103,61 +103,68 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     private func hydrateRelationships(for board: Board) {
-        let boardID = board.id
-        let columnsDescriptor = FetchDescriptor<Column>(
-            predicate: #Predicate { column in
-                column.board?.id == boardID
-            },
-            sortBy: [SortDescriptor(\Column.index)]
-        )
-
-        guard let fetchedColumns = try? modelContext.fetch(columnsDescriptor) else {
-            board.columns = []
-            return
-        }
-
-        board.columns = fetchedColumns
+        // CI repeatedly failed to evaluate relationship predicates (column.board?.id == boardID),
+        // so we fetch related models broadly and filter them in-memory for determinism.
+        let boardColumns = fetchColumns(forBoardID: board.id)
+        board.columns = boardColumns
 
         for column in board.columns {
             column.board = board
-
-            let columnID = column.id
-            let cardsDescriptor = FetchDescriptor<Card>(
-                predicate: #Predicate { card in
-                    card.column?.id == columnID
-                },
-                sortBy: [SortDescriptor(\Card.sortKey)]
-            )
-
-            guard let fetchedCards = try? modelContext.fetch(cardsDescriptor) else {
-                print("[BoardsRepository] No cards fetched for column \(column.id)")
-                column.cards = []
-                continue
-            }
-
-            column.cards = fetchedCards
+            let cards = fetchCards(forColumnID: column.id)
+            column.cards = cards
 
             for card in column.cards {
                 card.column = column
+                let checklistItems = fetchChecklistItems(forCardID: card.id)
+                card.checklist = checklistItems
 
-                let cardID = card.id
-                let checklistDescriptor = FetchDescriptor<ChecklistItem>(
-                    predicate: #Predicate { item in
-                        item.card?.id == cardID
-                    }
-                )
-
-                guard let fetchedItems = try? modelContext.fetch(checklistDescriptor) else {
-                    print("[BoardsRepository] No checklist items fetched for card \(card.id)")
-                    card.checklist = []
-                    continue
-                }
-
-                card.checklist = fetchedItems
                 for item in card.checklist {
                     item.card = card
                 }
             }
+        }
+    }
+
+    private func fetchColumns(forBoardID boardID: UUID) -> [Column] {
+        let descriptor = FetchDescriptor<Column>(
+            sortBy: [SortDescriptor(\Column.index)]
+        )
+
+        do {
+            return try modelContext
+                .fetch(descriptor)
+                .filter { $0.board?.id == boardID }
+        } catch {
+            print("[BoardsRepository] Failed to fetch columns for board \(boardID): \(error)")
+            return []
+        }
+    }
+
+    private func fetchCards(forColumnID columnID: UUID) -> [Card] {
+        let descriptor = FetchDescriptor<Card>(
+            sortBy: [SortDescriptor(\Card.sortKey)]
+        )
+
+        do {
+            return try modelContext
+                .fetch(descriptor)
+                .filter { $0.column?.id == columnID }
+        } catch {
+            print("[BoardsRepository] Failed to fetch cards for column \(columnID): \(error)")
+            return []
+        }
+    }
+
+    private func fetchChecklistItems(forCardID cardID: UUID) -> [ChecklistItem] {
+        let descriptor = FetchDescriptor<ChecklistItem>()
+
+        do {
+            return try modelContext
+                .fetch(descriptor)
+                .filter { $0.card?.id == cardID }
+        } catch {
+            print("[BoardsRepository] Failed to fetch checklist items for card \(cardID): \(error)")
+            return []
         }
     }
 
@@ -166,7 +173,9 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         for column in board.columns {
             print("  column=\(column.id) title=\(column.title) index=\(column.index) cards=\(column.cards.count)")
             for card in column.cards {
-                print("    card=\(card.id) title=\(card.title) sortKey=\(card.sortKey) checklist=\(card.checklist.count)")
+                print(
+                    "    card=\(card.id) title=\(card.title) sortKey=\(card.sortKey) checklist=\(card.checklist.count)"
+                )
             }
         }
     }

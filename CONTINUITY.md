@@ -6,12 +6,12 @@
 
 ## Current Focus
 
-**Goal**: Keep the baseline persistence stack healthy—run the suite regularly and document any workflow pitfalls discovered while doing so.
+**Goal**: Keep the baseline persistence stack healthy—run the suite regularly, unblock the `claude/fix-ci-cascading-delete` branch, and document any workflow pitfalls discovered while doing so.
 
 **Next 3 Steps**:
-1. Capture build/test nuances (e.g., project path requirements) in `KNOWLEDGEBASE.md`.
-2. Continue running the full test suite after notable changes.
-3. Fold repeatable discoveries into ADRs or the workflow docs as they emerge.
+1. Monitor the next CI run for `claude/fix-ci-cascading-delete` to verify the relationship hydration + formatting fixes stick.
+2. Remove the extra BoardsRepository logging once CI stays green for a full run.
+3. Fold any repeatable SwiftData quirks (like predicate filtering limits) into ADRs or workflow docs as they emerge.
 
 **Current Risks / Open Questions**:
 - Still need ADR scaffolding + workflow docs from the earlier plan (no one has picked this up yet).
@@ -19,6 +19,23 @@
 ---
 
 ## Session Log
+
+### 2025-12-22: BoardsRepository hydration + lint cleanup
+
+**What Changed**:
+- Reworked `SwiftDataBoardsRepository.hydrateRelationships` to fetch columns/cards/checklists broadly and filter in-memory so CI no longer returns empty relationships, then reran `xcodebuild -scheme HomeCooked -destination 'platform=iOS Simulator,name=iPhone 15' test` (green locally).
+- Ran SwiftFormat (`swiftformat --config HomeCooked/Tooling/swiftformat.yml HomeCooked/`) to clean up the 98 lint violations (import order, indentation, guard syntax, numbering) reported in `.ci/summary`.
+- Logged the change in `CHANGELOG.md` and tracked the work in beads issue `minello-6rk`.
+
+**Decisions Made**:
+- Treat SwiftData relationship predicates as unreliable in CI for now; prefer fetching supersets and filtering manually inside the repository for determinism.
+- Keep the temporary logging inside BoardsRepository while CI stabilizes so we can inspect board/column counts directly in the artifact logs.
+
+**Failures Tried / Ruled Out**:
+- Attempted to run `swiftlint lint --config Tooling/swiftlint.yml --strict` directly; SwiftLint still reports “No lintable files found,” so CI continues to rely on SwiftFormat until we revisit the config root issue separately.
+
+**Next Steps**:
+- Wait for CI run 20425000604’s successor to confirm the fetch + formatting fixes, then clean up the extra logging once we see a full green run.
 
 ### 2025-12-22: CI cascading delete + lint fix
 
