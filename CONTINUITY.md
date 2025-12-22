@@ -52,6 +52,21 @@
 **Next Steps**:
 - Watch the next CI run to confirm the crash is gone and that columns/cards hydrate correctly with the new ID-backed filtering.
 
+### 2025-12-22: Predicate fetches for parent IDs
+
+**What Changed**:
+- CI run 20427914086 still crashed while enumerating `Board.columns`, so BoardsRepository now issues direct `FetchDescriptor` predicates against the stored `boardID`/`columnID`/`cardID` fields before falling back to any relationship matching; this keeps SwiftData on 15.4 from instantiating every column just to filter in-memory.
+- Reran `xcodebuild -scheme HomeCooked -destination 'platform=iOS Simulator,name=iPhone 15' test` locally to verify the new descriptors work (green).
+
+**Decisions Made**:
+- Keep the verbose logging temporarily but narrow each fetch to the exact parent UUID to minimize CI's exposure to buggy relationship hydration.
+
+**Failures Tried / Ruled Out**:
+- The earlier boardID storage fix alone wasn't enough—CI still logged `matched=0`, implying the relationship-backed filtering remained brittle even with stored IDs, hence the move to predicate-based fetches.
+
+**Next Steps**:
+- Wait for the next CI run to confirm the crash is finally gone; once we see green we can start trimming the debug logging.
+
 
 ### 2025-12-22: BoardsRepository hydration + lint cleanup
 

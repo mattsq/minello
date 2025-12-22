@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hydrated BoardsRepository fetches by filtering columns/cards/checklists in-memory with persistentModelID comparisons (plus verbose logging) to keep CI tests from returning empty relationships, and reformatted BoardDetail previews plus supporting files to satisfy SwiftFormat (`minello-6rk`).
 - Added UUID-based fallback filtering + fetch descriptors (with expanded logging) so BoardsRepository columns/cards/checklists still hydrate correctly on CI's older SwiftData stack (`minello-bbq`).
 - Persisted parent UUIDs on Column/Card/ChecklistItem (with a new SchemaV3 migration stage) so repository fetches can fall back to explicit IDs without re-triggering SwiftData relationships, preventing CI's `Board.columns.getter` crash (`minello-aq8`).
+- Switched BoardsRepository fetches to primary `FetchDescriptor` predicates on the stored parent UUIDs (with relationship-based filtering as a final fallback) so CI no longer needs to hydrate entire stores before filtering, eliminating the lingering `Board.columns.getter` crashes (`minello-d6f`).
 
 ### Security
 - N/A
