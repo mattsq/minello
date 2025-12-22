@@ -19,8 +19,9 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func create(board: Board) async throws {
-        attachRelationships(for: board)
         modelContext.insert(board)
+        // SwiftData should handle the graph insertion if relationships are set up correctly
+        // but explicit insertion of children doesn't hurt.
         for column in board.columns {
             modelContext.insert(column)
             for card in column.cards {
@@ -31,8 +32,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             }
         }
         try modelContext.save()
-        log(board: board, context: "create(board:)")
-        logColumnStoreSnapshot(context: "post-create")
+        print("[BoardsRepository] create(board:) completed for \(board.id)")
     }
 
     func fetch(id: UUID) async throws -> Board? {
@@ -44,18 +44,16 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             return nil
         }
 
-        hydrateRelationships(for: board)
         sortRelationships(for: board)
-        log(board: board, context: "fetch(id:)")
+        
+        print("[BoardsRepository] fetch(id:) found board \(board.id) with \(board.columns.count) columns")
         return board
     }
 
     func fetchAll() async throws -> [Board] {
         let boards = try modelContext.fetch(boardFetchDescriptor())
         for board in boards {
-            hydrateRelationships(for: board)
             sortRelationships(for: board)
-            log(board: board, context: "fetchAll")
         }
         return boards.sorted { $0.updatedAt > $1.updatedAt }
     }
@@ -77,25 +75,8 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             return
         }
 
-        attachRelationships(for: boardToDelete)
-
         modelContext.delete(boardToDelete)
         try modelContext.save()
-    }
-
-    private func attachRelationships(for board: Board) {
-        for column in board.columns {
-            column.board = board
-            column.boardID = board.id
-            for card in column.cards {
-                card.column = column
-                card.columnID = column.id
-                for checklistItem in card.checklist {
-                    checklistItem.card = card
-                    checklistItem.cardID = card.id
-                }
-            }
-        }
     }
 
     private func boardFetchDescriptor() -> FetchDescriptor<Board> {
@@ -106,216 +87,4 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         ]
         return descriptor
     }
-
-    private func hydrateRelationships(for board: Board) {
-        // CI repeatedly failed to evaluate relationship predicates (column.board?.id == boardID),
-        // so we fetch related models broadly and filter them in-memory for determinism.
-        let boardColumns = fetchColumns(for: board)
-        board.columns = boardColumns
-
-        for column in board.columns {
-            column.board = board
-            let cards = fetchCards(for: column)
-            column.cards = cards
-
-            for card in column.cards {
-                card.column = column
-                let checklistItems = fetchChecklistItems(for: card)
-                card.checklist = checklistItems
-
-                for item in card.checklist {
-                    item.card = card
-                }
-            }
-        }
-    }
-
-    private func fetchColumns(for board: Board) -> [Column] {
-        let boardModelID = board.persistentModelID
-        let boardID = board.id
-
-        var descriptor = FetchDescriptor<Column>(
-            predicate: #Predicate { column in
-                column.boardID == boardID
-            },
-            sortBy: [SortDescriptor(\Column.index)]
-        )
-        descriptor.includePendingChanges = true
-
-        do {
-            var candidates = try modelContext.fetch(descriptor)
-            if candidates.isEmpty {
-                print("[BoardsRepository] fetchColumns board=\(board.id) descriptor fallback to broad fetch")
-                logColumnStoreSnapshot(
-                    context: "fetchColumns fallback board=\(board.id) existingBoardColumns=\(board.columns.count)"
-                )
-                var fallbackDescriptor = FetchDescriptor<Column>(
-                    sortBy: [SortDescriptor(\Column.index)]
-                )
-                fallbackDescriptor.includePendingChanges = true
-                candidates = (try? modelContext.fetch(fallbackDescriptor)) ?? []
-            }
-            print(
-                "[BoardsRepository] fetchColumns board=\(board.id) boardModelID=\(boardModelID) fetched=\(candidates.count)"
-            )
-            for column in candidates {
-                let parentID = column.boardID?.uuidString ?? "nil"
-                print("  column candidate id=\(column.id) boardID=\(parentID)")
-            }
-            var filtered = candidates.filter {
-                $0.boardID == boardID
-            }
-            if filtered.isEmpty {
-                print("[BoardsRepository] fetchColumns board=\(board.id) fallback matching on persistentModelID")
-                filtered = candidates.filter {
-                    $0.board?.persistentModelID == boardModelID
-                }
-            }
-            if filtered.isEmpty {
-                print("[BoardsRepository] fetchColumns board=\(board.id) fallback matching on UUID relationship")
-                filtered = candidates.filter {
-                    $0.board?.id == boardID
-                }
-            }
-            print(
-                "[BoardsRepository] fetchColumns board=\(board.id) matched=\(filtered.count)"
-            )
-            return filtered
-        } catch {
-            print("[BoardsRepository] Failed to fetch columns for board \(board.id): \(error)")
-            return []
-        }
-    }
-
-    private func fetchCards(for column: Column) -> [Card] {
-        let columnModelID = column.persistentModelID
-        let columnID = column.id
-
-        var descriptor = FetchDescriptor<Card>(
-            predicate: #Predicate { card in
-                card.columnID == columnID
-            },
-            sortBy: [SortDescriptor(\Card.sortKey)]
-        )
-        descriptor.includePendingChanges = true
-
-        do {
-            var candidates = try modelContext.fetch(descriptor)
-            if candidates.isEmpty {
-                print("[BoardsRepository] fetchCards column=\(column.id) descriptor fallback to broad fetch")
-                var fallbackDescriptor = FetchDescriptor<Card>(
-                    sortBy: [SortDescriptor(\Card.sortKey)]
-                )
-                fallbackDescriptor.includePendingChanges = true
-                candidates = (try? modelContext.fetch(fallbackDescriptor)) ?? []
-            }
-            print(
-                "[BoardsRepository] fetchCards column=\(column.id) columnModelID=\(columnModelID) fetched=\(candidates.count)"
-            )
-            for card in candidates {
-                let parentID = card.columnID?.uuidString ?? "nil"
-                print("  card candidate id=\(card.id) columnID=\(parentID)")
-            }
-            var filtered = candidates.filter {
-                $0.columnID == columnID
-            }
-            if filtered.isEmpty {
-                print("[BoardsRepository] fetchCards column=\(column.id) fallback matching on persistentModelID")
-                filtered = candidates.filter {
-                    $0.column?.persistentModelID == columnModelID
-                }
-            }
-            if filtered.isEmpty {
-                print("[BoardsRepository] fetchCards column=\(column.id) fallback matching on UUID relationship")
-                filtered = candidates.filter {
-                    $0.column?.id == columnID
-                }
-            }
-            print(
-                "[BoardsRepository] fetchCards column=\(column.id) matched=\(filtered.count)"
-            )
-            return filtered
-        } catch {
-            print("[BoardsRepository] Failed to fetch cards for column \(column.id): \(error)")
-            return []
-        }
-    }
-
-    private func fetchChecklistItems(for card: Card) -> [ChecklistItem] {
-        let cardModelID = card.persistentModelID
-        let cardID = card.id
-
-        var descriptor = FetchDescriptor<ChecklistItem>(
-            predicate: #Predicate { item in
-                item.cardID == cardID
-            }
-        )
-        descriptor.includePendingChanges = true
-
-        do {
-            var candidates = try modelContext.fetch(descriptor)
-            if candidates.isEmpty {
-                print("[BoardsRepository] fetchChecklist card=\(card.id) descriptor fallback to broad fetch")
-                var fallbackDescriptor = FetchDescriptor<ChecklistItem>()
-                fallbackDescriptor.includePendingChanges = true
-                candidates = (try? modelContext.fetch(fallbackDescriptor)) ?? []
-            }
-            print(
-                "[BoardsRepository] fetchChecklist card=\(card.id) cardModelID=\(cardModelID) fetched=\(candidates.count)"
-            )
-            for item in candidates {
-                let parentID = item.cardID?.uuidString ?? "nil"
-                print("  checklist candidate id=\(item.id) cardID=\(parentID)")
-            }
-            var filtered = candidates.filter {
-                $0.cardID == cardID
-            }
-            if filtered.isEmpty {
-                print("[BoardsRepository] fetchChecklist card=\(card.id) fallback matching on persistentModelID")
-                filtered = candidates.filter {
-                    $0.card?.persistentModelID == cardModelID
-                }
-            }
-            if filtered.isEmpty {
-                print("[BoardsRepository] fetchChecklist card=\(card.id) fallback matching on UUID relationship")
-                filtered = candidates.filter {
-                    $0.card?.id == cardID
-                }
-            }
-            print(
-                "[BoardsRepository] fetchChecklist card=\(card.id) matched=\(filtered.count)"
-            )
-            return filtered
-        } catch {
-            print("[BoardsRepository] Failed to fetch checklist items for card \(card.id): \(error)")
-            return []
-        }
-    }
-
-    private func log(board: Board, context: String) {
-        print("[BoardsRepository] \(context) board=\(board.id) title=\(board.title) columns=\(board.columns.count)")
-        for column in board.columns {
-            print("  column=\(column.id) title=\(column.title) index=\(column.index) cards=\(column.cards.count)")
-            for card in column.cards {
-                print(
-                    "    card=\(card.id) title=\(card.title) sortKey=\(card.sortKey) checklist=\(card.checklist.count)"
-                )
-            }
-        }
-    }
-
-    private func logColumnStoreSnapshot(context: String) {
-        var descriptor = FetchDescriptor<Column>(sortBy: [SortDescriptor(\Column.index)])
-        descriptor.includePendingChanges = true
-        guard let columns = try? modelContext.fetch(descriptor) else {
-            print("[BoardsRepository] \(context) column snapshot unavailable")
-            return
-        }
-        print("[BoardsRepository] \(context) totalColumns=\(columns.count)")
-        for column in columns {
-            let boardID = column.boardID?.uuidString ?? "nil"
-            print("  stored column id=\(column.id) boardID=\(boardID)")
-        }
-    }
-
 }
