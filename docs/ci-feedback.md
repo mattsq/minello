@@ -64,25 +64,43 @@ To prevent infinite workflow loops:
   "pr_number": "42",
   "overall_conclusion": "failure",
   "timestamp": "2025-01-04T12:34:56Z",
+  "total_compilation_errors": 5,
+  "total_test_failures": 3,
+  "total_lint_violations": 12,
   "jobs": [
     {
       "job_name": "build",
       "conclusion": "success",
+      "total_errors": 0,
+      "total_warnings": 0,
       "duration_seconds": null,
       "failed_steps": []
     },
     {
       "job_name": "test",
       "conclusion": "failure",
+      "total_errors": 3,
+      "total_warnings": 1,
       "duration_seconds": null,
       "failed_steps": [
         {
           "step_name": "test",
-          "log_excerpt": [
-            "Testing failed:",
-            "❌ TestCase.testFeature() failed",
-            "Expected true, got false"
-          ]
+          "log_excerpt": ["Testing failed:", "..."],
+          "log_tail": ["Last 50 lines...", "..."],
+          "error_summary": {
+            "test_failures": 3
+          },
+          "compilation_errors": [],
+          "test_failures": [
+            {
+              "test_name": "HomeCooked.BoardTests",
+              "test_case": "testBoardCreation",
+              "failure_message": "XCTAssertEqual failed: (Expected) is not equal to (Actual)",
+              "file_path": "/path/BoardTests.swift",
+              "line_number": 25
+            }
+          ],
+          "lint_violations": []
         }
       ]
     }
@@ -94,16 +112,22 @@ To prevent infinite workflow loops:
 }
 ```
 
-### summary.md Structure
+### summary.md Structure (Enhanced)
 
 The markdown file contains:
 
 - Overall CI status (✅ or ❌)
 - Run metadata (run ID, commit SHA, branch, PR number)
-- Job results with icons
-- Failed jobs with step details and error excerpts
-- Top errors section (max ~30 lines of key errors)
+- **Error Statistics**: Total compilation errors, test failures, lint violations
+- Job results with icons and error/warning counts
+- **Detailed Failures** section with collapsible `<details>` for:
+  - **Compilation Errors**: Up to 10 shown with file:line:column, message, and code context
+  - **Test Failures**: Up to 20 shown with test name, location, and failure message
+  - **Lint Violations**: Up to 20 shown with file:line:column, rule name, and message
+  - **Error Excerpt**: General error context (30 lines)
+  - **Log Tail**: Last 50 lines of full log for complete context
 - Available artifacts list
+- **For Agents** section with example jq commands to parse JSON
 - Link to full JSON results
 
 ## Usage
@@ -112,7 +136,7 @@ The markdown file contains:
 
 When working on a PR, agents can inspect CI results by:
 
-1. **Read the summary file**:
+1. **Read the summary file** (now with structured errors):
    ```python
    # In your agent code
    import json
@@ -120,21 +144,53 @@ When working on a PR, agents can inspect CI results by:
        ci_results = json.load(f)
 
    if ci_results['overall_conclusion'] == 'failure':
+       print(f"Total errors: {ci_results['total_compilation_errors']} compilation, "
+             f"{ci_results['total_test_failures']} tests, "
+             f"{ci_results['total_lint_violations']} lint")
+
        for job in ci_results['jobs']:
            if job['failed_steps']:
                for step in job['failed_steps']:
-                   print(f"Error in {job['job_name']}/{step['step_name']}:")
-                   for line in step['log_excerpt']:
-                       print(f"  {line}")
+                   # Access structured compilation errors
+                   for error in step.get('compilation_errors', []):
+                       print(f"Compilation error at {error['file_path']}:{error['line']}:{error['column']}")
+                       print(f"  {error['error_type']}: {error['message']}")
+
+                   # Access structured test failures
+                   for failure in step.get('test_failures', []):
+                       print(f"Test failure: {failure['test_name']}.{failure['test_case']}")
+                       if failure['file_path']:
+                           print(f"  Location: {failure['file_path']}:{failure['line_number']}")
+                       print(f"  Message: {failure['failure_message']}")
+
+                   # Access structured lint violations
+                   for violation in step.get('lint_violations', []):
+                       print(f"Lint {violation['severity']} at {violation['file_path']}:{violation['line']}")
+                       print(f"  ({violation['rule']}) {violation['message']}")
    ```
 
-2. **Check if the file exists**:
+2. **Use jq for quick queries**:
+   ```bash
+   # Get all compilation errors
+   cat .ci/summary.json | jq '.jobs[].failed_steps[].compilation_errors[]'
+
+   # Get all test failures
+   cat .ci/summary.json | jq '.jobs[].failed_steps[].test_failures[]'
+
+   # Get all files with errors
+   cat .ci/summary.json | jq -r '.jobs[].failed_steps[].compilation_errors[].file_path' | sort -u
+
+   # Get error statistics
+   cat .ci/summary.json | jq '{compilation: .total_compilation_errors, tests: .total_test_failures, lint: .total_lint_violations}'
+   ```
+
+3. **Check if the file exists**:
    ```bash
    git fetch origin your-branch
    git checkout origin/your-branch -- .ci/summary.json
    ```
 
-3. **Read human-friendly summary**:
+4. **Read human-friendly summary**:
    ```bash
    cat .ci/summary.md
    ```
@@ -147,14 +203,72 @@ When working on a PR, agents can inspect CI results by:
 
 ## Error Extraction
 
-The feedback script extracts errors using multiple patterns:
+The feedback script uses **specialized parsers** for different error types, providing structured, verbose output:
 
+### Structured Parsing (Enhanced)
+
+#### 1. Compilation Errors
+- **Pattern**: `/path/file.swift:line:column: error: message`
+- **Extracted**: File path, line number, column, error type (error/warning), message
+- **Context**: 3 lines before + error line + 5 lines after (9 lines total)
+- **Example**:
+  ```json
+  {
+    "file_path": "/Users/runner/work/minello/minello/HomeCooked/App/ViewModel.swift",
+    "line": 42,
+    "column": 15,
+    "error_type": "error",
+    "message": "Value of type 'String' has no member 'count'",
+    "context": ["func updateTitle() {", "...", "..."]
+  }
+  ```
+
+#### 2. Test Failures
+- **Pattern**: `Test Case '-[Target.Class.testMethod]' failed`
+- **Extracted**: Test name, test case, failure message, file path, line number
+- **Context**: Assertion failure details with exact location
+- **Example**:
+  ```json
+  {
+    "test_name": "HomeCooked.BoardTests",
+    "test_case": "testBoardCreation",
+    "failure_message": "XCTAssertEqual failed: (Expected) is not equal to (Actual)",
+    "file_path": "/path/BoardTests.swift",
+    "line_number": 25
+  }
+  ```
+
+#### 3. Lint Violations
+- **Pattern**: `/path/file.swift:line:column: error: (rule) message`
+- **Extracted**: File path, line, column, rule name, severity (error/warning), message
+- **Example**:
+  ```json
+  {
+    "file_path": "/Users/runner/work/minello/minello/HomeCooked/App/HomeCookedApp.swift",
+    "line": 1,
+    "column": 1,
+    "rule": "sortImports",
+    "severity": "error",
+    "message": "Sort import statements alphabetically"
+  }
+  ```
+
+### General Error Fallback
+
+For non-structured errors, the script still uses pattern matching:
 - Lines containing: `error:`, `failed:`, `failure:`, `fatal:`, `exception:`
 - Build/test failure markers: `** BUILD FAILED **`, `** TEST FAILED **`
 - Warning symbols that mention errors: `⚠️ ... error`
 - Emoji indicators: `❌`
 
-For each error, it includes context (1 line before, error line, 2 lines after) up to a maximum of ~10 lines per failed step.
+### Output Levels
+
+Each failed step now includes **four levels** of detail:
+
+1. **Error Summary**: Statistics (e.g., "5 compilation errors, 2 warnings")
+2. **Structured Errors**: Parsed errors with file:line:column (up to 10-20 per type)
+3. **Error Excerpt**: 30 lines of error-focused context
+4. **Log Tail**: Last 50 lines of the full log for complete context
 
 ## Workflow Triggers
 

@@ -3,10 +3,10 @@
 CI Feedback Generator for GitHub Actions
 
 This script:
-1. Parses CI log files from artifacts
-2. Extracts error excerpts
-3. Generates summary.json and summary.md
-4. Provides structured feedback for both humans and agents
+1. Parses CI log files from artifacts with verbose error extraction
+2. Extracts structured errors (compilation, tests, lint) with full context
+3. Generates detailed summary.json and summary.md
+4. Provides actionable feedback for both humans and agents
 
 Usage:
     python3 scripts/ci_feedback.py <artifacts-dir> <output-dir> <run-id> <run-url> <sha> <branch> <pr-number>
@@ -16,17 +16,54 @@ import json
 import os
 import re
 import sys
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from datetime import datetime
 from pathlib import Path
 from typing import List, Optional, Dict, Any
 
 
 @dataclass
+class CompilationError:
+    """Represents a compilation error with file location"""
+    file_path: str
+    line: Optional[int]
+    column: Optional[int]
+    error_type: str  # error or warning
+    message: str
+    context: List[str]  # Surrounding lines
+
+
+@dataclass
+class TestFailure:
+    """Represents a test failure"""
+    test_name: str
+    test_case: str
+    failure_message: str
+    file_path: Optional[str]
+    line_number: Optional[int]
+
+
+@dataclass
+class LintViolation:
+    """Represents a lint violation"""
+    file_path: str
+    line: int
+    column: Optional[int]
+    rule: str
+    message: str
+    severity: str  # error or warning
+
+
+@dataclass
 class FailedStep:
-    """Represents a failed CI step with error context"""
+    """Represents a failed CI step with detailed error context"""
     step_name: str
-    log_excerpt: List[str]  # Max ~10 lines of relevant errors
+    log_excerpt: List[str]  # Raw log excerpt
+    log_tail: List[str]  # Last 50 lines for full context
+    compilation_errors: List[CompilationError] = field(default_factory=list)
+    test_failures: List[TestFailure] = field(default_factory=list)
+    lint_violations: List[LintViolation] = field(default_factory=list)
+    error_summary: Dict[str, int] = field(default_factory=dict)
 
 
 @dataclass
@@ -36,6 +73,8 @@ class JobResult:
     conclusion: str  # success, failure, cancelled, skipped
     duration_seconds: Optional[int]
     failed_steps: List[FailedStep]
+    total_errors: int = 0
+    total_warnings: int = 0
 
 
 @dataclass
@@ -57,12 +96,42 @@ class CISummary:
     timestamp: str
     jobs: List[JobResult]
     artifacts: List[ArtifactInfo]
+    total_compilation_errors: int = 0
+    total_test_failures: int = 0
+    total_lint_violations: int = 0
 
 
 class LogParser:
-    """Parses CI logs to extract error information"""
+    """Parses CI logs to extract detailed error information"""
 
-    # Patterns that indicate errors
+    # Xcode compilation error patterns
+    # Format: /path/to/file.swift:line:column: error: message
+    COMPILATION_ERROR_PATTERN = re.compile(
+        r'^(/[^:]+):(\d+):(\d+):\s+(error|warning):\s+(.+)$',
+        re.MULTILINE
+    )
+
+    # Xcode test failure patterns
+    # Format: Test Case '-[TargetTests.TestClass testMethod]' failed
+    TEST_FAILURE_PATTERN = re.compile(
+        r"Test Case '-\[([^\]]+)\]' (failed|passed)",
+        re.MULTILINE
+    )
+
+    # More detailed test failure with assertion
+    TEST_ASSERTION_PATTERN = re.compile(
+        r'^(/[^:]+):(\d+):\s+error:\s+-\[([^\]]+)\]\s+:\s+(.+)$',
+        re.MULTILINE
+    )
+
+    # SwiftLint/SwiftFormat patterns
+    # Format: /path/to/file.swift:line:column: error: (rule) message
+    LINT_PATTERN = re.compile(
+        r'^(/[^:]+):(\d+):(\d+):\s+(error|warning):\s+\(([^)]+)\)\s+(.+)$',
+        re.MULTILINE
+    )
+
+    # General error patterns
     ERROR_PATTERNS = [
         re.compile(r'(?i)error:', re.MULTILINE),
         re.compile(r'(?i)failed:', re.MULTILINE),
@@ -83,7 +152,118 @@ class LogParser:
     ]
 
     @staticmethod
-    def extract_errors(log_content: str, max_lines: int = 10) -> List[str]:
+    def parse_compilation_errors(log_content: str) -> List[CompilationError]:
+        """Extract compilation errors with file locations"""
+        errors = []
+        lines = log_content.split('\n')
+
+        for i, line in enumerate(lines):
+            match = LogParser.COMPILATION_ERROR_PATTERN.match(line)
+            if match:
+                file_path, line_num, col, error_type, message = match.groups()
+
+                # Get context (3 lines before, error line, 5 lines after)
+                start = max(0, i - 3)
+                end = min(len(lines), i + 6)
+                context = [lines[j].rstrip() for j in range(start, end)]
+
+                errors.append(CompilationError(
+                    file_path=file_path,
+                    line=int(line_num),
+                    column=int(col),
+                    error_type=error_type,
+                    message=message.strip(),
+                    context=context
+                ))
+
+        return errors
+
+    @staticmethod
+    def parse_test_failures(log_content: str) -> List[TestFailure]:
+        """Extract test failures with details"""
+        failures = []
+        lines = log_content.split('\n')
+
+        # Find failed test cases
+        failed_tests = {}
+        for i, line in enumerate(lines):
+            match = LogParser.TEST_FAILURE_PATTERN.search(line)
+            if match and match.group(2) == 'failed':
+                test_full_name = match.group(1)
+                # Parse TestTarget.TestClass.testMethod
+                parts = test_full_name.split('.')
+                test_case = parts[-1] if parts else test_full_name
+                test_name = '.'.join(parts[:-1]) if len(parts) > 1 else test_full_name
+
+                failed_tests[test_full_name] = {
+                    'test_name': test_name,
+                    'test_case': test_case,
+                    'line_index': i
+                }
+
+        # Extract failure messages for each failed test
+        for test_full_name, test_info in failed_tests.items():
+            start_idx = test_info['line_index']
+            failure_message = []
+
+            # Look for assertion failures in the next 20 lines
+            for j in range(start_idx + 1, min(start_idx + 20, len(lines))):
+                line = lines[j]
+
+                # Stop at next test case
+                if LogParser.TEST_FAILURE_PATTERN.search(line):
+                    break
+
+                # Check for assertion pattern
+                assertion_match = LogParser.TEST_ASSERTION_PATTERN.match(line)
+                if assertion_match:
+                    file_path, line_num, test_method, message = assertion_match.groups()
+                    failures.append(TestFailure(
+                        test_name=test_info['test_name'],
+                        test_case=test_info['test_case'],
+                        failure_message=message.strip(),
+                        file_path=file_path,
+                        line_number=int(line_num)
+                    ))
+                    break
+                elif 'error:' in line.lower() or 'failed:' in line.lower():
+                    failure_message.append(line.strip())
+
+            # If no structured failure found, use collected message
+            if not any(f.test_case == test_info['test_case'] for f in failures):
+                failures.append(TestFailure(
+                    test_name=test_info['test_name'],
+                    test_case=test_info['test_case'],
+                    failure_message=' '.join(failure_message) or 'Test failed (no details)',
+                    file_path=None,
+                    line_number=None
+                ))
+
+        return failures
+
+    @staticmethod
+    def parse_lint_violations(log_content: str) -> List[LintViolation]:
+        """Extract lint violations with file locations"""
+        violations = []
+        lines = log_content.split('\n')
+
+        for line in lines:
+            match = LogParser.LINT_PATTERN.match(line)
+            if match:
+                file_path, line_num, col, severity, rule, message = match.groups()
+                violations.append(LintViolation(
+                    file_path=file_path,
+                    line=int(line_num),
+                    column=int(col),
+                    rule=rule,
+                    message=message.strip(),
+                    severity=severity
+                ))
+
+        return violations
+
+    @staticmethod
+    def extract_errors(log_content: str, max_lines: int = 30) -> List[str]:
         """
         Extract relevant error lines from log content
 
@@ -104,29 +284,36 @@ class LogParser:
 
             # Check if line matches error patterns
             if any(pattern.search(line) for pattern in LogParser.ERROR_PATTERNS):
-                # Include context: line before, error line, and 2 lines after
-                start = max(0, i - 1)
-                end = min(len(lines), i + 3)
+                # Include context: 2 lines before, error line, and 3 lines after
+                start = max(0, i - 2)
+                end = min(len(lines), i + 4)
                 context = lines[start:end]
 
                 for ctx_line in context:
-                    cleaned = ctx_line.strip()
+                    cleaned = ctx_line.rstrip()
                     if cleaned and cleaned not in error_lines:
                         error_lines.append(cleaned)
                         if len(error_lines) >= max_lines:
                             return error_lines[:max_lines]
 
-        # If no errors found but we know the job failed, take last N lines
+        # If no errors found but we know something failed, take last N lines
         if not error_lines and log_content:
-            tail_lines = [l.strip() for l in lines[-max_lines:] if l.strip()]
+            tail_lines = [l.rstrip() for l in lines[-max_lines:] if l.strip()]
             return tail_lines[-max_lines:]
 
         return error_lines[:max_lines]
 
+    @staticmethod
+    def extract_log_tail(log_content: str, num_lines: int = 50) -> List[str]:
+        """Extract the last N lines of the log for full context"""
+        lines = log_content.split('\n')
+        tail = [l.rstrip() for l in lines[-num_lines:] if l.strip()]
+        return tail
+
 
 def parse_job_logs(artifacts_dir: Path, job_name: str, job_conclusion: str) -> JobResult:
     """
-    Parse logs for a specific job
+    Parse logs for a specific job with detailed error extraction
 
     Args:
         artifacts_dir: Directory containing downloaded artifacts
@@ -137,6 +324,8 @@ def parse_job_logs(artifacts_dir: Path, job_name: str, job_conclusion: str) -> J
         JobResult with parsed information
     """
     failed_steps = []
+    total_errors = 0
+    total_warnings = 0
 
     # Look for log files for this job
     job_log_dir = artifacts_dir / f"{job_name}-logs"
@@ -149,13 +338,53 @@ def parse_job_logs(artifacts_dir: Path, job_name: str, job_conclusion: str) -> J
                 with open(log_file, 'r', encoding='utf-8', errors='replace') as f:
                     log_content = f.read()
 
-                # Extract errors if this step had issues
-                error_lines = LogParser.extract_errors(log_content, max_lines=10)
+                # Extract different types of errors based on job type
+                compilation_errors = []
+                test_failures = []
+                lint_violations = []
 
-                if error_lines:
+                if job_name == 'build':
+                    compilation_errors = LogParser.parse_compilation_errors(log_content)
+                    total_errors += sum(1 for e in compilation_errors if e.error_type == 'error')
+                    total_warnings += sum(1 for e in compilation_errors if e.error_type == 'warning')
+
+                elif job_name == 'test':
+                    test_failures = LogParser.parse_test_failures(log_content)
+                    compilation_errors = LogParser.parse_compilation_errors(log_content)
+                    total_errors += len(test_failures)
+                    total_errors += sum(1 for e in compilation_errors if e.error_type == 'error')
+                    total_warnings += sum(1 for e in compilation_errors if e.error_type == 'warning')
+
+                elif job_name == 'lint':
+                    lint_violations = LogParser.parse_lint_violations(log_content)
+                    total_errors += sum(1 for v in lint_violations if v.severity == 'error')
+                    total_warnings += sum(1 for v in lint_violations if v.severity == 'warning')
+
+                # Extract general error lines and log tail
+                error_lines = LogParser.extract_errors(log_content, max_lines=30)
+                log_tail = LogParser.extract_log_tail(log_content, num_lines=50)
+
+                # Build error summary
+                error_summary = {}
+                if compilation_errors:
+                    error_summary['compilation_errors'] = len([e for e in compilation_errors if e.error_type == 'error'])
+                    error_summary['compilation_warnings'] = len([e for e in compilation_errors if e.error_type == 'warning'])
+                if test_failures:
+                    error_summary['test_failures'] = len(test_failures)
+                if lint_violations:
+                    error_summary['lint_errors'] = len([v for v in lint_violations if v.severity == 'error'])
+                    error_summary['lint_warnings'] = len([v for v in lint_violations if v.severity == 'warning'])
+
+                # Only add step if there are errors or it's a failed job
+                if error_lines or compilation_errors or test_failures or lint_violations or job_conclusion == 'failure':
                     failed_steps.append(FailedStep(
                         step_name=step_name,
-                        log_excerpt=error_lines
+                        log_excerpt=error_lines,
+                        log_tail=log_tail,
+                        compilation_errors=compilation_errors,
+                        test_failures=test_failures,
+                        lint_violations=lint_violations,
+                        error_summary=error_summary
                     ))
             except Exception as e:
                 print(f"Warning: Could not parse {log_file}: {e}", file=sys.stderr)
@@ -164,14 +393,19 @@ def parse_job_logs(artifacts_dir: Path, job_name: str, job_conclusion: str) -> J
     if job_conclusion == 'failure' and not failed_steps:
         failed_steps.append(FailedStep(
             step_name=f"{job_name} (general)",
-            log_excerpt=[f"Job {job_name} failed but no detailed logs were captured"]
+            log_excerpt=[f"Job {job_name} failed but no detailed logs were captured"],
+            log_tail=[],
+            error_summary={'uncategorized_failure': 1}
         ))
+        total_errors += 1
 
     return JobResult(
         job_name=job_name,
         conclusion=job_conclusion,
-        duration_seconds=None,  # Could parse from GitHub Actions output if available
-        failed_steps=failed_steps
+        duration_seconds=None,
+        failed_steps=failed_steps,
+        total_errors=total_errors,
+        total_warnings=total_warnings
     )
 
 
@@ -233,11 +467,20 @@ def generate_summary(
         Complete CISummary object
     """
     jobs = []
+    total_compilation_errors = 0
+    total_test_failures = 0
+    total_lint_violations = 0
 
     # Parse each job's logs
     for job_name, conclusion in job_results.items():
         job_result = parse_job_logs(artifacts_dir, job_name, conclusion)
         jobs.append(job_result)
+
+        # Aggregate statistics
+        for step in job_result.failed_steps:
+            total_compilation_errors += len([e for e in step.compilation_errors if e.error_type == 'error'])
+            total_test_failures += len(step.test_failures)
+            total_lint_violations += len([v for v in step.lint_violations if v.severity == 'error'])
 
     # Determine overall conclusion
     all_conclusions = [job.conclusion for job in jobs]
@@ -259,7 +502,10 @@ def generate_summary(
         overall_conclusion=overall,
         timestamp=datetime.utcnow().isoformat() + 'Z',
         jobs=jobs,
-        artifacts=find_artifacts(output_dir)
+        artifacts=find_artifacts(output_dir),
+        total_compilation_errors=total_compilation_errors,
+        total_test_failures=total_test_failures,
+        total_lint_violations=total_lint_violations
     )
 
 
@@ -302,6 +548,18 @@ def write_markdown_summary(summary: CISummary, output_path: Path):
     lines.append(f"**Time**: {summary.timestamp}")
     lines.append("")
 
+    # Statistics summary
+    if summary.total_compilation_errors > 0 or summary.total_test_failures > 0 or summary.total_lint_violations > 0:
+        lines.append("## 📊 Error Statistics")
+        lines.append("")
+        if summary.total_compilation_errors > 0:
+            lines.append(f"- **Compilation Errors**: {summary.total_compilation_errors}")
+        if summary.total_test_failures > 0:
+            lines.append(f"- **Test Failures**: {summary.total_test_failures}")
+        if summary.total_lint_violations > 0:
+            lines.append(f"- **Lint Violations**: {summary.total_lint_violations}")
+        lines.append("")
+
     # Job results
     lines.append("## Job Results")
     lines.append("")
@@ -316,18 +574,24 @@ def write_markdown_summary(summary: CISummary, output_path: Path):
         else:
             icon = "⚠️"
 
-        lines.append(f"- {icon} **{job.job_name}**: {job.conclusion}")
+        error_info = ""
+        if job.total_errors > 0:
+            error_info = f" ({job.total_errors} errors"
+            if job.total_warnings > 0:
+                error_info += f", {job.total_warnings} warnings"
+            error_info += ")"
+
+        lines.append(f"- {icon} **{job.job_name}**: {job.conclusion}{error_info}")
 
     lines.append("")
 
-    # Failed steps and errors
+    # Detailed failures
     failed_jobs = [job for job in summary.jobs if job.failed_steps]
 
     if failed_jobs:
-        lines.append("## ❌ Failures")
+        lines.append("## ❌ Detailed Failures")
         lines.append("")
 
-        total_errors = 0
         for job in failed_jobs:
             lines.append(f"### {job.job_name}")
             lines.append("")
@@ -335,45 +599,125 @@ def write_markdown_summary(summary: CISummary, output_path: Path):
             for step in job.failed_steps:
                 lines.append(f"#### Step: `{step.step_name}`")
                 lines.append("")
-                lines.append("```")
-                for error_line in step.log_excerpt:
-                    lines.append(error_line)
-                    total_errors += 1
-                lines.append("```")
-                lines.append("")
 
-        # Summary of top errors
-        lines.append("## 🔍 Top Errors")
-        lines.append("")
+                # Show error summary
+                if step.error_summary:
+                    lines.append("**Error Summary:**")
+                    for error_type, count in step.error_summary.items():
+                        lines.append(f"- {error_type.replace('_', ' ').title()}: {count}")
+                    lines.append("")
 
-        error_count = 0
-        for job in failed_jobs:
-            for step in job.failed_steps:
-                for error_line in step.log_excerpt[:5]:  # Top 5 per step
-                    lines.append(f"- `{error_line[:100]}`")  # Truncate long lines
-                    error_count += 1
-                    if error_count >= 30:  # Max 30 error lines
-                        break
-                if error_count >= 30:
-                    break
-            if error_count >= 30:
-                lines.append(f"- _(... and {total_errors - error_count} more errors)_")
-                break
+                # Show compilation errors
+                if step.compilation_errors:
+                    lines.append("<details>")
+                    lines.append(f"<summary><b>Compilation Errors ({len(step.compilation_errors)})</b></summary>")
+                    lines.append("")
+                    for error in step.compilation_errors[:10]:  # Limit to first 10
+                        lines.append(f"**{error.file_path}:{error.line}:{error.column}**")
+                        lines.append(f"```")
+                        lines.append(f"{error.error_type}: {error.message}")
+                        lines.append("```")
+                        if error.context:
+                            lines.append("<details>")
+                            lines.append("<summary>Context</summary>")
+                            lines.append("")
+                            lines.append("```swift")
+                            for ctx_line in error.context:
+                                lines.append(ctx_line)
+                            lines.append("```")
+                            lines.append("</details>")
+                        lines.append("")
+                    if len(step.compilation_errors) > 10:
+                        lines.append(f"_... and {len(step.compilation_errors) - 10} more compilation errors_")
+                        lines.append("")
+                    lines.append("</details>")
+                    lines.append("")
 
-        lines.append("")
+                # Show test failures
+                if step.test_failures:
+                    lines.append("<details>")
+                    lines.append(f"<summary><b>Test Failures ({len(step.test_failures)})</b></summary>")
+                    lines.append("")
+                    for failure in step.test_failures[:20]:  # Limit to first 20
+                        lines.append(f"**{failure.test_name}.{failure.test_case}**")
+                        if failure.file_path and failure.line_number:
+                            lines.append(f"- Location: `{failure.file_path}:{failure.line_number}`")
+                        lines.append(f"```")
+                        lines.append(failure.failure_message)
+                        lines.append("```")
+                        lines.append("")
+                    if len(step.test_failures) > 20:
+                        lines.append(f"_... and {len(step.test_failures) - 20} more test failures_")
+                        lines.append("")
+                    lines.append("</details>")
+                    lines.append("")
+
+                # Show lint violations
+                if step.lint_violations:
+                    lines.append("<details>")
+                    lines.append(f"<summary><b>Lint Violations ({len(step.lint_violations)})</b></summary>")
+                    lines.append("")
+                    for violation in step.lint_violations[:20]:  # Limit to first 20
+                        lines.append(f"**{violation.file_path}:{violation.line}:{violation.column}**")
+                        lines.append(f"```")
+                        lines.append(f"{violation.severity}: ({violation.rule}) {violation.message}")
+                        lines.append("```")
+                        lines.append("")
+                    if len(step.lint_violations) > 20:
+                        lines.append(f"_... and {len(step.lint_violations) - 20} more lint violations_")
+                        lines.append("")
+                    lines.append("</details>")
+                    lines.append("")
+
+                # Show general error excerpt
+                if step.log_excerpt and not (step.compilation_errors or step.test_failures or step.lint_violations):
+                    lines.append("<details>")
+                    lines.append("<summary><b>Error Excerpt</b></summary>")
+                    lines.append("")
+                    lines.append("```")
+                    for error_line in step.log_excerpt:
+                        lines.append(error_line)
+                    lines.append("```")
+                    lines.append("</details>")
+                    lines.append("")
+
+                # Show full log tail for agents
+                if step.log_tail:
+                    lines.append("<details>")
+                    lines.append("<summary><b>Full Log Tail (Last 50 Lines)</b></summary>")
+                    lines.append("")
+                    lines.append("```")
+                    for tail_line in step.log_tail:
+                        lines.append(tail_line)
+                    lines.append("```")
+                    lines.append("</details>")
+                    lines.append("")
 
     # Artifacts
     lines.append("## 📦 Artifacts")
     lines.append("")
-    lines.append("The following artifacts may be available:")
+    lines.append("The following artifacts may be available for download:")
     for artifact in summary.artifacts:
-        lines.append(f"- `{artifact.name}`")
+        lines.append(f"- `{artifact.name}` - Available in GitHub Actions artifacts")
     lines.append("")
 
     # How to find detailed results
     lines.append("## 📄 Detailed Results")
     lines.append("")
-    lines.append(f"Full structured results: `.ci/summary.json` in branch `{summary.branch}`")
+    lines.append(f"Full structured results available at: `.ci/summary.json` in branch `{summary.branch}`")
+    lines.append("")
+    lines.append("### For Agents")
+    lines.append("")
+    lines.append("To review failures programmatically:")
+    lines.append("```bash")
+    lines.append("# Read the JSON summary")
+    lines.append("cat .ci/summary.json | jq '.jobs[] | select(.conclusion == \"failure\")'")
+    lines.append("")
+    lines.append("# Check specific error types")
+    lines.append("cat .ci/summary.json | jq '.jobs[].failed_steps[].compilation_errors[]'")
+    lines.append("cat .ci/summary.json | jq '.jobs[].failed_steps[].test_failures[]'")
+    lines.append("cat .ci/summary.json | jq '.jobs[].failed_steps[].lint_violations[]'")
+    lines.append("```")
     lines.append("")
     lines.append("---")
     lines.append("<!-- ci-feedback -->")
@@ -438,6 +782,11 @@ def main():
     print("✅ CI feedback generation complete")
     print(f"   - JSON: {json_path}")
     print(f"   - Markdown: {md_path}")
+    print("")
+    print(f"Statistics:")
+    print(f"   - Compilation errors: {summary.total_compilation_errors}")
+    print(f"   - Test failures: {summary.total_test_failures}")
+    print(f"   - Lint violations: {summary.total_lint_violations}")
 
     # Exit with appropriate code
     if summary.overall_conclusion == 'failure':
