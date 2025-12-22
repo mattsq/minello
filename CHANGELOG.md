@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ensured BoardsRepository wires relationships before relying on SwiftData cascades so deletes don't leave orphans or crash CI (`minello-727`, `minello-729`).
 - Brought BoardDetailView back into SwiftFormat compliance (import sort, operator spacing, preview indentation) to clear lint failures (`minello-727`).
 - Hydrated BoardsRepository fetches by filtering columns/cards/checklists in-memory with persistentModelID comparisons (plus verbose logging) to keep CI tests from returning empty relationships, and reformatted BoardDetail previews plus supporting files to satisfy SwiftFormat (`minello-6rk`).
+- Added UUID-based fallback filtering + fetch descriptors (with expanded logging) so BoardsRepository columns/cards/checklists still hydrate correctly on CI's older SwiftData stack (`minello-bbq`).
 
 ### Security
 - N/A

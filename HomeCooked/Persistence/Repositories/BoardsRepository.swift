@@ -147,8 +147,26 @@ final class SwiftDataBoardsRepository: BoardsRepository {
                     "  column candidate id=\(column.id) boardID=\(parentID) boardModelID=\(parentModelID)"
                 )
             }
-            let filtered = fetched.filter {
+            var filtered = fetched.filter {
                 $0.board?.persistentModelID == boardModelID
+            }
+            if filtered.isEmpty {
+                print("[BoardsRepository] fetchColumns board=\(board.id) fallback matching on UUID")
+                filtered = fetched.filter {
+                    $0.board?.id == board.id
+                }
+            }
+            if filtered.isEmpty {
+                print("[BoardsRepository] fetchColumns board=\(board.id) fallback descriptor by UUID")
+                let boardID = board.id
+                var fallbackDescriptor = FetchDescriptor<Column>(
+                    predicate: #Predicate { column in
+                        column.board?.id == boardID
+                    },
+                    sortBy: [SortDescriptor(\Column.index)]
+                )
+                fallbackDescriptor.includePendingChanges = true
+                filtered = (try? modelContext.fetch(fallbackDescriptor)) ?? []
             }
             print(
                 "[BoardsRepository] fetchColumns board=\(board.id) matched=\(filtered.count)"
@@ -180,8 +198,26 @@ final class SwiftDataBoardsRepository: BoardsRepository {
                     "  card candidate id=\(card.id) columnID=\(parentID) columnModelID=\(parentModelID)"
                 )
             }
-            let filtered = fetched.filter {
+            var filtered = fetched.filter {
                 $0.column?.persistentModelID == columnModelID
+            }
+            if filtered.isEmpty {
+                print("[BoardsRepository] fetchCards column=\(column.id) fallback matching on UUID")
+                filtered = fetched.filter {
+                    $0.column?.id == column.id
+                }
+            }
+            if filtered.isEmpty {
+                print("[BoardsRepository] fetchCards column=\(column.id) fallback descriptor by UUID")
+                let columnID = column.id
+                var fallbackDescriptor = FetchDescriptor<Card>(
+                    predicate: #Predicate { card in
+                        card.column?.id == columnID
+                    },
+                    sortBy: [SortDescriptor(\Card.sortKey)]
+                )
+                fallbackDescriptor.includePendingChanges = true
+                filtered = (try? modelContext.fetch(fallbackDescriptor)) ?? []
             }
             print(
                 "[BoardsRepository] fetchCards column=\(column.id) matched=\(filtered.count)"
@@ -211,8 +247,25 @@ final class SwiftDataBoardsRepository: BoardsRepository {
                     "  checklist candidate id=\(item.id) cardID=\(parentID) cardModelID=\(parentModelID)"
                 )
             }
-            let filtered = fetched.filter {
+            var filtered = fetched.filter {
                 $0.card?.persistentModelID == cardModelID
+            }
+            if filtered.isEmpty {
+                print("[BoardsRepository] fetchChecklist card=\(card.id) fallback matching on UUID")
+                filtered = fetched.filter {
+                    $0.card?.id == card.id
+                }
+            }
+            if filtered.isEmpty {
+                print("[BoardsRepository] fetchChecklist card=\(card.id) fallback descriptor by UUID")
+                let cardID = card.id
+                var fallbackDescriptor = FetchDescriptor<ChecklistItem>(
+                    predicate: #Predicate { item in
+                        item.card?.id == cardID
+                    }
+                )
+                fallbackDescriptor.includePendingChanges = true
+                filtered = (try? modelContext.fetch(fallbackDescriptor)) ?? []
             }
             print(
                 "[BoardsRepository] fetchChecklist card=\(card.id) matched=\(filtered.count)"
