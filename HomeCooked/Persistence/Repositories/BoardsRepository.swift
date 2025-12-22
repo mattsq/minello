@@ -135,11 +135,26 @@ final class SwiftDataBoardsRepository: BoardsRepository {
 
         do {
             let fetched = try modelContext.fetch(descriptor)
+            print(
+                "[BoardsRepository] fetchColumns board=\(board.id) boardModelID=\(boardModelID) fetched=\(fetched.count)"
+            )
+            for column in fetched {
+                let parentID = column.board?.id.uuidString ?? "nil"
+                let parentModelID: String
+                if let identifier = column.board?.persistentModelID {
+                    parentModelID = "\(identifier)"
+                } else {
+                    parentModelID = "nil"
+                }
+                print(
+                    "  column candidate id=\(column.id) boardID=\(parentID) boardModelID=\(parentModelID)"
+                )
+            }
             let filtered = fetched.filter {
                 $0.board?.persistentModelID == boardModelID
             }
             print(
-                "[BoardsRepository] fetchColumns board=\(board.id) fetched=\(fetched.count) matched=\(filtered.count)"
+                "[BoardsRepository] fetchColumns board=\(board.id) matched=\(filtered.count)"
             )
             return filtered
         } catch {
@@ -158,11 +173,26 @@ final class SwiftDataBoardsRepository: BoardsRepository {
 
         do {
             let fetched = try modelContext.fetch(descriptor)
+            print(
+                "[BoardsRepository] fetchCards column=\(column.id) columnModelID=\(columnModelID) fetched=\(fetched.count)"
+            )
+            for card in fetched {
+                let parentID = card.column?.id.uuidString ?? "nil"
+                let parentModelID: String
+                if let identifier = card.column?.persistentModelID {
+                    parentModelID = "\(identifier)"
+                } else {
+                    parentModelID = "nil"
+                }
+                print(
+                    "  card candidate id=\(card.id) columnID=\(parentID) columnModelID=\(parentModelID)"
+                )
+            }
             let filtered = fetched.filter {
                 $0.column?.persistentModelID == columnModelID
             }
             print(
-                "[BoardsRepository] fetchCards column=\(column.id) fetched=\(fetched.count) matched=\(filtered.count)"
+                "[BoardsRepository] fetchCards column=\(column.id) matched=\(filtered.count)"
             )
             return filtered
         } catch {
@@ -179,11 +209,26 @@ final class SwiftDataBoardsRepository: BoardsRepository {
 
         do {
             let fetched = try modelContext.fetch(descriptor)
+            print(
+                "[BoardsRepository] fetchChecklist card=\(card.id) cardModelID=\(cardModelID) fetched=\(fetched.count)"
+            )
+            for item in fetched {
+                let parentID = item.card?.id.uuidString ?? "nil"
+                let parentModelID: String
+                if let identifier = item.card?.persistentModelID {
+                    parentModelID = "\(identifier)"
+                } else {
+                    parentModelID = "nil"
+                }
+                print(
+                    "  checklist candidate id=\(item.id) cardID=\(parentID) cardModelID=\(parentModelID)"
+                )
+            }
             let filtered = fetched.filter {
                 $0.card?.persistentModelID == cardModelID
             }
             print(
-                "[BoardsRepository] fetchChecklist card=\(card.id) fetched=\(fetched.count) matched=\(filtered.count)"
+                "[BoardsRepository] fetchChecklist card=\(card.id) matched=\(filtered.count)"
             )
             return filtered
         } catch {
