@@ -1,16 +1,20 @@
 # ❌ CI Failed (failure)
 
-**Run**: [20425794719](https://github.com/mattsq/minello/actions/runs/20425794719)
-**Commit**: `134d50f8`
+**Run**: [20426008198](https://github.com/mattsq/minello/actions/runs/20426008198)
+**Commit**: `4beb1113`
 **Branch**: `claude/fix-ci-cascading-delete`
 **PR**: #33
-**Time**: 2025-12-22T08:13:15.543466Z
+**Time**: 2025-12-22T08:23:38.162559Z
+
+## 📊 Error Statistics
+
+- **Lint Violations**: 12
 
 ## Job Results
 
 - ✅ **build**: success
 - ❌ **test**: failure
-- ✅ **lint**: success
+- ✅ **lint**: success (12 errors)
 
 ## ❌ Detailed Failures
 
@@ -32,8 +36,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 08:08:59.163 appintentsnltrainingprocessor[11993:53996] Parsing options for appintentsnltrainingprocessor
-2025-12-22 08:08:59.164 appintentsnltrainingprocessor[11993:53996] No AppShortcuts found - Skipping.
+2025-12-22 08:19:09.483 appintentsnltrainingprocessor[7991:38758] Parsing options for appintentsnltrainingprocessor
+2025-12-22 08:19:09.490 appintentsnltrainingprocessor[7991:38758] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -76,8 +80,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 08:08:59.163 appintentsnltrainingprocessor[11993:53996] Parsing options for appintentsnltrainingprocessor
-2025-12-22 08:08:59.164 appintentsnltrainingprocessor[11993:53996] No AppShortcuts found - Skipping.
+2025-12-22 08:19:09.483 appintentsnltrainingprocessor[7991:38758] Parsing options for appintentsnltrainingprocessor
+2025-12-22 08:19:09.490 appintentsnltrainingprocessor[7991:38758] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -190,41 +194,41 @@ Testing started
 <summary><b>Full Log Tail (Last 50 Lines)</b></summary>
 
 ```
-Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' started.
-[BoardsRepository] fetchColumns board=6F4FE6E3-7FAC-4B51-BB97-DF44E64AF169 fetched=0 matched=0
-[BoardsRepository] fetch(id:) board=6F4FE6E3-7FAC-4B51-BB97-DF44E64AF169 title=Updated Title columns=0
-Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.011 seconds).
-Test Suite 'BoardsRepositoryTests' failed at 2025-12-22 08:11:57.943.
-	 Executed 4 tests, with 1 failure (0 unexpected) in 0.050 (0.051) seconds
-Test Suite 'CardMigrationTests' started at 2025-12-22 08:11:57.944.
+[BoardsRepository] fetchColumns board=67E9A6D0-6654-4B1C-A9B5-F94310D3BCD8 boardModelID=PersistentIdentifier(id: SwiftData.PersistentIdentifier.ID(url: x-coredata://AD698D73-9270-4945-9DCD-80FEA01FEC0C/Board/p1), implementation: SwiftData.PersistentIdentifierImplementation) fetched=0
+[BoardsRepository] fetchColumns board=67E9A6D0-6654-4B1C-A9B5-F94310D3BCD8 matched=0
+[BoardsRepository] fetch(id:) board=67E9A6D0-6654-4B1C-A9B5-F94310D3BCD8 title=Updated Title columns=0
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.006 seconds).
+Test Suite 'BoardsRepositoryTests' failed at 2025-12-22 08:22:01.597.
+	 Executed 4 tests, with 1 failure (0 unexpected) in 0.052 (0.053) seconds
+Test Suite 'CardMigrationTests' started at 2025-12-22 08:22:01.597.
 Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' started.
-Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.014 seconds).
+Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.016 seconds).
 Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' started.
-Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.011 seconds).
-Test Suite 'CardMigrationTests' passed at 2025-12-22 08:11:57.969.
-	 Executed 2 tests, with 0 failures (0 unexpected) in 0.025 (0.025) seconds
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:11:57.969.
+Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.014 seconds).
+Test Suite 'CardMigrationTests' passed at 2025-12-22 08:22:01.628.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.030 (0.031) seconds
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:22:01.628.
 Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' started.
 Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testCascadingDelete(); summary will include totals from previous launches.
-Test Suite 'Selected tests' started at 2025-12-22 08:12:02.508.
-Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:12:02.508.
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:12:02.508.
+Test Suite 'Selected tests' started at 2025-12-22 08:22:05.026.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:22:05.026.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:22:05.026.
 Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' started.
 Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testRoundTripCreateFetchDelete(); summary will include totals from previous launches.
-Test Suite 'Selected tests' started at 2025-12-22 08:12:04.203.
-Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:12:04.204.
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:12:04.204.
-Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 08:12:04.204.
+Test Suite 'Selected tests' started at 2025-12-22 08:22:06.515.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:22:06.516.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:22:06.516.
+Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 08:22:06.516.
 	 Executed 2 tests, with 2 failures (0 unexpected) in 0.000 (0.000) seconds
-Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 08:12:04.204.
-	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.000) seconds
-Test Suite 'Selected tests' failed at 2025-12-22 08:12:04.204.
+Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 08:22:06.517.
 	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.001) seconds
-2025-12-22 08:12:52.165 xcodebuild[15551:69798] [MT] IDETestOperationsObserverDebug: 167.169 elapsed -- Testing started completed.
-2025-12-22 08:12:52.166 xcodebuild[15551:69798] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2025-12-22 08:12:52.166 xcodebuild[15551:69798] [MT] IDETestOperationsObserverDebug: 167.169 sec, +167.169 sec -- end
+Test Suite 'Selected tests' failed at 2025-12-22 08:22:06.517.
+	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.002) seconds
+2025-12-22 08:23:13.032 xcodebuild[10709:49821] [MT] IDETestOperationsObserverDebug: 195.015 elapsed -- Testing started completed.
+2025-12-22 08:23:13.033 xcodebuild[10709:49821] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2025-12-22 08:23:13.033 xcodebuild[10709:49821] [MT] IDETestOperationsObserverDebug: 195.015 sec, +195.015 sec -- end
 Test session results, code coverage, and logs:
-	/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_08-09-27-+0000.xcresult
+	/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_08-19-33-+0000.xcresult
 Failing tests:
 	BoardsRepositoryTests.testCreateBoardWithColumnsAndCards()
 	PersistenceIntegrationTests.testCascadingDelete()
@@ -258,15 +262,73 @@ Error: No lintable files found at paths: ''
 
 #### Step: `swiftformat`
 
-<details>
-<summary><b>Error Excerpt</b></summary>
+**Error Summary:**
+- Lint Errors: 12
+- Lint Warnings: 0
 
+<details>
+<summary><b>Lint Violations (12)</b></summary>
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:143:1**
 ```
-Running SwiftFormat...
-(lint mode - no files will be changed.)
-SwiftFormat completed in 0.18s.
-0/25 files require formatting.
+error: (conditionalAssignment) Assign properties using if / switch expressions.
 ```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:143:1**
+```
+error: (redundantType) Remove redundant type from variable declarations.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:145:1**
+```
+error: (conditionalAssignment) Assign properties using if / switch expressions.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:147:1**
+```
+error: (conditionalAssignment) Assign properties using if / switch expressions.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:181:1**
+```
+error: (conditionalAssignment) Assign properties using if / switch expressions.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:181:1**
+```
+error: (redundantType) Remove redundant type from variable declarations.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:183:1**
+```
+error: (conditionalAssignment) Assign properties using if / switch expressions.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:185:1**
+```
+error: (conditionalAssignment) Assign properties using if / switch expressions.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:217:1**
+```
+error: (conditionalAssignment) Assign properties using if / switch expressions.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:217:1**
+```
+error: (redundantType) Remove redundant type from variable declarations.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:219:1**
+```
+error: (conditionalAssignment) Assign properties using if / switch expressions.
+```
+
+**/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:221:1**
+```
+error: (conditionalAssignment) Assign properties using if / switch expressions.
+```
+
 </details>
 
 <details>
@@ -275,8 +337,21 @@ SwiftFormat completed in 0.18s.
 ```
 Running SwiftFormat...
 (lint mode - no files will be changed.)
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:143:1: error: (conditionalAssignment) Assign properties using if / switch expressions.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:143:1: error: (redundantType) Remove redundant type from variable declarations.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:145:1: error: (conditionalAssignment) Assign properties using if / switch expressions.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:147:1: error: (conditionalAssignment) Assign properties using if / switch expressions.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:181:1: error: (conditionalAssignment) Assign properties using if / switch expressions.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:181:1: error: (redundantType) Remove redundant type from variable declarations.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:183:1: error: (conditionalAssignment) Assign properties using if / switch expressions.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:185:1: error: (conditionalAssignment) Assign properties using if / switch expressions.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:217:1: error: (conditionalAssignment) Assign properties using if / switch expressions.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:217:1: error: (redundantType) Remove redundant type from variable declarations.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:219:1: error: (conditionalAssignment) Assign properties using if / switch expressions.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:221:1: error: (conditionalAssignment) Assign properties using if / switch expressions.
 SwiftFormat completed in 0.18s.
-0/25 files require formatting.
+Source input did not pass lint check.
+1/25 files require formatting.
 ```
 </details>
 
