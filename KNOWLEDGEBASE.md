@@ -199,7 +199,7 @@ swiftlint lint --config HomeCooked/Tooling/swiftlint.yml --path HomeCooked/ --st
 - **SortKey churn**: Frequent reordering → many sync ops. Mitigation: background normalization rounds keys to near-integers.
 
 ### SwiftData cascade deletes
-- **Board deletions**: `ModelContext.delete(board)` alone left orphaned columns/cards in CI; repository now manually deletes children before deleting the board.
+- **Board deletions**: Cascades only work if both sides of the relationship are attached before saving/deleting; repository now ensures relationships are wired and then relies on SwiftData to cascade automatically.
 - **Checklist chains**: Deleting a card still cascades into ChecklistItem because each card delete explicitly triggers SwiftData's `.cascade` relationship.
 - **Attach both sides**: Ensure each column references its board (and cards reference their column) before saving; relying on inverse inference caused CI to persist boards without children.
 

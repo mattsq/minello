@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - N/A
 
 ### Fixed
-- Ensured BoardsRepository.delete manually removes child columns/cards so cascade deletes survive CI (`minello-727`).
+- Ensured BoardsRepository wires relationships before relying on SwiftData cascades so deletes don't leave orphans or crash CI (`minello-727`, `minello-729`).
 - Brought BoardDetailView back into SwiftFormat compliance (import sort, operator spacing, preview indentation) to clear lint failures (`minello-727`).
 
 ### Security

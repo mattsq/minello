@@ -59,15 +59,6 @@ final class SwiftDataBoardsRepository: BoardsRepository {
 
         attachRelationships(for: boardToDelete)
 
-        let columns = boardToDelete.columns
-        for column in columns {
-            let cards = column.cards
-            for card in cards {
-                modelContext.delete(card)
-            }
-            modelContext.delete(column)
-        }
-
         modelContext.delete(boardToDelete)
         try modelContext.save()
     }
