@@ -50,10 +50,10 @@ final class SwiftDataBoardsRepository: BoardsRepository {
 
     func fetchAll() async throws -> [Board] {
         let boards = try modelContext.fetch(boardFetchDescriptor())
-        boards.forEach {
-            hydrateRelationships(for: $0)
-            sortRelationships(for: $0)
-            log(board: $0, context: "fetchAll")
+        for board in boards {
+            hydrateRelationships(for: board)
+            sortRelationships(for: board)
+            log(board: board, context: "fetchAll")
         }
         return boards.sorted { $0.updatedAt > $1.updatedAt }
     }
@@ -103,38 +103,60 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     private func hydrateRelationships(for board: Board) {
-        guard let fetchedColumns = try? modelContext.fetch(
-            FetchDescriptor<Column>(sortBy: [SortDescriptor(\Column.index)])
-        ) else {
+        let boardID = board.id
+        let columnsDescriptor = FetchDescriptor<Column>(
+            predicate: #Predicate { column in
+                column.board?.id == boardID
+            },
+            sortBy: [SortDescriptor(\Column.index)]
+        )
+
+        guard let fetchedColumns = try? modelContext.fetch(columnsDescriptor) else {
+            board.columns = []
             return
         }
 
-        let columns = fetchedColumns.filter { $0.board?.id == board.id }
-        board.columns = columns
+        board.columns = fetchedColumns
 
         for column in board.columns {
-            guard let fetchedCards = try? modelContext.fetch(
-                FetchDescriptor<Card>(sortBy: [SortDescriptor(\Card.sortKey)])
-            ) else {
+            column.board = board
+
+            let columnID = column.id
+            let cardsDescriptor = FetchDescriptor<Card>(
+                predicate: #Predicate { card in
+                    card.column?.id == columnID
+                },
+                sortBy: [SortDescriptor(\Card.sortKey)]
+            )
+
+            guard let fetchedCards = try? modelContext.fetch(cardsDescriptor) else {
                 print("[BoardsRepository] No cards fetched for column \(column.id)")
                 column.cards = []
                 continue
             }
 
-            let cards = fetchedCards.filter { $0.column?.id == column.id }
-            cards.forEach { $0.column = column }
-            column.cards = cards
+            column.cards = fetchedCards
 
             for card in column.cards {
-                guard let fetchedItems = try? modelContext.fetch(FetchDescriptor<ChecklistItem>()) else {
+                card.column = column
+
+                let cardID = card.id
+                let checklistDescriptor = FetchDescriptor<ChecklistItem>(
+                    predicate: #Predicate { item in
+                        item.card?.id == cardID
+                    }
+                )
+
+                guard let fetchedItems = try? modelContext.fetch(checklistDescriptor) else {
                     print("[BoardsRepository] No checklist items fetched for card \(card.id)")
                     card.checklist = []
                     continue
                 }
 
-                let items = fetchedItems.filter { $0.card?.id == card.id }
-                items.forEach { $0.card = card }
-                card.checklist = items
+                card.checklist = fetchedItems
+                for item in card.checklist {
+                    item.card = card
+                }
             }
         }
     }
