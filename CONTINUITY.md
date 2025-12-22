@@ -20,6 +20,24 @@
 
 ## Session Log
 
+### 2025-12-22: CI cascading delete + lint fix
+
+**What Changed**:
+- Investigated `.ci/summary.json` failure from GH run 20420099081 showing `testCascadingDelete` breakage plus 152 lint hits in `BoardDetailView`.
+- Updated `SwiftDataBoardsRepository.delete` to manually cascade columns/cards before removing a board so SwiftData can't leave orphan rows.
+- Re-formatted `BoardDetailView` (import order, operator spacing, preview indentation) to satisfy SwiftFormat.
+- Logged the SwiftData cascade quirk in `KNOWLEDGEBASE.md` for future reference.
+
+**Decisions Made**:
+- Trust repository-level clean-up over relying on SwiftData's `.cascade` rules until we understand why they are skipped in CI.
+
+**Failures Tried / Ruled Out**:
+- Attempted to rely solely on `modelContext.delete(board)`; CI evidence showed it leaves columns/cards behind, so manual cleanup is required.
+
+**Next Steps**:
+- Monitor the next CI run for the same test to ensure manual cascading holds.
+- Keep watching for other SwiftData lifecycle inconsistencies that deserve docs/tests.
+
 ### 2025-12-21: Initial agent memory system setup
 
 **What Changed**:

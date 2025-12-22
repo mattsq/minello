@@ -198,6 +198,10 @@ swiftlint lint --config HomeCooked/Tooling/swiftlint.yml --path HomeCooked/ --st
 - **Last-write-wins** for family use: acceptable data loss risk for non-critical app.
 - **SortKey churn**: Frequent reordering → many sync ops. Mitigation: background normalization rounds keys to near-integers.
 
+### SwiftData cascade deletes
+- **Board deletions**: `ModelContext.delete(board)` alone left orphaned columns/cards in CI; repository now manually deletes children before deleting the board.
+- **Checklist chains**: Deleting a card still cascades into ChecklistItem because each card delete explicitly triggers SwiftData's `.cascade` relationship.
+
 ### Drag-and-drop in SwiftUI Lists
 - **Prefer LazyVStack + custom gesture**: List's built-in reorder has quirks (especially cross-section).
 - **Test on device**: Simulator doesn't replicate all touch behaviors.

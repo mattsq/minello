@@ -52,7 +52,20 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func delete(board: Board) async throws {
-        modelContext.delete(board)
+        guard let boardToDelete = try await fetch(id: board.id) else {
+            return
+        }
+
+        let columns = boardToDelete.columns
+        for column in columns {
+            let cards = column.cards
+            for card in cards {
+                modelContext.delete(card)
+            }
+            modelContext.delete(column)
+        }
+
+        modelContext.delete(boardToDelete)
         try modelContext.save()
     }
 }
