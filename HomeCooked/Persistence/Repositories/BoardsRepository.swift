@@ -100,22 +100,36 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     private func hydrateRelationships(for board: Board) {
+        guard let fetchedColumns = try? modelContext.fetch(
+            FetchDescriptor<Column>(sortBy: [SortDescriptor(\Column.index)])
+        ) else {
+            return
+        }
+
+        let columns = fetchedColumns.filter { $0.board?.id == board.id }
+        board.columns = columns
+
         for column in board.columns {
-            let columnID = column.id
-            let cardsDescriptor = FetchDescriptor<Card>(
-                predicate: #Predicate { $0.column?.id == columnID }
-            )
-            if let cards = try? modelContext.fetch(cardsDescriptor) {
-                column.cards = cards
-                for card in cards {
-                    let cardID = card.id
-                    let checklistDescriptor = FetchDescriptor<ChecklistItem>(
-                        predicate: #Predicate { $0.card?.id == cardID }
-                    )
-                    if let items = try? modelContext.fetch(checklistDescriptor) {
-                        card.checklist = items
-                    }
+            guard let fetchedCards = try? modelContext.fetch(
+                FetchDescriptor<Card>(sortBy: [SortDescriptor(\Card.sortKey)])
+            ) else {
+                column.cards = []
+                continue
+            }
+
+            let cards = fetchedCards.filter { $0.column?.id == column.id }
+            cards.forEach { $0.column = column }
+            column.cards = cards
+
+            for card in column.cards {
+                guard let fetchedItems = try? modelContext.fetch(FetchDescriptor<ChecklistItem>()) else {
+                    card.checklist = []
+                    continue
                 }
+
+                let items = fetchedItems.filter { $0.card?.id == card.id }
+                items.forEach { $0.card = card }
+                card.checklist = items
             }
         }
     }
