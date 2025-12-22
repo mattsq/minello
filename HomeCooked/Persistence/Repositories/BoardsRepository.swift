@@ -21,12 +21,23 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     func create(board: Board) async throws {
         attachRelationships(for: board)
         modelContext.insert(board)
+        for column in board.columns {
+            modelContext.insert(column)
+            for card in column.cards {
+                modelContext.insert(card)
+                for checklistItem in card.checklist {
+                    modelContext.insert(checklistItem)
+                }
+            }
+        }
         try modelContext.save()
     }
 
     func fetch(id: UUID) async throws -> Board? {
-        let descriptor = FetchDescriptor<Board>()
-        guard let board = try modelContext.fetch(descriptor).first(where: { $0.id == id }) else {
+        var descriptor = boardFetchDescriptor()
+        descriptor.predicate = #Predicate { $0.id == id }
+
+        guard let board = try modelContext.fetch(descriptor).first else {
             return nil
         }
         sortRelationships(for: board)
@@ -34,7 +45,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func fetchAll() async throws -> [Board] {
-        let descriptor = FetchDescriptor<Board>()
+        let descriptor = boardFetchDescriptor()
         let boards = try modelContext.fetch(descriptor)
         boards.forEach { sortRelationships(for: $0) }
         return boards.sorted { $0.updatedAt > $1.updatedAt }
@@ -73,5 +84,14 @@ final class SwiftDataBoardsRepository: BoardsRepository {
                 }
             }
         }
+    }
+
+    private func boardFetchDescriptor() -> FetchDescriptor<Board> {
+        var descriptor = FetchDescriptor<Board>()
+        descriptor.includePendingChanges = true
+        descriptor.relationshipKeyPathsForPrefetching = [
+            \Board.columns,
+        ]
+        return descriptor
     }
 }
