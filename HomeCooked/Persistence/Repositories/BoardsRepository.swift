@@ -40,13 +40,15 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         guard let board = try modelContext.fetch(descriptor).first else {
             return nil
         }
+
+        hydrateCards(for: [board])
         sortRelationships(for: board)
         return board
     }
 
     func fetchAll() async throws -> [Board] {
-        let descriptor = boardFetchDescriptor()
-        let boards = try modelContext.fetch(descriptor)
+        let boards = try modelContext.fetch(boardFetchDescriptor())
+        hydrateCards(for: boards)
         boards.forEach { sortRelationships(for: $0) }
         return boards.sorted { $0.updatedAt > $1.updatedAt }
     }
@@ -93,5 +95,28 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             \Board.columns,
         ]
         return descriptor
+    }
+
+    private func hydrateCards(for boards: [Board]) {
+        guard !boards.isEmpty else { return }
+
+        guard let cards = try? modelContext.fetch(FetchDescriptor<Card>()) else {
+            return
+        }
+
+        let boardIDs = Set(boards.map(\.id))
+        let cardsByColumn = Dictionary(
+            grouping: cards.filter { card in
+                guard let column = card.column, let board = column.board else {
+                    return false
+                }
+                return boardIDs.contains(board.id)
+            }
+        ) { $0.column?.id }
+        for board in boards {
+            for column in board.columns {
+                column.cards = cardsByColumn[column.id] ?? []
+            }
+        }
     }
 }
