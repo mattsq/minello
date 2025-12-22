@@ -82,6 +82,17 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             return
         }
 
+        // Manual cascade to ensure cleanup in CI where automatic cascade is flaky
+        for column in boardToDelete.columns {
+            for card in column.cards {
+                for checklistItem in card.checklist {
+                    modelContext.delete(checklistItem)
+                }
+                modelContext.delete(card)
+            }
+            modelContext.delete(column)
+        }
+
         modelContext.delete(boardToDelete)
         try modelContext.save()
     }
