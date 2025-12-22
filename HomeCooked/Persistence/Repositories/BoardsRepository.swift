@@ -41,15 +41,17 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             return nil
         }
 
-        hydrateCards(for: [board])
+        hydrateRelationships(for: board)
         sortRelationships(for: board)
         return board
     }
 
     func fetchAll() async throws -> [Board] {
         let boards = try modelContext.fetch(boardFetchDescriptor())
-        hydrateCards(for: boards)
-        boards.forEach { sortRelationships(for: $0) }
+        boards.forEach {
+            hydrateRelationships(for: $0)
+            sortRelationships(for: $0)
+        }
         return boards.sorted { $0.updatedAt > $1.updatedAt }
     }
 
@@ -97,25 +99,23 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         return descriptor
     }
 
-    private func hydrateCards(for boards: [Board]) {
-        guard !boards.isEmpty else { return }
-
-        guard let cards = try? modelContext.fetch(FetchDescriptor<Card>()) else {
-            return
-        }
-
-        let boardIDs = Set(boards.map(\.id))
-        let cardsByColumn = Dictionary(
-            grouping: cards.filter { card in
-                guard let column = card.column, let board = column.board else {
-                    return false
+    private func hydrateRelationships(for board: Board) {
+        for column in board.columns {
+            let columnID = column.id
+            let cardsDescriptor = FetchDescriptor<Card>(
+                predicate: #Predicate { $0.column?.id == columnID }
+            )
+            if let cards = try? modelContext.fetch(cardsDescriptor) {
+                column.cards = cards
+                for card in cards {
+                    let cardID = card.id
+                    let checklistDescriptor = FetchDescriptor<ChecklistItem>(
+                        predicate: #Predicate { $0.card?.id == cardID }
+                    )
+                    if let items = try? modelContext.fetch(checklistDescriptor) {
+                        card.checklist = items
+                    }
                 }
-                return boardIDs.contains(board.id)
-            }
-        ) { $0.column?.id }
-        for board in boards {
-            for column in board.columns {
-                column.cards = cardsByColumn[column.id] ?? []
             }
         }
     }
