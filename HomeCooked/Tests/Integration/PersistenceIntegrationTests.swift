@@ -39,12 +39,14 @@ final class PersistenceIntegrationTests: XCTestCase {
 
         try await boardsRepo.create(board: board)
         let fetchedBoard = try await boardsRepo.fetch(id: board.id)
+        logBoardState(fetchedBoard, context: "Round-trip fetched board")
         XCTAssertNotNil(fetchedBoard)
         XCTAssertEqual(fetchedBoard?.title, "Integration Test Board")
         XCTAssertEqual(fetchedBoard?.columns.first?.cards.count, 1)
 
         try await boardsRepo.delete(board: board)
         let deletedBoard = try await boardsRepo.fetch(id: board.id)
+        logBoardState(deletedBoard, context: "After board delete")
         XCTAssertNil(deletedBoard)
 
         // Test PersonalList round trip
@@ -116,7 +118,28 @@ final class PersistenceIntegrationTests: XCTestCase {
         let fetchedColumns = try context.fetch(columnDescriptor)
         let fetchedCards = try context.fetch(cardDescriptor)
 
+        XCTContext.runActivity(named: "Cascade delete check") { _ in
+            print("Columns fetched: \(fetchedColumns.count), Cards fetched: \(fetchedCards.count)")
+        }
         XCTAssertTrue(fetchedColumns.isEmpty)
         XCTAssertTrue(fetchedCards.isEmpty)
+
+    }
+
+    private func logBoardState(_ board: Board?, context: String) {
+        XCTContext.runActivity(named: "Integration board state: \(context)") { _ in
+            guard let board else {
+                print("Board is nil")
+                return
+            }
+
+            print("Board[\(board.id)] title=\(board.title) columns=\(board.columns.count)")
+            for column in board.columns {
+                print("  Column[\(column.id)] title=\(column.title) index=\(column.index) cards=\(column.cards.count)")
+                for card in column.cards {
+                    print("    Card[\(card.id)] title=\(card.title) sortKey=\(card.sortKey)")
+                }
+            }
+        }
     }
 }

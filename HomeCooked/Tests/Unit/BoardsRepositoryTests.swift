@@ -46,6 +46,7 @@ final class BoardsRepositoryTests: XCTestCase {
 
         // Then
         let fetchedBoard = try await repository.fetch(id: board.id)
+        logBoardState(fetchedBoard, context: "After create")
         XCTAssertNotNil(fetchedBoard)
         XCTAssertEqual(fetchedBoard?.title, "Test Board")
         XCTAssertEqual(fetchedBoard?.columns.count, 2)
@@ -95,6 +96,24 @@ final class BoardsRepositoryTests: XCTestCase {
 
         // Then
         let fetchedBoard = try await repository.fetch(id: board.id)
+        logBoardState(fetchedBoard, context: "After delete")
         XCTAssertNil(fetchedBoard)
+    }
+
+    private func logBoardState(_ board: Board?, context: String) {
+        XCTContext.runActivity(named: "Board state: \(context)") { _ in
+            guard let board else {
+                print("Board is nil")
+                return
+            }
+
+            print("Board[\(board.id)] title=\(board.title) columns=\(board.columns.count)")
+            for column in board.columns {
+                print("  Column[\(column.id)] title=\(column.title) index=\(column.index) cards=\(column.cards.count)")
+                for card in column.cards {
+                    print("    Card[\(card.id)] title=\(card.title) sortKey=\(card.sortKey)")
+                }
+            }
+        }
     }
 }
