@@ -788,11 +788,9 @@ def main():
     print(f"   - Test failures: {summary.total_test_failures}")
     print(f"   - Lint violations: {summary.total_lint_violations}")
 
-    # Exit with appropriate code
-    if summary.overall_conclusion == 'failure':
-        sys.exit(1)
-    else:
-        sys.exit(0)
+    # Always exit with 0 - we successfully generated feedback
+    # The feedback itself indicates whether CI passed or failed
+    sys.exit(0)
 
 
 if __name__ == '__main__':
