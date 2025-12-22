@@ -44,3 +44,10 @@ Package.resolved
 # Beads local cache
 .beads/beads.db
 .beads/*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
