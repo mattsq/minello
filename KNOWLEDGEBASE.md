@@ -202,6 +202,7 @@ swiftlint lint --config HomeCooked/Tooling/swiftlint.yml --path HomeCooked/ --st
 - **Board deletions**: Cascades only work if both sides of the relationship are attached before saving/deleting; repository now ensures relationships are wired and then relies on SwiftData to cascade automatically.
 - **Checklist chains**: Deleting a card still cascades into ChecklistItem because each card delete explicitly triggers SwiftData's `.cascade` relationship.
 - **Attach both sides**: Ensure each column references its board (and cards reference their column) before saving; relying on inverse inference caused CI to persist boards without children.
+- **XCTest isolation**: Don't mark `XCTestCase` subclasses `@MainActor`—annotate `setUp`, `tearDown`, and individual tests instead to avoid CI crashes and Swift 6 isolation warnings.
 
 ### Drag-and-drop in SwiftUI Lists
 - **Prefer LazyVStack + custom gesture**: List's built-in reorder has quirks (especially cross-section).

@@ -2,11 +2,11 @@ import SwiftData
 import XCTest
 @testable import HomeCooked
 
-@MainActor
 final class BoardsRepositoryTests: XCTestCase {
     var container: ModelContainer!
     var repository: SwiftDataBoardsRepository!
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         container = try ModelContainerFactory.createInMemory()
@@ -15,12 +15,14 @@ final class BoardsRepositoryTests: XCTestCase {
         )
     }
 
+    @MainActor
     override func tearDown() async throws {
         container = nil
         repository = nil
         try await super.tearDown()
     }
 
+    @MainActor
     func testCreateBoardWithColumnsAndCards() async throws {
         // Given
         let board = Board(title: "Test Board")
@@ -52,6 +54,7 @@ final class BoardsRepositoryTests: XCTestCase {
         XCTAssertEqual(fetchedBoard?.columns.first?.cards.first?.sortKey, 100)
     }
 
+    @MainActor
     func testFetchAllReturnsAllBoards() async throws {
         // Given
         let board1 = Board(title: "Board 1")
@@ -66,6 +69,7 @@ final class BoardsRepositoryTests: XCTestCase {
         XCTAssertEqual(boards.count, 2)
     }
 
+    @MainActor
     func testUpdateBoard() async throws {
         // Given
         let board = Board(title: "Original Title")
@@ -80,6 +84,7 @@ final class BoardsRepositoryTests: XCTestCase {
         XCTAssertEqual(fetchedBoard?.title, "Updated Title")
     }
 
+    @MainActor
     func testDeleteBoard() async throws {
         // Given
         let board = Board(title: "Test Board")

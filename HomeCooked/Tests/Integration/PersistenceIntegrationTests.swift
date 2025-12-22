@@ -2,13 +2,13 @@ import SwiftData
 import XCTest
 @testable import HomeCooked
 
-@MainActor
 final class PersistenceIntegrationTests: XCTestCase {
     var container: ModelContainer!
     var boardsRepo: SwiftDataBoardsRepository!
     var listsRepo: SwiftDataListsRepository!
     var recipesRepo: SwiftDataRecipesRepository!
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         container = try ModelContainerFactory.createInMemory()
@@ -18,6 +18,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         recipesRepo = SwiftDataRecipesRepository(modelContext: context)
     }
 
+    @MainActor
     override func tearDown() async throws {
         container = nil
         boardsRepo = nil
@@ -26,6 +27,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         try await super.tearDown()
     }
 
+    @MainActor
     func testRoundTripCreateFetchDelete() async throws {
         // Test Board round trip
         let board = Board(title: "Integration Test Board")
@@ -85,6 +87,7 @@ final class PersistenceIntegrationTests: XCTestCase {
         XCTAssertNil(deletedRecipe)
     }
 
+    @MainActor
     func testCascadingDelete() async throws {
         // Given: Board with columns and cards
         let board = Board(title: "Test Board")
