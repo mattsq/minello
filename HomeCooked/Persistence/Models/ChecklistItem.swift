@@ -10,6 +10,7 @@ final class ChecklistItem {
     var unit: String?
     var note: String?
     var card: Card?
+    var cardID: UUID?
     var personalList: PersonalList?
 
     init(
@@ -20,6 +21,7 @@ final class ChecklistItem {
         unit: String? = nil,
         note: String? = nil,
         card: Card? = nil,
+        cardID: UUID? = nil,
         personalList: PersonalList? = nil
     ) {
         self.id = id
@@ -29,6 +31,7 @@ final class ChecklistItem {
         self.unit = unit
         self.note = note
         self.card = card
+        self.cardID = cardID
         self.personalList = personalList
     }
 }

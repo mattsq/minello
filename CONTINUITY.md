@@ -36,6 +36,22 @@
 **Next Steps**:
 - Monitor the next CI run for `claude/fix-ci-cascading-delete` and plan the logging cleanup once we see a passing run.
 
+### 2025-12-22: Stored parent IDs to stop CI Board.columns crash
+
+**What Changed**:
+- Added `boardID`, `columnID`, and `cardID` attributes on the SwiftData models (plus a SchemaV3 migration stage) so repositories can match children to parents without dereferencing brittle relationships; CI crash logs pointed at `Board.columns.getter` right when the relationship fallback tried to re-fetch.
+- Updated `BoardsRepository` to set these IDs in `attachRelationships`, filter primarily on the stored IDs, and remove the extra fetch descriptors that were tripping SwiftData 15.4.
+- Extended `CardSortKeyMigration` to migrate from SchemaV2→V3 by backfilling the parent IDs, then reran `xcodebuild … test` locally (green) to ensure the new schema stays healthy.
+
+**Decisions Made**:
+- Prefer explicit parent UUIDs for CI-critical filtering instead of repeatedly poking at inverse relationships that behave differently between Xcode 15.4 and 16.
+
+**Failures Tried / Ruled Out**:
+- Initial test run crashed because the simulator still held a SchemaV2 store; resolved by adding the SchemaV3 stage so SwiftData can migrate automatically.
+
+**Next Steps**:
+- Watch the next CI run to confirm the crash is gone and that columns/cards hydrate correctly with the new ID-backed filtering.
+
 
 ### 2025-12-22: BoardsRepository hydration + lint cleanup
 
