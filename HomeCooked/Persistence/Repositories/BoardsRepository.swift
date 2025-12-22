@@ -27,12 +27,12 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             column.board = board
             column.boardID = board.id
             modelContext.insert(column)
-            
+
             for card in column.cards {
                 card.column = column
                 card.columnID = column.id
                 modelContext.insert(card)
-                
+
                 for checklistItem in card.checklist {
                     checklistItem.card = card
                     checklistItem.cardID = card.id
@@ -40,7 +40,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
                 }
             }
         }
-        
+
         try modelContext.save()
         print("[BoardsRepository] create(board:) completed for \(board.id)")
     }
@@ -92,9 +92,6 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     private func boardFetchDescriptor() -> FetchDescriptor<Board> {
         var descriptor = FetchDescriptor<Board>()
         descriptor.includePendingChanges = true
-        descriptor.relationshipKeyPathsForPrefetching = [
-            \Board.columns,
-        ]
         return descriptor
     }
 }
