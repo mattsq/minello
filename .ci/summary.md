@@ -1,20 +1,16 @@
 # ❌ CI Failed (failure)
 
-**Run**: [20425000604](https://github.com/mattsq/minello/actions/runs/20425000604)
-**Commit**: `d3a2777f`
+**Run**: [20425535603](https://github.com/mattsq/minello/actions/runs/20425535603)
+**Commit**: `f766683d`
 **Branch**: `claude/fix-ci-cascading-delete`
 **PR**: #33
-**Time**: 2025-12-22T07:32:28.712077Z
-
-## 📊 Error Statistics
-
-- **Lint Violations**: 98
+**Time**: 2025-12-22T08:01:11.825929Z
 
 ## Job Results
 
 - ✅ **build**: success
 - ❌ **test**: failure
-- ✅ **lint**: success (98 errors)
+- ✅ **lint**: success
 
 ## ❌ Detailed Failures
 
@@ -36,8 +32,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 07:28:36.701 appintentsnltrainingprocessor[9103:41603] Parsing options for appintentsnltrainingprocessor
-2025-12-22 07:28:36.702 appintentsnltrainingprocessor[9103:41603] No AppShortcuts found - Skipping.
+2025-12-22 07:57:08.340 appintentsnltrainingprocessor[11009:49890] Parsing options for appintentsnltrainingprocessor
+2025-12-22 07:57:08.341 appintentsnltrainingprocessor[11009:49890] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -63,12 +59,12 @@ Ld /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates
 CreateUniversalBinary /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked normal arm64\ x86_64 (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/Binary/HomeCooked /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/Binary/HomeCooked -output /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked
-WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')
-    cd /Users/runner/work/minello/minello/HomeCooked
-    write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList
 WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList
+WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')
+    cd /Users/runner/work/minello/minello/HomeCooked
+    write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList
 CopySwiftLibs /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Frameworks --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/PlugIns --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/SystemExtensions --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
@@ -80,8 +76,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 07:28:36.701 appintentsnltrainingprocessor[9103:41603] Parsing options for appintentsnltrainingprocessor
-2025-12-22 07:28:36.702 appintentsnltrainingprocessor[9103:41603] No AppShortcuts found - Skipping.
+2025-12-22 07:57:08.340 appintentsnltrainingprocessor[11009:49890] Parsing options for appintentsnltrainingprocessor
+2025-12-22 07:57:08.341 appintentsnltrainingprocessor[11009:49890] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -194,41 +190,41 @@ Testing started
 <summary><b>Full Log Tail (Last 50 Lines)</b></summary>
 
 ```
-Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' passed (0.008 seconds).
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' passed (0.015 seconds).
 Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' started.
-[BoardsRepository] fetch(id:) board=A67A2F45-D444-4D34-AFAB-EA78417E9B0B title=Updated Title columns=0
-Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.006 seconds).
-Test Suite 'BoardsRepositoryTests' failed at 2025-12-22 07:31:36.128.
-	 Executed 4 tests, with 1 failure (0 unexpected) in 0.031 (0.032) seconds
-Test Suite 'CardMigrationTests' started at 2025-12-22 07:31:36.129.
+[BoardsRepository] fetch(id:) board=D481A857-2F71-4EAC-957A-3E2F25AB19A3 title=Updated Title columns=0
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.009 seconds).
+Test Suite 'BoardsRepositoryTests' failed at 2025-12-22 08:00:04.556.
+	 Executed 4 tests, with 1 failure (0 unexpected) in 0.057 (0.147) seconds
+Test Suite 'CardMigrationTests' started at 2025-12-22 08:00:04.558.
 Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' started.
-Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.011 seconds).
+Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.024 seconds).
 Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' started.
-Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.007 seconds).
-Test Suite 'CardMigrationTests' passed at 2025-12-22 07:31:36.147.
-	 Executed 2 tests, with 0 failures (0 unexpected) in 0.018 (0.019) seconds
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 07:31:36.148.
+Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.018 seconds).
+Test Suite 'CardMigrationTests' passed at 2025-12-22 08:00:04.602.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.043 (0.043) seconds
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:00:04.602.
 Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' started.
 Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testCascadingDelete(); summary will include totals from previous launches.
-Test Suite 'Selected tests' started at 2025-12-22 07:31:37.310.
-Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 07:31:37.310.
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 07:31:37.311.
+Test Suite 'Selected tests' started at 2025-12-22 08:00:06.338.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:00:06.339.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:00:06.339.
 Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' started.
 Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testRoundTripCreateFetchDelete(); summary will include totals from previous launches.
-Test Suite 'Selected tests' started at 2025-12-22 07:31:38.358.
-Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 07:31:38.359.
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 07:31:38.359.
-Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 07:31:38.359.
+Test Suite 'Selected tests' started at 2025-12-22 08:00:07.456.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 08:00:07.456.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 08:00:07.456.
+Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 08:00:07.457.
 	 Executed 2 tests, with 2 failures (0 unexpected) in 0.000 (0.000) seconds
-Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 07:31:38.359.
+Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 08:00:07.457.
 	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.001) seconds
-Test Suite 'Selected tests' failed at 2025-12-22 07:31:38.360.
-	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.002) seconds
-2025-12-22 07:32:06.248 xcodebuild[4314:22205] [MT] IDETestOperationsObserverDebug: 145.014 elapsed -- Testing started completed.
-2025-12-22 07:32:06.248 xcodebuild[4314:22205] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2025-12-22 07:32:06.248 xcodebuild[4314:22205] [MT] IDETestOperationsObserverDebug: 145.014 sec, +145.014 sec -- end
+Test Suite 'Selected tests' failed at 2025-12-22 08:00:07.457.
+	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.001) seconds
+2025-12-22 08:00:46.966 xcodebuild[9078:43106] [MT] IDETestOperationsObserverDebug: 169.343 elapsed -- Testing started completed.
+2025-12-22 08:00:46.966 xcodebuild[9078:43106] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2025-12-22 08:00:46.966 xcodebuild[9078:43106] [MT] IDETestOperationsObserverDebug: 169.343 sec, +169.343 sec -- end
 Test session results, code coverage, and logs:
-	/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_07-29-02-+0000.xcresult
+	/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_07-57-31-+0000.xcresult
 Failing tests:
 	BoardsRepositoryTests.testCreateBoardWithColumnsAndCards()
 	PersistenceIntegrationTests.testCascadingDelete()
@@ -262,170 +258,25 @@ Error: No lintable files found at paths: ''
 
 #### Step: `swiftformat`
 
-**Error Summary:**
-- Lint Errors: 98
-- Lint Warnings: 0
-
 <details>
-<summary><b>Lint Violations (98)</b></summary>
+<summary><b>Error Excerpt</b></summary>
 
-**/Users/runner/work/minello/minello/HomeCooked/App/HomeCookedApp.swift:1:1**
 ```
-error: (sortImports) Sort import statements alphabetically.
+Running SwiftFormat...
+(lint mode - no files will be changed.)
+SwiftFormat completed in 0.1s.
+0/25 files require formatting.
 ```
-
-**/Users/runner/work/minello/minello/HomeCooked/App/HomeCookedApp.swift:2:1**
-```
-error: (sortImports) Sort import statements alphabetically.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardReorderService.swift:87:1**
-```
-error: (spaceAroundOperators) Add or remove space around operators or delimiters.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:131:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:132:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:133:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:134:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:135:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:136:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:137:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:138:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:139:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:140:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:141:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:142:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:144:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:145:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:146:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:147:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-**/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:149:1**
-```
-error: (indent) Indent code in accordance with the scope level.
-```
-
-_... and 78 more lint violations_
-
 </details>
 
 <details>
 <summary><b>Full Log Tail (Last 50 Lines)</b></summary>
 
 ```
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:243:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:244:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:245:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:246:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:247:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:248:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:249:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:250:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:251:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:252:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:253:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:254:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:255:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:256:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:257:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:258:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:260:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:261:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:262:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:263:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:265:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:267:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:269:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:270:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:271:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:272:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:273:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:275:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:276:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:277:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:278:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:279:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:280:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:282:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:283:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:284:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:286:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:288:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:289:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:290:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:291:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:292:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:89:1: error: (preferKeyPath) Convert trivial map { $0.foo } closures to keyPath-based syntax.
-/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:232:1: error: (numberFormatting) Use consistent grouping for numeric literals. Groups will be separated by _ delimiters to improve readability. For each numeric type you can specify a group size (the number of digits in each group) and a threshold (the minimum number of digits in a number before grouping is applied).
-/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:169:1: error: (wrap) Wrap lines that exceed the specified maximum width.
-/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:170:1: error: (wrap) Wrap lines that exceed the specified maximum width.
-SwiftFormat completed in 0.24s.
-Source input did not pass lint check.
-6/25 files require formatting.
+Running SwiftFormat...
+(lint mode - no files will be changed.)
+SwiftFormat completed in 0.1s.
+0/25 files require formatting.
 ```
 </details>
 
