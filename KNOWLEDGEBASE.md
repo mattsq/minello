@@ -201,6 +201,7 @@ swiftlint lint --config HomeCooked/Tooling/swiftlint.yml --path HomeCooked/ --st
 ### SwiftData cascade deletes
 - **Board deletions**: `ModelContext.delete(board)` alone left orphaned columns/cards in CI; repository now manually deletes children before deleting the board.
 - **Checklist chains**: Deleting a card still cascades into ChecklistItem because each card delete explicitly triggers SwiftData's `.cascade` relationship.
+- **Attach both sides**: Ensure each column references its board (and cards reference their column) before saving; relying on inverse inference caused CI to persist boards without children.
 
 ### Drag-and-drop in SwiftUI Lists
 - **Prefer LazyVStack + custom gesture**: List's built-in reorder has quirks (especially cross-section).

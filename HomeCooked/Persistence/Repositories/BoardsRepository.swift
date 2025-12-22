@@ -19,6 +19,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func create(board: Board) async throws {
+        attachRelationships(for: board)
         modelContext.insert(board)
         try modelContext.save()
     }
@@ -56,6 +57,8 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             return
         }
 
+        attachRelationships(for: boardToDelete)
+
         let columns = boardToDelete.columns
         for column in columns {
             let cards = column.cards
@@ -67,5 +70,17 @@ final class SwiftDataBoardsRepository: BoardsRepository {
 
         modelContext.delete(boardToDelete)
         try modelContext.save()
+    }
+
+    private func attachRelationships(for board: Board) {
+        for column in board.columns {
+            column.board = board
+            for card in column.cards {
+                card.column = column
+                for checklistItem in card.checklist {
+                    checklistItem.card = card
+                }
+            }
+        }
     }
 }
