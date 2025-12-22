@@ -31,6 +31,8 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             }
         }
         try modelContext.save()
+        log(board: board, context: "create(board:)")
+        logColumnStoreSnapshot(context: "post-create")
     }
 
     func fetch(id: UUID) async throws -> Board? {
@@ -140,12 +142,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             )
             for column in fetched {
                 let parentID = column.board?.id.uuidString ?? "nil"
-                let parentModelID: String
-                if let identifier = column.board?.persistentModelID {
-                    parentModelID = "\(identifier)"
-                } else {
-                    parentModelID = "nil"
-                }
+                let parentModelID = describeIdentifier(column.board?.persistentModelID)
                 print(
                     "  column candidate id=\(column.id) boardID=\(parentID) boardModelID=\(parentModelID)"
                 )
@@ -178,12 +175,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             )
             for card in fetched {
                 let parentID = card.column?.id.uuidString ?? "nil"
-                let parentModelID: String
-                if let identifier = card.column?.persistentModelID {
-                    parentModelID = "\(identifier)"
-                } else {
-                    parentModelID = "nil"
-                }
+                let parentModelID = describeIdentifier(card.column?.persistentModelID)
                 print(
                     "  card candidate id=\(card.id) columnID=\(parentID) columnModelID=\(parentModelID)"
                 )
@@ -214,12 +206,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             )
             for item in fetched {
                 let parentID = item.card?.id.uuidString ?? "nil"
-                let parentModelID: String
-                if let identifier = item.card?.persistentModelID {
-                    parentModelID = "\(identifier)"
-                } else {
-                    parentModelID = "nil"
-                }
+                let parentModelID = describeIdentifier(item.card?.persistentModelID)
                 print(
                     "  checklist candidate id=\(item.id) cardID=\(parentID) cardModelID=\(parentModelID)"
                 )
@@ -247,5 +234,27 @@ final class SwiftDataBoardsRepository: BoardsRepository {
                 )
             }
         }
+    }
+
+    private func logColumnStoreSnapshot(context: String) {
+        var descriptor = FetchDescriptor<Column>(sortBy: [SortDescriptor(\Column.index)])
+        descriptor.includePendingChanges = true
+        guard let columns = try? modelContext.fetch(descriptor) else {
+            print("[BoardsRepository] \(context) column snapshot unavailable")
+            return
+        }
+        print("[BoardsRepository] \(context) totalColumns=\(columns.count)")
+        for column in columns {
+            let boardID = column.board?.id.uuidString ?? "nil"
+            let boardModelID = describeIdentifier(column.board?.persistentModelID)
+            print("  stored column id=\(column.id) boardID=\(boardID) boardModelID=\(boardModelID)")
+        }
+    }
+
+    private func describeIdentifier(_ identifier: PersistentIdentifier?) -> String {
+        guard let identifier else {
+            return "nil"
+        }
+        return String(describing: identifier)
     }
 }
