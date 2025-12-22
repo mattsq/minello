@@ -1,20 +1,20 @@
 # ❌ CI Failed (failure)
 
-**Run**: [20422542100](https://github.com/mattsq/minello/actions/runs/20422542100)
-**Commit**: `80e8182e`
+**Run**: [20422669085](https://github.com/mattsq/minello/actions/runs/20422669085)
+**Commit**: `2d29bda1`
 **Branch**: `claude/fix-ci-cascading-delete`
 **PR**: #33
-**Time**: 2025-12-22T05:19:46.951707Z
+**Time**: 2025-12-22T05:29:38.382657Z
 
 ## 📊 Error Statistics
 
-- **Lint Violations**: 96
+- **Lint Violations**: 99
 
 ## Job Results
 
 - ✅ **build**: success
 - ❌ **test**: failure
-- ✅ **lint**: success (96 errors)
+- ✅ **lint**: success (99 errors)
 
 ## ❌ Detailed Failures
 
@@ -36,8 +36,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 05:16:21.930 appintentsnltrainingprocessor[4171:18826] Parsing options for appintentsnltrainingprocessor
-2025-12-22 05:16:21.940 appintentsnltrainingprocessor[4171:18826] No AppShortcuts found - Skipping.
+2025-12-22 05:23:24.999 appintentsnltrainingprocessor[8559:40945] Parsing options for appintentsnltrainingprocessor
+2025-12-22 05:23:25.004 appintentsnltrainingprocessor[8559:40945] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -63,12 +63,12 @@ Ld /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates
 CreateUniversalBinary /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked normal arm64\ x86_64 (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/Binary/HomeCooked /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/Binary/HomeCooked -output /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked
-WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')
-    cd /Users/runner/work/minello/minello/HomeCooked
-    write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList
 WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList
+WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')
+    cd /Users/runner/work/minello/minello/HomeCooked
+    write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList
 CopySwiftLibs /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Frameworks --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/PlugIns --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/SystemExtensions --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
@@ -80,8 +80,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 05:16:21.930 appintentsnltrainingprocessor[4171:18826] Parsing options for appintentsnltrainingprocessor
-2025-12-22 05:16:21.940 appintentsnltrainingprocessor[4171:18826] No AppShortcuts found - Skipping.
+2025-12-22 05:23:24.999 appintentsnltrainingprocessor[8559:40945] Parsing options for appintentsnltrainingprocessor
+2025-12-22 05:23:25.004 appintentsnltrainingprocessor[8559:40945] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -194,41 +194,43 @@ Testing started
 <summary><b>Full Log Tail (Last 50 Lines)</b></summary>
 
 ```
-Test Suite 'CardMigrationTests' passed at 2025-12-22 05:18:30.037.
-	 Executed 2 tests, with 0 failures (0 unexpected) in 0.015 (0.023) seconds
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 05:18:30.038.
-Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' started.
-Restarting after unexpected exit, crash, or test timeout in CardMigrationTests.testSortKeyInitializedAscending(); summary will include totals from previous launches.
-Test Suite 'Selected tests' started at 2025-12-22 05:18:53.063.
-Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 05:18:53.064.
-Test Suite 'CardMigrationTests' started at 2025-12-22 05:18:53.064.
-Test Suite 'CardMigrationTests' failed at 2025-12-22 05:18:53.064.
-	 Executed 2 tests, with 1 failure (0 unexpected) in 0.000 (0.000) seconds
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 05:18:53.064.
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' started.
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' passed (0.016 seconds).
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' started.
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.021 seconds).
+Test Suite 'BoardsRepositoryTests' failed at 2025-12-22 05:27:57.279.
+	 Executed 4 tests, with 1 failure (0 unexpected) in 0.138 (0.140) seconds
+Test Suite 'CardMigrationTests' started at 2025-12-22 05:27:57.286.
+Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' started.
+Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.032 seconds).
+Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' started.
+Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.015 seconds).
+Test Suite 'CardMigrationTests' passed at 2025-12-22 05:27:57.350.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.047 (0.064) seconds
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 05:27:57.351.
 Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' started.
 Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testCascadingDelete(); summary will include totals from previous launches.
-Test Suite 'Selected tests' started at 2025-12-22 05:19:03.012.
-Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 05:19:03.012.
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 05:19:03.012.
+Test Suite 'Selected tests' started at 2025-12-22 05:28:13.357.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 05:28:13.358.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 05:28:13.358.
 Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' started.
 Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testRoundTripCreateFetchDelete(); summary will include totals from previous launches.
-Test Suite 'Selected tests' started at 2025-12-22 05:19:04.057.
-Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 05:19:04.057.
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 05:19:04.057.
-Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 05:19:04.058.
+Test Suite 'Selected tests' started at 2025-12-22 05:28:15.250.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 05:28:15.251.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 05:28:15.251.
+Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 05:28:15.251.
 	 Executed 2 tests, with 2 failures (0 unexpected) in 0.000 (0.000) seconds
-Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 05:19:04.058.
-	 Executed 8 tests, with 4 failures (0 unexpected) in 0.000 (0.001) seconds
-Test Suite 'Selected tests' failed at 2025-12-22 05:19:04.058.
-	 Executed 8 tests, with 4 failures (0 unexpected) in 0.000 (0.001) seconds
-2025-12-22 05:19:28.733 xcodebuild[2798:14376] [MT] IDETestOperationsObserverDebug: 141.974 elapsed -- Testing started completed.
-2025-12-22 05:19:28.734 xcodebuild[2798:14376] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2025-12-22 05:19:28.734 xcodebuild[2798:14376] [MT] IDETestOperationsObserverDebug: 141.974 sec, +141.974 sec -- end
+Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 05:28:15.251.
+	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'Selected tests' failed at 2025-12-22 05:28:15.251.
+	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.001) seconds
+2025-12-22 05:29:00.814 xcodebuild[4518:22838] [MT] IDETestOperationsObserverDebug: 253.456 elapsed -- Testing started completed.
+2025-12-22 05:29:00.815 xcodebuild[4518:22838] [MT] IDETestOperationsObserverDebug: 0.001 sec, +0.001 sec -- start
+2025-12-22 05:29:00.815 xcodebuild[4518:22838] [MT] IDETestOperationsObserverDebug: 253.457 sec, +253.456 sec -- end
 Test session results, code coverage, and logs:
-	/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_05-16-41-+0000.xcresult
+	/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_05-23-58-+0000.xcresult
 Failing tests:
 	BoardsRepositoryTests.testCreateBoardWithColumnsAndCards()
-	CardMigrationTests.testSortKeyInitializedAscending()
 	PersistenceIntegrationTests.testCascadingDelete()
 	PersistenceIntegrationTests.testRoundTripCreateFetchDelete()
 ** TEST FAILED **
@@ -261,11 +263,11 @@ Error: No lintable files found at paths: ''
 #### Step: `swiftformat`
 
 **Error Summary:**
-- Lint Errors: 96
+- Lint Errors: 99
 - Lint Warnings: 0
 
 <details>
-<summary><b>Lint Violations (96)</b></summary>
+<summary><b>Lint Violations (99)</b></summary>
 
 **/Users/runner/work/minello/minello/HomeCooked/App/HomeCookedApp.swift:1:1**
 ```
@@ -367,7 +369,7 @@ error: (indent) Indent code in accordance with the scope level.
 error: (indent) Indent code in accordance with the scope level.
 ```
 
-_... and 76 more lint violations_
+_... and 79 more lint violations_
 
 </details>
 
@@ -375,9 +377,6 @@ _... and 76 more lint violations_
 <summary><b>Full Log Tail (Last 50 Lines)</b></summary>
 
 ```
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:241:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:242:1: error: (indent) Indent code in accordance with the scope level.
-/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:243:1: error: (indent) Indent code in accordance with the scope level.
 /Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:244:1: error: (indent) Indent code in accordance with the scope level.
 /Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:245:1: error: (indent) Indent code in accordance with the scope level.
 /Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:246:1: error: (indent) Indent code in accordance with the scope level.
@@ -421,9 +420,12 @@ _... and 76 more lint violations_
 /Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:292:1: error: (indent) Indent code in accordance with the scope level.
 /Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:89:1: error: (preferKeyPath) Convert trivial map { $0.foo } closures to keyPath-based syntax.
 /Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:232:1: error: (numberFormatting) Use consistent grouping for numeric literals. Groups will be separated by _ delimiters to improve readability. For each numeric type you can specify a group size (the number of digits in each group) and a threshold (the minimum number of digits in a number before grouping is applied).
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:51:1: error: (preferForLoop) Convert functional forEach calls to for loops.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:52:1: error: (preferForLoop) Convert functional forEach calls to for loops.
+/Users/runner/work/minello/minello/HomeCooked/Persistence/Repositories/BoardsRepository.swift:53:1: error: (preferForLoop) Convert functional forEach calls to for loops.
 SwiftFormat completed in 0.13s.
 Source input did not pass lint check.
-5/25 files require formatting.
+6/25 files require formatting.
 ```
 </details>
 
