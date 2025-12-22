@@ -23,10 +23,13 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         // SwiftData should handle the graph insertion if relationships are set up correctly
         // but explicit insertion of children doesn't hurt.
         for column in board.columns {
+            column.board = board
             modelContext.insert(column)
             for card in column.cards {
+                card.column = column
                 modelContext.insert(card)
                 for checklistItem in card.checklist {
+                    checklistItem.card = card
                     modelContext.insert(checklistItem)
                 }
             }
@@ -45,7 +48,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         }
 
         sortRelationships(for: board)
-        
+
         print("[BoardsRepository] fetch(id:) found board \(board.id) with \(board.columns.count) columns")
         return board
     }
