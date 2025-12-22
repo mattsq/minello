@@ -11,7 +11,6 @@ final class Card {
     @Relationship(deleteRule: .cascade, inverse: \ChecklistItem.card)
     var checklist: [ChecklistItem]
     var column: Column?
-    var columnID: UUID?
     var sortKey: Double
     var createdAt: Date
     var updatedAt: Date
@@ -24,7 +23,6 @@ final class Card {
         tags: [String] = [],
         checklist: [ChecklistItem] = [],
         column: Column? = nil,
-        columnID: UUID? = nil,
         sortKey: Double = 0,
         createdAt: Date = Date(),
         updatedAt: Date = Date()
@@ -36,7 +34,6 @@ final class Card {
         self.tags = tags
         self.checklist = checklist
         self.column = column
-        self.columnID = columnID
         self.sortKey = sortKey
         self.createdAt = createdAt
         self.updatedAt = updatedAt

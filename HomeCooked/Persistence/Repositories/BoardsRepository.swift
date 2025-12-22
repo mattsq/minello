@@ -25,17 +25,14 @@ final class SwiftDataBoardsRepository: BoardsRepository {
 
         for column in board.columns {
             column.board = board
-            column.boardID = board.id
             modelContext.insert(column)
 
             for card in column.cards {
                 card.column = column
-                card.columnID = column.id
                 modelContext.insert(card)
 
                 for checklistItem in card.checklist {
                     checklistItem.card = card
-                    checklistItem.cardID = card.id
                     modelContext.insert(checklistItem)
                 }
             }
