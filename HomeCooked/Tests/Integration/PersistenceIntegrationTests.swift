@@ -91,39 +91,53 @@ final class PersistenceIntegrationTests: XCTestCase {
 
     @MainActor
     func testCascadingDelete() async throws {
-        // Given: Board with columns and cards
+        // Given: Board with complete object graph
         let board = Board(title: "Test Board")
         let column = Column(title: "Column", index: 0)
         let card = Card(title: "Card", sortKey: 100)
-        // Set up relationships (SwiftData maintains inverse relationships)
+        let checklistItem = ChecklistItem(text: "Task 1")
+
+        // Build complete graph
+        card.checklist = [checklistItem]
         column.cards = [card]
         board.columns = [column]
 
         try await boardsRepo.create(board: board)
 
+        // Verify creation succeeded
+        let createdBoard = try await boardsRepo.fetch(id: board.id)
+        XCTAssertNotNil(createdBoard)
+        XCTAssertEqual(createdBoard?.columns.count, 1)
+
         // When: Delete board
         try await boardsRepo.delete(board: board)
 
-        // Then: Columns and cards should be deleted (cascade)
+        // Then: Board itself should be gone
+        let deletedBoard = try await boardsRepo.fetch(id: board.id)
+        XCTAssertNil(deletedBoard, "Board should be deleted")
+
+        // And: ALL child objects should be cascade deleted
+        // Don't query by specific IDs (object identity issue in CI)
+        // Instead, verify NO orphaned children exist at all
         let context = container.mainContext
-        let columnID = column.id
-        let cardID = card.id
-        let columnDescriptor = FetchDescriptor<Column>(
-            predicate: #Predicate { $0.id == columnID }
-        )
-        let cardDescriptor = FetchDescriptor<Card>(
-            predicate: #Predicate { $0.id == cardID }
-        )
+        let allColumns = try context.fetch(FetchDescriptor<Column>())
+        let allCards = try context.fetch(FetchDescriptor<Card>())
+        // Only check card checklists (filter out personal list items)
+        let allCardChecklists = try context.fetch(FetchDescriptor<ChecklistItem>())
+            .filter { $0.card != nil }
 
-        let fetchedColumns = try context.fetch(columnDescriptor)
-        let fetchedCards = try context.fetch(cardDescriptor)
-
-        XCTContext.runActivity(named: "Cascade delete check") { _ in
-            print("Columns fetched: \(fetchedColumns.count), Cards fetched: \(fetchedCards.count)")
+        XCTContext.runActivity(named: "Verify cascade delete removed all children") { _ in
+            print("Remaining columns: \(allColumns.count)")
+            print("Remaining cards: \(allCards.count)")
+            print("Remaining card checklists: \(allCardChecklists.count)")
         }
-        XCTAssertTrue(fetchedColumns.isEmpty)
-        XCTAssertTrue(fetchedCards.isEmpty)
 
+        XCTAssertTrue(allColumns.isEmpty,
+                      "Expected 0 columns after cascade delete, found \(allColumns.count)")
+        XCTAssertTrue(allCards.isEmpty,
+                      "Expected 0 cards after cascade delete, found \(allCards.count)")
+        XCTAssertTrue(allCardChecklists.isEmpty,
+                      "Expected 0 checklist items after cascade delete, found \(allCardChecklists.count)")
     }
 
     private func logBoardState(_ board: Board?, context: String) {

@@ -78,12 +78,13 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func delete(board: Board) async throws {
-        guard let boardToDelete = try await fetch(id: board.id) else {
-            return
-        }
+        // Use the passed-in object directly rather than re-fetching it
+        // Re-fetching creates a new instance which causes object identity mismatch in CI (Xcode 15.4)
+        // SwiftData will automatically load relationships when accessed (lazy loading)
 
-        // Manual cascade to ensure cleanup in CI where automatic cascade is flaky
-        for column in boardToDelete.columns {
+        // Manual cascade delete (required for CI where deleteRule: .cascade is unreliable)
+        // Delete in order from deepest children to shallowest
+        for column in board.columns {
             for card in column.cards {
                 for checklistItem in card.checklist {
                     modelContext.delete(checklistItem)
@@ -93,8 +94,10 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             modelContext.delete(column)
         }
 
-        modelContext.delete(boardToDelete)
+        modelContext.delete(board)
         try modelContext.save()
+
+        print("[BoardsRepository] delete(board:) completed for \(board.id)")
     }
 
     private func boardFetchDescriptor() -> FetchDescriptor<Board> {

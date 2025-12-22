@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - N/A
 
 ### Fixed
+- **Cascade Delete CI Failures (Final Fix)**: Fixed `testCascadingDelete` failures in CI by removing the re-fetch pattern in `BoardsRepository.delete()` and `ListsRepository.delete()`. The root cause was object identity mismatch in SwiftData 15.4 (CI environment) - re-fetching created new object instances, leaving original objects as orphans. Solution: Use the passed-in object directly and rely on SwiftData's lazy loading for relationships. Updated `testCascadingDelete` to verify NO orphaned children exist (using broad queries) rather than checking specific object IDs, making the test robust to SwiftData version differences.
 - Ensured BoardsRepository wires relationships before relying on SwiftData cascades so deletes don't leave orphans or crash CI (`minello-727`, `minello-729`).
 - Brought BoardDetailView back into SwiftFormat compliance (import sort, operator spacing, preview indentation) to clear lint failures (`minello-727`).
 - Hydrated BoardsRepository fetches by filtering columns/cards/checklists in-memory with persistentModelID comparisons (plus verbose logging) to keep CI tests from returning empty relationships, and reformatted BoardDetail previews plus supporting files to satisfy SwiftFormat (`minello-6rk`).
