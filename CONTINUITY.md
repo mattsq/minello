@@ -20,6 +20,18 @@
 
 ## Session Log
 
+### 2025-12-22: Instrument fetchColumns fallback for CI logs
+
+**What Changed**:
+- When `fetchColumns` falls back to the broad descriptor, log a column store snapshot (with the current board’s column count) so the next CI run reveals whether SwiftData 15.4 is actually persisting the children before filtering.
+- Re-ran `xcodebuild -scheme HomeCooked -destination 'platform=iOS Simulator,name=iPhone 15' test` locally (green) to ensure the extra logging doesn’t disturb the suite.
+
+**Decisions Made**:
+- Treat the fallback logging as a diagnostic tool for run 20428983617’s successor before attempting another structural change.
+
+**Next Steps**:
+- Inspect the next CI run’s logs to see whether any Column rows exist when the fallback triggers; if they do, focus on why `boardID` / relationships aren’t populated, otherwise investigate model insertion.
+
 ### 2025-12-22: Broad descriptor fallbacks to stop SwiftData crashes
 
 **What Changed**:

@@ -146,6 +146,9 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             var candidates = try modelContext.fetch(descriptor)
             if candidates.isEmpty {
                 print("[BoardsRepository] fetchColumns board=\(board.id) descriptor fallback to broad fetch")
+                logColumnStoreSnapshot(
+                    context: "fetchColumns fallback board=\(board.id) existingBoardColumns=\(board.columns.count)"
+                )
                 var fallbackDescriptor = FetchDescriptor<Column>(
                     sortBy: [SortDescriptor(\Column.index)]
                 )
