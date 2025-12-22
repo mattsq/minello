@@ -1,5 +1,5 @@
-import Testing
 import SwiftData
+import Testing
 @testable import HomeCooked
 
 /// Integration tests for drag-and-drop functionality with persistence
@@ -20,7 +20,7 @@ struct DragAndDropIntegrationTests {
     }
 
     @Test("Drop updates repository and persists changes")
-    func testDropUpdatesRepository() async throws {
+    func dropUpdatesRepository() async throws {
         // Given: A board with columns and cards
         let board = Board(title: "Test Board")
         let sourceColumn = Column(title: "Source", index: 0)
@@ -61,7 +61,7 @@ struct DragAndDropIntegrationTests {
     }
 
     @Test("Multiple drag operations maintain consistency")
-    func testMultipleDragOperationsMaintainConsistency() async throws {
+    func multipleDragOperationsMaintainConsistency() async throws {
         // Given: A board with multiple columns and cards
         let board = Board(title: "Multi-Op Board")
         let column1 = Column(title: "Column 1", index: 0)
@@ -113,7 +113,7 @@ struct DragAndDropIntegrationTests {
     }
 
     @Test("Reordering within column persists correctly")
-    func testReorderWithinColumnPersists() async throws {
+    func reorderWithinColumnPersists() async throws {
         // Given: A column with multiple cards
         let column = Column(title: "Test Column", index: 0)
 
@@ -150,7 +150,7 @@ struct DragAndDropIntegrationTests {
     }
 
     @Test("Normalization preserves order after save")
-    func testNormalizationPreservesOrderAfterSave() async throws {
+    func normalizationPreservesOrderAfterSave() async throws {
         // Given: A column with cards that need normalization
         let column = Column(title: "Normalize Test", index: 0)
 
@@ -193,7 +193,7 @@ struct DragAndDropIntegrationTests {
     }
 
     @Test("Moving card updates updatedAt timestamp")
-    func testMoveUpdatesTimestamp() async throws {
+    func moveUpdatesTimestamp() async throws {
         // Given: A card with a known timestamp
         let column1 = Column(title: "Column 1", index: 0)
         let column2 = Column(title: "Column 2", index: 1)
@@ -219,7 +219,7 @@ struct DragAndDropIntegrationTests {
     }
 
     @Test("Cards in different columns maintain independent sortKeys")
-    func testIndependentSortKeysAcrossColumns() async throws {
+    func independentSortKeysAcrossColumns() async throws {
         // Given: Multiple columns with cards
         let column1 = Column(title: "Column 1", index: 0)
         let column2 = Column(title: "Column 2", index: 1)
@@ -253,7 +253,7 @@ struct DragAndDropIntegrationTests {
     }
 
     @Test("Empty column accepts first card correctly")
-    func testEmptyColumnAcceptsFirstCard() async throws {
+    func emptyColumnAcceptsFirstCard() async throws {
         // Given: An empty column and a card in another column
         let sourceColumn = Column(title: "Source", index: 0)
         let emptyColumn = Column(title: "Empty", index: 1)

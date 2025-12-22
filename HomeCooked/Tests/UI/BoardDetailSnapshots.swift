@@ -1,6 +1,6 @@
-import Testing
-import SwiftUI
 import SwiftData
+import SwiftUI
+import Testing
 @testable import HomeCooked
 
 /// Snapshot tests for BoardDetailView in light and dark modes
@@ -20,7 +20,7 @@ struct BoardDetailSnapshots {
     }
 
     @Test("Kanban board renders in light mode")
-    func testKanbanLightMode() async throws {
+    func kanbanLightMode() async throws {
         // Given: A board with multiple columns and cards
         let board = createTestBoard()
 
@@ -36,7 +36,7 @@ struct BoardDetailSnapshots {
     }
 
     @Test("Kanban board renders in dark mode")
-    func testKanbanDarkMode() async throws {
+    func kanbanDarkMode() async throws {
         // Given: A board with multiple columns and cards
         let board = createTestBoard()
 
@@ -51,7 +51,7 @@ struct BoardDetailSnapshots {
     }
 
     @Test("Empty board renders correctly")
-    func testEmptyBoard() async throws {
+    func emptyBoard() async throws {
         // Given: An empty board with no columns
         let board = Board(title: "Empty Board")
         modelContext.insert(board)
@@ -66,7 +66,7 @@ struct BoardDetailSnapshots {
     }
 
     @Test("Board with empty columns renders correctly")
-    func testBoardWithEmptyColumns() async throws {
+    func boardWithEmptyColumns() async throws {
         // Given: A board with columns but no cards
         let board = Board(title: "Board with Empty Columns")
         let column1 = Column(title: "To Do", index: 0)
@@ -91,7 +91,7 @@ struct BoardDetailSnapshots {
     }
 
     @Test("Board with cards with various states renders correctly")
-    func testBoardWithVariousCardStates() async throws {
+    func boardWithVariousCardStates() async throws {
         // Given: A board with cards in different states
         let board = Board(title: "Board with Various States")
         let column = Column(title: "Mixed", index: 0)
@@ -151,7 +151,7 @@ struct BoardDetailSnapshots {
     }
 
     @Test("CardRow renders correctly")
-    func testCardRowSnapshot() async throws {
+    func cardRowSnapshot() async throws {
         // Given: A card with various features
         let card = Card(
             title: "Test Card",
@@ -173,7 +173,7 @@ struct BoardDetailSnapshots {
     }
 
     @Test("ColumnView renders correctly")
-    func testColumnViewSnapshot() async throws {
+    func columnViewSnapshot() async throws {
         // Given: A column with cards
         let column = Column(title: "Test Column", index: 0)
         let card1 = Card(title: "Card 1", sortKey: 1000)

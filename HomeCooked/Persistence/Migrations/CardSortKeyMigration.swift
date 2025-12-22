@@ -7,7 +7,7 @@ enum CardSortKeyMigration {
 
     /// Schema V1: Initial version without Card.sortKey
     enum SchemaV1: VersionedSchema {
-        static var versionIdentifier = Schema.Version(1, 0, 0)
+        static let versionIdentifier = Schema.Version(1, 0, 0)
 
         static var models: [any PersistentModel.Type] {
             [Board.self, Column.self, Card.self, ChecklistItem.self, PersonalList.self, Recipe.self]
@@ -174,7 +174,7 @@ enum CardSortKeyMigration {
 
     /// Schema V2: Version with Card.sortKey added
     enum SchemaV2: VersionedSchema {
-        static var versionIdentifier = Schema.Version(2, 0, 0)
+        static let versionIdentifier = Schema.Version(2, 0, 0)
 
         static var models: [any PersistentModel.Type] {
             [Board.self, Column.self, Card.self, ChecklistItem.self, PersonalList.self, Recipe.self]

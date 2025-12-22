@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 
+@MainActor
 protocol BoardsRepository {
     func create(board: Board) async throws
     func fetch(id: UUID) async throws -> Board?
@@ -23,17 +24,26 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func fetch(id: UUID) async throws -> Board? {
-        let descriptor = FetchDescriptor<Board>(
-            predicate: #Predicate { $0.id == id }
-        )
-        return try modelContext.fetch(descriptor).first
+        let descriptor = FetchDescriptor<Board>()
+        guard let board = try modelContext.fetch(descriptor).first(where: { $0.id == id }) else {
+            return nil
+        }
+        sortRelationships(for: board)
+        return board
     }
 
     func fetchAll() async throws -> [Board] {
-        let descriptor = FetchDescriptor<Board>(
-            sortBy: [SortDescriptor(\Board.updatedAt, order: .reverse)]
-        )
-        return try modelContext.fetch(descriptor)
+        let descriptor = FetchDescriptor<Board>()
+        let boards = try modelContext.fetch(descriptor)
+        boards.forEach { sortRelationships(for: $0) }
+        return boards.sorted { $0.updatedAt > $1.updatedAt }
+    }
+
+    private func sortRelationships(for board: Board) {
+        board.columns.sort { $0.index < $1.index }
+        for column in board.columns {
+            column.cards.sort { $0.sortKey < $1.sortKey }
+        }
     }
 
     func update(board: Board) async throws {

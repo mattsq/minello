@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 
+@MainActor
 protocol RecipesRepository {
     func create(recipe: Recipe) async throws
     func fetch(id: UUID) async throws -> Recipe?
@@ -23,17 +24,14 @@ final class SwiftDataRecipesRepository: RecipesRepository {
     }
 
     func fetch(id: UUID) async throws -> Recipe? {
-        let descriptor = FetchDescriptor<Recipe>(
-            predicate: #Predicate { $0.id == id }
-        )
-        return try modelContext.fetch(descriptor).first
+        let descriptor = FetchDescriptor<Recipe>()
+        return try modelContext.fetch(descriptor).first { $0.id == id }
     }
 
     func fetchAll() async throws -> [Recipe] {
-        let descriptor = FetchDescriptor<Recipe>(
-            sortBy: [SortDescriptor(\Recipe.title)]
-        )
-        return try modelContext.fetch(descriptor)
+        let descriptor = FetchDescriptor<Recipe>()
+        let recipes = try modelContext.fetch(descriptor)
+        return recipes.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
     }
 
     func update(recipe: Recipe) async throws {

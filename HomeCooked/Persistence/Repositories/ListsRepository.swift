@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 
+@MainActor
 protocol ListsRepository {
     func create(list: PersonalList) async throws
     func fetch(id: UUID) async throws -> PersonalList?
@@ -23,17 +24,14 @@ final class SwiftDataListsRepository: ListsRepository {
     }
 
     func fetch(id: UUID) async throws -> PersonalList? {
-        let descriptor = FetchDescriptor<PersonalList>(
-            predicate: #Predicate { $0.id == id }
-        )
-        return try modelContext.fetch(descriptor).first
+        let descriptor = FetchDescriptor<PersonalList>()
+        return try modelContext.fetch(descriptor).first { $0.id == id }
     }
 
     func fetchAll() async throws -> [PersonalList] {
-        let descriptor = FetchDescriptor<PersonalList>(
-            sortBy: [SortDescriptor(\PersonalList.title)]
-        )
-        return try modelContext.fetch(descriptor)
+        let descriptor = FetchDescriptor<PersonalList>()
+        let lists = try modelContext.fetch(descriptor)
+        return lists.sorted { $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending }
     }
 
     func update(list: PersonalList) async throws {

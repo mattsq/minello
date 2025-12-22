@@ -1,5 +1,5 @@
-import Testing
 import SwiftData
+import Testing
 @testable import HomeCooked
 
 @MainActor
@@ -25,7 +25,7 @@ struct CardReorderServiceTests {
     // MARK: - Midpoint Insertion Tests
 
     @Test("Insert card at beginning of column")
-    func testInsertAtBeginning() async throws {
+    func insertAtBeginning() async throws {
         // Given: A column with existing cards
         let card1 = Card(title: "Card 1", sortKey: 1000)
         let card2 = Card(title: "Card 2", sortKey: 2000)
@@ -54,7 +54,7 @@ struct CardReorderServiceTests {
     }
 
     @Test("Insert card at end of column")
-    func testInsertAtEnd() async throws {
+    func insertAtEnd() async throws {
         // Given: A column with existing cards
         let card1 = Card(title: "Card 1", sortKey: 1000)
         let card2 = Card(title: "Card 2", sortKey: 2000)
@@ -83,7 +83,7 @@ struct CardReorderServiceTests {
     }
 
     @Test("Insert card in middle using midpoint")
-    func testMidpointInsertionWithinColumn() async throws {
+    func midpointInsertionWithinColumn() async throws {
         // Given: A column with cards at specific sortKeys
         let card1 = Card(title: "Card 1", sortKey: 1000)
         let card2 = Card(title: "Card 2", sortKey: 2000)
@@ -116,7 +116,7 @@ struct CardReorderServiceTests {
     }
 
     @Test("Insert into empty column")
-    func testInsertIntoEmptyColumn() async throws {
+    func insertIntoEmptyColumn() async throws {
         // Given: An empty column
         let emptyColumn = Column(title: "Empty Column", index: 1)
         modelContext.insert(emptyColumn)
@@ -135,7 +135,7 @@ struct CardReorderServiceTests {
     // MARK: - Cross-Column Move Tests
 
     @Test("Move card between columns preserves relative order")
-    func testCrossColumnMovePreservesRelativeOrder() async throws {
+    func crossColumnMovePreservesRelativeOrder() async throws {
         // Given: Two columns with cards
         let sourceColumn = Column(title: "Source", index: 0)
         let destColumn = Column(title: "Destination", index: 1)
@@ -186,7 +186,7 @@ struct CardReorderServiceTests {
     // MARK: - Normalization Tests
 
     @Test("Normalization triggers when sortKeys are too close")
-    func testNormalizationThreshold() async throws {
+    func normalizationThreshold() async throws {
         // Given: Cards with very close sortKeys
         let card1 = Card(title: "Card 1", sortKey: 1.000)
         let card2 = Card(title: "Card 2", sortKey: 1.0005)
@@ -212,7 +212,7 @@ struct CardReorderServiceTests {
     }
 
     @Test("Normalization preserves order")
-    func testNormalizationPreservesOrder() async throws {
+    func normalizationPreservesOrder() async throws {
         // Given: Cards with arbitrary sortKeys
         let card1 = Card(title: "Card 1", sortKey: 157.3)
         let card2 = Card(title: "Card 2", sortKey: 892.1)
@@ -250,7 +250,7 @@ struct CardReorderServiceTests {
     // MARK: - Edge Cases
 
     @Test("Reorder within column with adjacent cards")
-    func testReorderAdjacentCards() async throws {
+    func reorderAdjacentCards() async throws {
         // Given: A column with three cards
         let card1 = Card(title: "Card 1", sortKey: 1000)
         let card2 = Card(title: "Card 2", sortKey: 2000)
@@ -280,7 +280,7 @@ struct CardReorderServiceTests {
     }
 
     @Test("Move card to same position is no-op")
-    func testMoveToSamePosition() async throws {
+    func moveToSamePosition() async throws {
         // Given: A card at position 1
         let card1 = Card(title: "Card 1", sortKey: 1000)
         let card2 = Card(title: "Card 2", sortKey: 2000)
