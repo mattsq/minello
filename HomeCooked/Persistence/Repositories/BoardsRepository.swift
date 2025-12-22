@@ -105,17 +105,17 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     private func hydrateRelationships(for board: Board) {
         // CI repeatedly failed to evaluate relationship predicates (column.board?.id == boardID),
         // so we fetch related models broadly and filter them in-memory for determinism.
-        let boardColumns = fetchColumns(forBoardID: board.id)
+        let boardColumns = fetchColumns(for: board)
         board.columns = boardColumns
 
         for column in board.columns {
             column.board = board
-            let cards = fetchCards(forColumnID: column.id)
+            let cards = fetchCards(for: column)
             column.cards = cards
 
             for card in column.cards {
                 card.column = column
-                let checklistItems = fetchChecklistItems(forCardID: card.id)
+                let checklistItems = fetchChecklistItems(for: card)
                 card.checklist = checklistItems
 
                 for item in card.checklist {
@@ -125,45 +125,69 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         }
     }
 
-    private func fetchColumns(forBoardID boardID: UUID) -> [Column] {
-        let descriptor = FetchDescriptor<Column>(
+    private func fetchColumns(for board: Board) -> [Column] {
+        let boardModelID = board.persistentModelID
+
+        var descriptor = FetchDescriptor<Column>(
             sortBy: [SortDescriptor(\Column.index)]
         )
+        descriptor.includePendingChanges = true
 
         do {
-            return try modelContext
-                .fetch(descriptor)
-                .filter { $0.board?.id == boardID }
+            let fetched = try modelContext.fetch(descriptor)
+            let filtered = fetched.filter {
+                $0.board?.persistentModelID == boardModelID
+            }
+            print(
+                "[BoardsRepository] fetchColumns board=\(board.id) fetched=\(fetched.count) matched=\(filtered.count)"
+            )
+            return filtered
         } catch {
-            print("[BoardsRepository] Failed to fetch columns for board \(boardID): \(error)")
+            print("[BoardsRepository] Failed to fetch columns for board \(board.id): \(error)")
             return []
         }
     }
 
-    private func fetchCards(forColumnID columnID: UUID) -> [Card] {
-        let descriptor = FetchDescriptor<Card>(
+    private func fetchCards(for column: Column) -> [Card] {
+        let columnModelID = column.persistentModelID
+
+        var descriptor = FetchDescriptor<Card>(
             sortBy: [SortDescriptor(\Card.sortKey)]
         )
+        descriptor.includePendingChanges = true
 
         do {
-            return try modelContext
-                .fetch(descriptor)
-                .filter { $0.column?.id == columnID }
+            let fetched = try modelContext.fetch(descriptor)
+            let filtered = fetched.filter {
+                $0.column?.persistentModelID == columnModelID
+            }
+            print(
+                "[BoardsRepository] fetchCards column=\(column.id) fetched=\(fetched.count) matched=\(filtered.count)"
+            )
+            return filtered
         } catch {
-            print("[BoardsRepository] Failed to fetch cards for column \(columnID): \(error)")
+            print("[BoardsRepository] Failed to fetch cards for column \(column.id): \(error)")
             return []
         }
     }
 
-    private func fetchChecklistItems(forCardID cardID: UUID) -> [ChecklistItem] {
-        let descriptor = FetchDescriptor<ChecklistItem>()
+    private func fetchChecklistItems(for card: Card) -> [ChecklistItem] {
+        let cardModelID = card.persistentModelID
+
+        var descriptor = FetchDescriptor<ChecklistItem>()
+        descriptor.includePendingChanges = true
 
         do {
-            return try modelContext
-                .fetch(descriptor)
-                .filter { $0.card?.id == cardID }
+            let fetched = try modelContext.fetch(descriptor)
+            let filtered = fetched.filter {
+                $0.card?.persistentModelID == cardModelID
+            }
+            print(
+                "[BoardsRepository] fetchChecklist card=\(card.id) fetched=\(fetched.count) matched=\(filtered.count)"
+            )
+            return filtered
         } catch {
-            print("[BoardsRepository] Failed to fetch checklist items for card \(cardID): \(error)")
+            print("[BoardsRepository] Failed to fetch checklist items for card \(card.id): \(error)")
             return []
         }
     }

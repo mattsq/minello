@@ -23,8 +23,9 @@
 ### 2025-12-22: BoardsRepository hydration + lint cleanup
 
 **What Changed**:
-- Reworked `SwiftDataBoardsRepository.hydrateRelationships` to fetch columns/cards/checklists broadly and filter in-memory so CI no longer returns empty relationships, then reran `xcodebuild -scheme HomeCooked -destination 'platform=iOS Simulator,name=iPhone 15' test` (green locally).
+- Reworked `SwiftDataBoardsRepository.hydrateRelationships` to fetch columns/cards/checklists broadly and filter in-memory using `persistentModelID` + `includePendingChanges` so CI no longer returns empty relationships, then reran `xcodebuild -scheme HomeCooked -destination 'platform=iOS Simulator,name=iPhone 15' test` (green locally).
 - Ran SwiftFormat (`swiftformat --config HomeCooked/Tooling/swiftformat.yml HomeCooked/`) to clean up the 98 lint violations (import order, indentation, guard syntax, numbering) reported in `.ci/summary`.
+- Added targeted logging (`fetchColumns/fetchCards/fetchChecklist`) so the next CI log reveals how many objects were fetched vs. matched for each relationship.
 - Logged the change in `CHANGELOG.md` and tracked the work in beads issue `minello-6rk`.
 
 **Decisions Made**:
