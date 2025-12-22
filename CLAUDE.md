@@ -94,6 +94,8 @@ HomeCooked/
 • **Lint/format**: `swiftformat . && swiftlint --strict`
 • **Snapshots (record)**: set RECORD_SNAPSHOTS=1 env var for UI test target
 
+> ℹ️ The `.xcodeproj` lives inside `HomeCooked/`; run the commands above from that directory (or pass `-project HomeCooked/HomeCooked.xcodeproj`) to avoid "does not contain an Xcode project" errors.
+
 ### Beads (bd) - Issue Tracking
 
 #### Setup for Claude Code Web (CRITICAL - Read First)

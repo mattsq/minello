@@ -67,6 +67,8 @@ HomeCooked/
 
 ### Build
 
+> ℹ️ Run all `xcodebuild` commands from the `HomeCooked/` subdirectory (where `HomeCooked.xcodeproj` lives) or add `-project HomeCooked/HomeCooked.xcodeproj`; running from the repo root fails with "does not contain an Xcode project".
+
 ```bash
 xcodebuild -scheme HomeCooked \
   -destination 'platform=iOS Simulator,name=iPhone 15' \
