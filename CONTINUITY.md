@@ -9,9 +9,9 @@
 **Goal**: Keep the baseline persistence stack healthy—run the suite regularly, unblock the `claude/fix-ci-cascading-delete` branch, and document any workflow pitfalls discovered while doing so.
 
 **Next 3 Steps**:
-1. Monitor the next CI run for `claude/fix-ci-cascading-delete` to verify the relationship hydration + formatting fixes stick.
-2. Remove the extra BoardsRepository logging once CI stays green for a full run.
-3. Fold any repeatable SwiftData quirks (like predicate filtering limits) into ADRs or workflow docs as they emerge.
+1. Watch the next CI run for `claude/fix-ci-cascading-delete` (now containing the UUID fallbacks from d6d7d70) to confirm boards/columns hydrate correctly outside our local environment.
+2. If that run succeeds, start pruning the BoardsRepository debug logging back down to the essentials before we merge the branch.
+3. Capture any additional SwiftData predicate/filter quirks we learn from CI in docs/ADRs so they’re easy to reference later.
 
 **Current Risks / Open Questions**:
 - Still need ADR scaffolding + workflow docs from the earlier plan (no one has picked this up yet).
@@ -19,6 +19,23 @@
 ---
 
 ## Session Log
+
+### 2025-12-22: BoardsRepository UUID fallbacks pushed
+
+**What Changed**:
+- Added UUID-based fallbacks (plus descriptor retries) inside `BoardsRepository.fetchColumns/fetchCards/fetchChecklist` so CI’s older SwiftData build can still hydrate relationships when `persistentModelID` comparisons return zero rows, and kept the verbose logging that dumps each candidate’s parent IDs for future debugging.
+- Documented the fix in `CHANGELOG.md` and tracked it under beads issue `minello-bbq`.
+- Reran `xcodebuild -scheme HomeCooked -destination 'platform=iOS Simulator,name=iPhone 15' test` to ensure the suite stays green before pushing.
+
+**Decisions Made**:
+- Ship the verbose logging alongside the fallback logic so we can validate CI’s behavior before trimming noise in a follow-up PR.
+
+**Failures Tried / Ruled Out**:
+- None; this change was primarily about landing the already-tested local code so CI can exercise it.
+
+**Next Steps**:
+- Monitor the next CI run for `claude/fix-ci-cascading-delete` and plan the logging cleanup once we see a passing run.
+
 
 ### 2025-12-22: BoardsRepository hydration + lint cleanup
 
