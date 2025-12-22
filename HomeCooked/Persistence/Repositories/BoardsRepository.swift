@@ -19,21 +19,28 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func create(board: Board) async throws {
+        // Ensure the object graph is fully connected and manual IDs are populated
+        // Insert the root object
         modelContext.insert(board)
-        // SwiftData should handle the graph insertion if relationships are set up correctly
-        // but explicit insertion of children doesn't hurt.
+
         for column in board.columns {
             column.board = board
+            column.boardID = board.id
             modelContext.insert(column)
+            
             for card in column.cards {
                 card.column = column
+                card.columnID = column.id
                 modelContext.insert(card)
+                
                 for checklistItem in card.checklist {
                     checklistItem.card = card
+                    checklistItem.cardID = card.id
                     modelContext.insert(checklistItem)
                 }
             }
         }
+        
         try modelContext.save()
         print("[BoardsRepository] create(board:) completed for \(board.id)")
     }
