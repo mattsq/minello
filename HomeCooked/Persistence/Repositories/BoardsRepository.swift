@@ -38,11 +38,13 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         descriptor.predicate = #Predicate { $0.id == id }
 
         guard let board = try modelContext.fetch(descriptor).first else {
+            print("[BoardsRepository] fetch(\(id)) returned nil")
             return nil
         }
 
         hydrateRelationships(for: board)
         sortRelationships(for: board)
+        log(board: board, context: "fetch(id:)")
         return board
     }
 
@@ -51,6 +53,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         boards.forEach {
             hydrateRelationships(for: $0)
             sortRelationships(for: $0)
+            log(board: $0, context: "fetchAll")
         }
         return boards.sorted { $0.updatedAt > $1.updatedAt }
     }
@@ -113,6 +116,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
             guard let fetchedCards = try? modelContext.fetch(
                 FetchDescriptor<Card>(sortBy: [SortDescriptor(\Card.sortKey)])
             ) else {
+                print("[BoardsRepository] No cards fetched for column \(column.id)")
                 column.cards = []
                 continue
             }
@@ -123,6 +127,7 @@ final class SwiftDataBoardsRepository: BoardsRepository {
 
             for card in column.cards {
                 guard let fetchedItems = try? modelContext.fetch(FetchDescriptor<ChecklistItem>()) else {
+                    print("[BoardsRepository] No checklist items fetched for card \(card.id)")
                     card.checklist = []
                     continue
                 }
@@ -130,6 +135,16 @@ final class SwiftDataBoardsRepository: BoardsRepository {
                 let items = fetchedItems.filter { $0.card?.id == card.id }
                 items.forEach { $0.card = card }
                 card.checklist = items
+            }
+        }
+    }
+
+    private func log(board: Board, context: String) {
+        print("[BoardsRepository] \(context) board=\(board.id) title=\(board.title) columns=\(board.columns.count)")
+        for column in board.columns {
+            print("  column=\(column.id) title=\(column.title) index=\(column.index) cards=\(column.cards.count)")
+            for card in column.cards {
+                print("    card=\(card.id) title=\(card.title) sortKey=\(card.sortKey) checklist=\(card.checklist.count)")
             }
         }
     }
