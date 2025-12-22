@@ -1,10 +1,10 @@
 # ❌ CI Failed (failure)
 
-**Run**: [20421749109](https://github.com/mattsq/minello/actions/runs/20421749109)
-**Commit**: `c4b42fc5`
+**Run**: [20422189019](https://github.com/mattsq/minello/actions/runs/20422189019)
+**Commit**: `4a1930f6`
 **Branch**: `claude/fix-ci-cascading-delete`
 **PR**: #33
-**Time**: 2025-12-22T04:29:21.374889Z
+**Time**: 2025-12-22T04:59:34.829240Z
 
 ## 📊 Error Statistics
 
@@ -36,8 +36,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 04:26:25.099 appintentsnltrainingprocessor[2899:12762] Parsing options for appintentsnltrainingprocessor
-2025-12-22 04:26:25.103 appintentsnltrainingprocessor[2899:12762] No AppShortcuts found - Skipping.
+2025-12-22 04:55:23.239 appintentsnltrainingprocessor[26649:115339] Parsing options for appintentsnltrainingprocessor
+2025-12-22 04:55:23.241 appintentsnltrainingprocessor[26649:115339] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -80,8 +80,8 @@ note: Metadata extraction skipped. No AppIntents.framework dependency found. (in
 AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets
-2025-12-22 04:26:25.099 appintentsnltrainingprocessor[2899:12762] Parsing options for appintentsnltrainingprocessor
-2025-12-22 04:26:25.103 appintentsnltrainingprocessor[2899:12762] No AppShortcuts found - Skipping.
+2025-12-22 04:55:23.239 appintentsnltrainingprocessor[26649:115339] Parsing options for appintentsnltrainingprocessor
+2025-12-22 04:55:23.241 appintentsnltrainingprocessor[26649:115339] No AppShortcuts found - Skipping.
 RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')
     cd /Users/runner/work/minello/minello/HomeCooked
     builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app
@@ -195,40 +195,40 @@ Testing started
 
 ```
 Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' started.
-Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' passed (0.005 seconds).
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' passed (0.013 seconds).
 Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' started.
-Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.005 seconds).
-Test Suite 'BoardsRepositoryTests' failed at 2025-12-22 04:28:20.515.
-	 Executed 4 tests, with 1 failure (0 unexpected) in 0.023 (0.023) seconds
-Test Suite 'CardMigrationTests' started at 2025-12-22 04:28:20.515.
+Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.006 seconds).
+Test Suite 'BoardsRepositoryTests' failed at 2025-12-22 04:58:14.213.
+	 Executed 4 tests, with 1 failure (0 unexpected) in 0.053 (0.054) seconds
+Test Suite 'CardMigrationTests' started at 2025-12-22 04:58:14.213.
 Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' started.
-Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.011 seconds).
+Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.028 seconds).
 Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' started.
-Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.007 seconds).
-Test Suite 'CardMigrationTests' passed at 2025-12-22 04:28:20.534.
-	 Executed 2 tests, with 0 failures (0 unexpected) in 0.018 (0.018) seconds
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 04:28:20.534.
+Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.019 seconds).
+Test Suite 'CardMigrationTests' passed at 2025-12-22 04:58:14.261.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 0.047 (0.048) seconds
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 04:58:14.262.
 Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' started.
 Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testCascadingDelete(); summary will include totals from previous launches.
-Test Suite 'Selected tests' started at 2025-12-22 04:28:23.724.
-Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 04:28:23.725.
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 04:28:23.725.
+Test Suite 'Selected tests' started at 2025-12-22 04:58:15.462.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 04:58:15.463.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 04:58:15.463.
 Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' started.
 Restarting after unexpected exit, crash, or test timeout in PersistenceIntegrationTests.testRoundTripCreateFetchDelete(); summary will include totals from previous launches.
-Test Suite 'Selected tests' started at 2025-12-22 04:28:32.412.
-Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 04:28:32.412.
-Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 04:28:32.412.
-Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 04:28:32.412.
+Test Suite 'Selected tests' started at 2025-12-22 04:58:16.686.
+Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 04:58:16.686.
+Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 04:58:16.686.
+Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 04:58:16.686.
 	 Executed 2 tests, with 2 failures (0 unexpected) in 0.000 (0.000) seconds
-Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 04:28:32.412.
-	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.000) seconds
-Test Suite 'Selected tests' failed at 2025-12-22 04:28:32.413.
+Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 04:58:16.687.
 	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.001) seconds
-2025-12-22 04:28:58.071 xcodebuild[1209:6547] [MT] IDETestOperationsObserverDebug: 107.886 elapsed -- Testing started completed.
-2025-12-22 04:28:58.072 xcodebuild[1209:6547] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
-2025-12-22 04:28:58.072 xcodebuild[1209:6547] [MT] IDETestOperationsObserverDebug: 107.886 sec, +107.886 sec -- end
+Test Suite 'Selected tests' failed at 2025-12-22 04:58:16.687.
+	 Executed 8 tests, with 3 failures (0 unexpected) in 0.000 (0.001) seconds
+2025-12-22 04:59:05.505 xcodebuild[11534:53191] [MT] IDETestOperationsObserverDebug: 171.513 elapsed -- Testing started completed.
+2025-12-22 04:59:05.506 xcodebuild[11534:53191] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2025-12-22 04:59:05.507 xcodebuild[11534:53191] [MT] IDETestOperationsObserverDebug: 171.513 sec, +171.513 sec -- end
 Test session results, code coverage, and logs:
-	/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_04-26-45-+0000.xcresult
+	/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_04-55-44-+0000.xcresult
 Failing tests:
 	BoardsRepositoryTests.testCreateBoardWithColumnsAndCards()
 	PersistenceIntegrationTests.testCascadingDelete()
@@ -423,7 +423,7 @@ _... and 76 more lint violations_
 /Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/ColumnView.swift:292:1: error: (indent) Indent code in accordance with the scope level.
 /Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:89:1: error: (preferKeyPath) Convert trivial map { $0.foo } closures to keyPath-based syntax.
 /Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:232:1: error: (numberFormatting) Use consistent grouping for numeric literals. Groups will be separated by _ delimiters to improve readability. For each numeric type you can specify a group size (the number of digits in each group) and a threshold (the minimum number of digits in a number before grouping is applied).
-SwiftFormat completed in 0.14s.
+SwiftFormat completed in 0.17s.
 Source input did not pass lint check.
 5/25 files require formatting.
 ```
