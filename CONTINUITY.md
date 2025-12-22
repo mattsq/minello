@@ -9,7 +9,7 @@
 **Goal**: Keep the baseline persistence stack healthy—run the suite regularly, unblock the `claude/fix-ci-cascading-delete` branch, and document any workflow pitfalls discovered while doing so.
 
 **Next 3 Steps**:
-1. Watch the next CI run for `claude/fix-ci-cascading-delete` (now with the descriptor retries from `minello-lci`) to confirm boards/columns hydrate correctly outside our local environment.
+1. Watch the next CI run for `claude/fix-ci-cascading-delete` (now using the broad descriptor fallbacks from `minello-0zd`) to confirm SwiftData 15.4 stops crashing.
 2. If that run succeeds, start pruning the BoardsRepository debug logging back down to the essentials before we merge the branch.
 3. Capture any additional SwiftData predicate/filter quirks we learn from CI in docs/ADRs so they’re easy to reference later.
 
@@ -19,6 +19,22 @@
 ---
 
 ## Session Log
+
+### 2025-12-22: Broad descriptor fallbacks to stop SwiftData crashes
+
+**What Changed**:
+- Removed the descriptor retries that queried `parent?.persistentModelID` / `.id` and restored the broad `FetchDescriptor` fallbacks (with pending changes) so we keep filtering in-memory without relying on unsupported relationship predicates in SwiftData 15.4.
+- Reran `xcodebuild -scheme HomeCooked -destination 'platform=iOS Simulator,name=iPhone 15' test` (green) to verify the fallback approach still passes locally.
+- Tracked the failure and fix under beads issue `minello-0zd`.
+
+**Decisions Made**:
+- Treat relationship-based predicates inside SwiftData `FetchDescriptor`s as unsafe on CI’s toolchain and stick with broader fetches plus manual filtering until we can verify a newer Xcode build.
+
+**Failures Tried / Ruled Out**:
+- The attempt to narrow fetches by targeting `persistentModelID` / UUID relationship predicates caused the CI crashes observed in run 20428657755, so that approach is shelved for now.
+
+**Next Steps**:
+- Monitor the next CI run for the branch to confirm the crash disappears with the broader fetch strategy and, once green, trim the logging noise.
 
 ### 2025-12-22: Descriptor retries for BoardsRepository fetches
 
