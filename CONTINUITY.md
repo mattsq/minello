@@ -6,15 +6,15 @@
 
 ## Current Focus
 
-**Goal**: Add agent memory system to repository (KNOWLEDGEBASE, CONTINUITY, ADR scaffolding, PR template, agent workflow docs)
+**Goal**: Keep the baseline persistence stack healthy—run the suite regularly and document any workflow pitfalls discovered while doing so.
 
 **Next 3 Steps**:
-1. Create ADR scaffolding in `docs/adr/`
-2. Update `CLAUDE.md` to reference new memory system
-3. Create PR template and agent workflow guide
+1. Capture build/test nuances (e.g., project path requirements) in `KNOWLEDGEBASE.md`.
+2. Continue running the full test suite after notable changes.
+3. Fold repeatable discoveries into ADRs or the workflow docs as they emerge.
 
 **Current Risks / Open Questions**:
-- None currently
+- Still need ADR scaffolding + workflow docs from the earlier plan (no one has picked this up yet).
 
 ---
 
@@ -43,6 +43,21 @@
 - Create `docs/agent-workflow.md` with session start/end workflow
 - Create `notes/sessions/` structure for optional long-form notes
 - Update `README.md` to link to agent workflow docs
+
+### 2025-12-22: Test health check + workflow note
+
+**What Changed**:
+- Ran `xcodebuild -scheme HomeCooked test` successfully; suite remains green.
+- Hit a "does not contain an Xcode project" error when running tests from repo root, so documented that commands must run inside `HomeCooked/` (or pass `-project`) in `KNOWLEDGEBASE.md`.
+
+**Decisions Made**:
+- Treat these periodic test runs as part of baseline health-check work—log any workflow gotchas we find even if the code needs no changes.
+
+**Failures Tried / Ruled Out**:
+- Attempted to execute `xcodebuild` from repo root; fails because `HomeCooked.xcodeproj` lives in the `HomeCooked/` subdirectory.
+
+**Next Steps**:
+- Future session: resume the outstanding ADR scaffolding + agent workflow docs from the previous session log.
 
 ---
 

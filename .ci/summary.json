@@ -1,11 +1,11 @@
 {
-  "run_id": "20418908662",
-  "run_url": "https://github.com/mattsq/minello/actions/runs/20418908662",
-  "sha": "ee2cd13bb04a55911ea7c5530e9191682c71558b",
-  "branch": "claude/enhance-ci-feedback-logs-MX54o",
-  "pr_number": "31",
+  "run_id": "20420099081",
+  "run_url": "https://github.com/mattsq/minello/actions/runs/20420099081",
+  "sha": "070d60788fc4e827f3f91c554be04f1a03ab19ac",
+  "branch": "claude/test-health-docs",
+  "pr_number": "32",
   "overall_conclusion": "failure",
-  "timestamp": "2025-12-22T01:26:10.027845Z",
+  "timestamp": "2025-12-22T02:45:26.541171Z",
   "jobs": [
     {
       "job_name": "build",
@@ -15,9 +15,9 @@
         {
           "step_name": "build",
           "log_excerpt": [
+            "WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
-            "    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Frameworks --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/PlugIns --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/SystemExtensions --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os",
-            "Ignoring --strip-bitcode because --sign was not passed",
+            "    write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList",
             "ExtractAppIntentsMetadata (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
             "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --output /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --toolchain-dir /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name HomeCooked --sdk-root /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk --xcode-version 15F31d --platform-family iOS --deployment-target 17.0 --target-triple arm64-apple-ios17.0-simulator --target-triple x86_64-apple-ios17.0-simulator --binary-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked --dependency-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked_dependency_info.dat --dependency-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked_dependency_info.dat --stringsdata-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftFileList --source-file-list /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftFileList --swift-const-vals-list /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList --swift-const-vals-list /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing",
@@ -25,8 +25,8 @@
             "AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
             "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets",
-            "2025-12-22 01:23:11.527 appintentsnltrainingprocessor[7796:37353] Parsing options for appintentsnltrainingprocessor",
-            "2025-12-22 01:23:11.530 appintentsnltrainingprocessor[7796:37353] No AppShortcuts found - Skipping.",
+            "2025-12-22 02:41:31.640 appintentsnltrainingprocessor[23438:100310] Parsing options for appintentsnltrainingprocessor",
+            "2025-12-22 02:41:31.644 appintentsnltrainingprocessor[23438:100310] No AppShortcuts found - Skipping.",
             "RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
             "    builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app",
@@ -40,23 +40,23 @@
           ],
           "log_tail": [
             "    cd /Users/runner/work/minello/minello/HomeCooked",
-            "    builtin-Swift-Compilation -- /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name HomeCooked -Onone -enforce-exclusivity\\=checked @/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftFileList -DDEBUG -sdk /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk -target arm64-apple-ios17.0-simulator -enable-bare-slash-regex -g -module-cache-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64 -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/SDKStatCaches.noindex/iphonesimulator17.5-21F77-23950cd4b3f73050108268841b0fa1a8.sdkstatcache -output-file-map /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/HomeCooked-generated-files.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/HomeCooked-own-target-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/HomeCooked-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/HomeCooked-project-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/DerivedSources -Xcc -DDEBUG\\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked-Swift.h -working-directory /Users/runner/work/minello/minello/HomeCooked -experimental-emit-module-separately -disable-cmo",
-            "Ld /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/Binary/HomeCooked normal arm64 (in target 'HomeCooked' from project 'HomeCooked')",
+            "    builtin-Swift-Compilation -- /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name HomeCooked -Onone -enforce-exclusivity\\=checked @/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftFileList -DDEBUG -sdk /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk -target x86_64-apple-ios17.0-simulator -enable-bare-slash-regex -g -module-cache-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -emit-localized-strings -emit-localized-strings-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64 -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/SDKStatCaches.noindex/iphonesimulator17.5-21F77-23950cd4b3f73050108268841b0fa1a8.sdkstatcache -output-file-map /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/HomeCooked-generated-files.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/HomeCooked-own-target-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/HomeCooked-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/HomeCooked-project-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/DerivedSources-normal/x86_64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/DerivedSources/x86_64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/DerivedSources -Xcc -DDEBUG\\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked-Swift.h -working-directory /Users/runner/work/minello/minello/HomeCooked -experimental-emit-module-separately -disable-cmo",
+            "Ld /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/Binary/HomeCooked normal x86_64 (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
-            "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -isysroot /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk -O0 -L/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -F/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -filelist /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.LinkFileList -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked_lto.o -Xlinker -export_dynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -fobjc-link-runtime -L/Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.swiftmodule -Xlinker -dependency_info -Xlinker /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked_dependency_info.dat -o /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/Binary/HomeCooked",
+            "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-ios17.0-simulator -isysroot /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk -O0 -L/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -F/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -filelist /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.LinkFileList -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked_lto.o -Xlinker -export_dynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -fobjc-link-runtime -L/Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.swiftmodule -Xlinker -dependency_info -Xlinker /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked_dependency_info.dat -o /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/Binary/HomeCooked",
             "CreateUniversalBinary /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked normal arm64\\ x86_64 (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
             "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/Binary/HomeCooked /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/Binary/HomeCooked -output /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked",
-            "WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')",
-            "    cd /Users/runner/work/minello/minello/HomeCooked",
-            "    write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList",
-            "WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')",
-            "    cd /Users/runner/work/minello/minello/HomeCooked",
-            "    write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList",
             "CopySwiftLibs /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
             "    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Frameworks --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/PlugIns --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/SystemExtensions --scan-folder /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os",
             "Ignoring --strip-bitcode because --sign was not passed",
+            "WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')",
+            "    cd /Users/runner/work/minello/minello/HomeCooked",
+            "    write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList",
+            "WriteAuxiliaryFile /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList (in target 'HomeCooked' from project 'HomeCooked')",
+            "    cd /Users/runner/work/minello/minello/HomeCooked",
+            "    write-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList",
             "ExtractAppIntentsMetadata (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
             "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --output /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --toolchain-dir /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name HomeCooked --sdk-root /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk --xcode-version 15F31d --platform-family iOS --deployment-target 17.0 --target-triple arm64-apple-ios17.0-simulator --target-triple x86_64-apple-ios17.0-simulator --binary-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/HomeCooked --dependency-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked_dependency_info.dat --dependency-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked_dependency_info.dat --stringsdata-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftFileList --source-file-list /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftFileList --swift-const-vals-list /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/arm64/HomeCooked.SwiftConstValuesFileList --swift-const-vals-list /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/Objects-normal/x86_64/HomeCooked.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing",
@@ -64,8 +64,8 @@
             "AppIntentsSSUTraining (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
             "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Info.plist --temp-dir-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCooked.build/ssu --bundle-id com.homecooked.HomeCooked --product-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app --extracted-metadata-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app/Metadata.appintents --archive-ssu-assets",
-            "2025-12-22 01:23:11.527 appintentsnltrainingprocessor[7796:37353] Parsing options for appintentsnltrainingprocessor",
-            "2025-12-22 01:23:11.530 appintentsnltrainingprocessor[7796:37353] No AppShortcuts found - Skipping.",
+            "2025-12-22 02:41:31.640 appintentsnltrainingprocessor[23438:100310] Parsing options for appintentsnltrainingprocessor",
+            "2025-12-22 02:41:31.644 appintentsnltrainingprocessor[23438:100310] No AppShortcuts found - Skipping.",
             "RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app (in target 'HomeCooked' from project 'HomeCooked')",
             "    cd /Users/runner/work/minello/minello/HomeCooked",
             "    builtin-RegisterExecutionPolicyException /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app",
@@ -170,67 +170,58 @@
         {
           "step_name": "test",
           "log_excerpt": [
-            "Test Suite 'BoardsRepositoryTests' started at 2025-12-22 01:25:16.433.",
-            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards]' started.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:50: error: -[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards] : XCTAssertEqual failed: (\"Optional(0)\") is not equal to (\"Optional(2)\")",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:51: error: -[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards] : XCTAssertEqual failed: (\"nil\") is not equal to (\"Optional(\"Buy milk\")\")",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:52: error: -[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards] : XCTAssertEqual failed: (\"nil\") is not equal to (\"Optional(100.0)\")",
-            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards]' failed (0.136 seconds).",
-            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testDeleteBoard]' started.",
-            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testDeleteBoard]' passed (0.006 seconds).",
-            "Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 01:25:16.616.",
+            "Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 02:43:49.276.",
             "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' started.",
             "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift:116: error: -[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete] : XCTAssertTrue failed",
             "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift:117: error: -[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete] : XCTAssertTrue failed",
-            "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' failed (0.007 seconds).",
+            "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' failed (0.129 seconds).",
             "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' started.",
-            "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' passed (0.061 seconds).",
+            "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' passed (0.020 seconds).",
             "\tPersistenceIntegrationTests.testCascadingDelete()",
             "** TEST FAILED **",
             "Testing started"
           ],
           "log_tail": [
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:50: error: -[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards] : XCTAssertEqual failed: (\"Optional(0)\") is not equal to (\"Optional(2)\")",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:51: error: -[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards] : XCTAssertEqual failed: (\"nil\") is not equal to (\"Optional(\"Buy milk\")\")",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:52: error: -[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards] : XCTAssertEqual failed: (\"nil\") is not equal to (\"Optional(100.0)\")",
-            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards]' failed (0.136 seconds).",
+            "    /usr/bin/touch -c /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/HomeCooked.app",
+            "Test Suite 'All tests' started at 2025-12-22 02:43:49.191.",
+            "Test Suite 'HomeCookedTests.xctest' started at 2025-12-22 02:43:49.192.",
+            "Test Suite 'BoardsRepositoryTests' started at 2025-12-22 02:43:49.192.",
+            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards]' started.",
+            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testCreateBoardWithColumnsAndCards]' passed (0.021 seconds).",
             "Test Case '-[HomeCookedTests.BoardsRepositoryTests testDeleteBoard]' started.",
-            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testDeleteBoard]' passed (0.006 seconds).",
+            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testDeleteBoard]' passed (0.005 seconds).",
             "Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' started.",
             "Test Case '-[HomeCookedTests.BoardsRepositoryTests testFetchAllReturnsAllBoards]' passed (0.006 seconds).",
             "Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' started.",
-            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.004 seconds).",
-            "Test Suite 'BoardsRepositoryTests' failed at 2025-12-22 01:25:16.594.",
-            "\t Executed 4 tests, with 3 failures (0 unexpected) in 0.153 (0.160) seconds",
-            "Test Suite 'CardMigrationTests' started at 2025-12-22 01:25:16.594.",
+            "Test Case '-[HomeCookedTests.BoardsRepositoryTests testUpdateBoard]' passed (0.028 seconds).",
+            "Test Suite 'BoardsRepositoryTests' passed at 2025-12-22 02:43:49.253.",
+            "\t Executed 4 tests, with 0 failures (0 unexpected) in 0.060 (0.061) seconds",
+            "Test Suite 'CardMigrationTests' started at 2025-12-22 02:43:49.253.",
             "Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' started.",
-            "Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.006 seconds).",
+            "Test Case '-[HomeCookedTests.CardMigrationTests testMigrationHandlesMultipleColumns]' passed (0.008 seconds).",
             "Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' started.",
-            "Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.007 seconds).",
-            "Test Suite 'CardMigrationTests' passed at 2025-12-22 01:25:16.616.",
-            "\t Executed 2 tests, with 0 failures (0 unexpected) in 0.013 (0.022) seconds",
-            "Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 01:25:16.616.",
+            "Test Case '-[HomeCookedTests.CardMigrationTests testSortKeyInitializedAscending]' passed (0.006 seconds).",
+            "Test Suite 'CardMigrationTests' passed at 2025-12-22 02:43:49.267.",
+            "\t Executed 2 tests, with 0 failures (0 unexpected) in 0.014 (0.014) seconds",
+            "Test Suite 'PersistenceIntegrationTests' started at 2025-12-22 02:43:49.276.",
             "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' started.",
             "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift:116: error: -[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete] : XCTAssertTrue failed",
             "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift:117: error: -[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete] : XCTAssertTrue failed",
-            "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' failed (0.007 seconds).",
+            "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testCascadingDelete]' failed (0.129 seconds).",
             "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' started.",
-            "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' passed (0.061 seconds).",
-            "Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 01:25:16.685.",
-            "\t Executed 2 tests, with 2 failures (0 unexpected) in 0.069 (0.069) seconds",
-            "Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 01:25:16.685.",
-            "\t Executed 8 tests, with 5 failures (0 unexpected) in 0.234 (0.252) seconds",
-            "Test Suite 'All tests' failed at 2025-12-22 01:25:16.685.",
-            "\t Executed 8 tests, with 5 failures (0 unexpected) in 0.234 (0.253) seconds",
-            "2025-12-22 01:25:48.987 xcodebuild[2918:14764] [MT] IDETestOperationsObserverDebug: 106.074 elapsed -- Testing started completed.",
-            "2025-12-22 01:25:48.988 xcodebuild[2918:14764] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start",
-            "2025-12-22 01:25:48.988 xcodebuild[2918:14764] [MT] IDETestOperationsObserverDebug: 106.075 sec, +106.075 sec -- end",
+            "Test Case '-[HomeCookedTests.PersistenceIntegrationTests testRoundTripCreateFetchDelete]' passed (0.020 seconds).",
+            "Test Suite 'PersistenceIntegrationTests' failed at 2025-12-22 02:43:49.426.",
+            "\t Executed 2 tests, with 2 failures (0 unexpected) in 0.149 (0.149) seconds",
+            "Test Suite 'HomeCookedTests.xctest' failed at 2025-12-22 02:43:49.426.",
+            "\t Executed 8 tests, with 2 failures (0 unexpected) in 0.223 (0.234) seconds",
+            "Test Suite 'All tests' failed at 2025-12-22 02:43:49.487.",
+            "\t Executed 8 tests, with 2 failures (0 unexpected) in 0.223 (0.296) seconds",
+            "2025-12-22 02:44:57.366 xcodebuild[2977:15185] [MT] IDETestOperationsObserverDebug: 155.640 elapsed -- Testing started completed.",
+            "2025-12-22 02:44:57.367 xcodebuild[2977:15185] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start",
+            "2025-12-22 02:44:57.367 xcodebuild[2977:15185] [MT] IDETestOperationsObserverDebug: 155.640 sec, +155.640 sec -- end",
             "Test session results, code coverage, and logs:",
-            "\t/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_01-23-35-+0000.xcresult",
+            "\t/Users/runner/work/minello/minello/HomeCooked/DerivedData/Logs/Test/Test-HomeCooked-2025.12.22_02-41-51-+0000.xcresult",
             "Failing tests:",
-            "\tBoardsRepositoryTests.testCreateBoardWithColumnsAndCards()",
-            "\tBoardsRepositoryTests.testCreateBoardWithColumnsAndCards()",
-            "\tBoardsRepositoryTests.testCreateBoardWithColumnsAndCards()",
             "\tPersistenceIntegrationTests.testCascadingDelete()",
             "\tPersistenceIntegrationTests.testCascadingDelete()",
             "** TEST FAILED **",
@@ -341,44 +332,8 @@
                 "final class PersistenceIntegrationTests: XCTestCase {",
                 "            ^",
                 "",
-                "SwiftDriverJobDiscovery normal arm64 Compiling HomeCookedApp.swift, ContentView.swift, ModelContainerFactory.swift, RecipesRepository.swift, BoardsRepository.swift (in target 'HomeCooked' from project 'HomeCooked')",
+                "SwiftDriverJobDiscovery normal arm64 Compiling Column.swift, PersonalList.swift, Recipe.swift, GeneratedAssetSymbols.swift (in target 'HomeCooked' from project 'HomeCooked')",
                 ""
-              ]
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift",
-              "line": 6,
-              "column": 13,
-              "error_type": "warning",
-              "message": "main actor-isolated class 'BoardsRepositoryTests' has different actor isolation from nonisolated superclass 'XCTestCase'; this is an error in Swift 6",
-              "context": [
-                "SwiftCompile normal x86_64 /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')",
-                "    cd /Users/runner/work/minello/minello/HomeCooked",
-                "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -c -primary-file /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift /Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift -emit-dependencies-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.d -emit-const-values-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.swiftconstvalues -emit-reference-dependencies-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.swiftdeps -serialize-diagnostics-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.dia -target x86_64-apple-ios17.0-simulator -enable-objc-interop -sdk /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk -I /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/Developer/Library/Frameworks -no-color-diagnostics -enable-testing -g -module-cache-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex -profile-generate -profile-coverage-mapping -swift-version 5 -enforce-exclusivity\\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/HomeCookedTests_const_extract_protocols.json -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/runner/work/minello/minello/HomeCooked -resource-dir /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift -enable-anonymous-context-mangled-names -Xcc -ivfsstatcache -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/SDKStatCaches.noindex/iphonesimulator17.5-21F77-23950cd4b3f73050108268841b0fa1a8.sdkstatcache -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-generated-files.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-own-target-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-project-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources-normal/x86_64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources/x86_64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources -Xcc -DDEBUG\\=1 -module-name HomeCookedTests -frontend-parseable-output -disable-clang-spi -target-sdk-version 17.5 -target-sdk-name iphonesimulator17.5 -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/local/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/local/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins -plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/lib/swift/host/plugins -o /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.o -index-unit-output-path /HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.o -index-store-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Index.noindex/DataStore -index-system-modules",
-                "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:6:13: warning: main actor-isolated class 'BoardsRepositoryTests' has different actor isolation from nonisolated superclass 'XCTestCase'; this is an error in Swift 6",
-                "final class BoardsRepositoryTests: XCTestCase {",
-                "            ^",
-                "",
-                "SwiftDriverJobDiscovery normal x86_64 Emitting module for HomeCookedTests (in target 'HomeCookedTests' from project 'HomeCooked')",
-                ""
-              ]
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift",
-              "line": 6,
-              "column": 13,
-              "error_type": "warning",
-              "message": "main actor-isolated class 'CardMigrationTests' has different actor isolation from nonisolated superclass 'XCTestCase'; this is an error in Swift 6",
-              "context": [
-                "SwiftCompile normal arm64 /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')",
-                "    cd /Users/runner/work/minello/minello/HomeCooked",
-                "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -c /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift -primary-file /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift /Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift -emit-dependencies-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.d -emit-const-values-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.swiftconstvalues -emit-reference-dependencies-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.swiftdeps -serialize-diagnostics-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.dia -target arm64-apple-ios17.0-simulator -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk -I /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/Developer/Library/Frameworks -no-color-diagnostics -enable-testing -g -module-cache-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex -profile-generate -profile-coverage-mapping -swift-version 5 -enforce-exclusivity\\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/HomeCookedTests_const_extract_protocols.json -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/runner/work/minello/minello/HomeCooked -resource-dir /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift -enable-anonymous-context-mangled-names -Xcc -ivfsstatcache -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/SDKStatCaches.noindex/iphonesimulator17.5-21F77-23950cd4b3f73050108268841b0fa1a8.sdkstatcache -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-generated-files.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-own-target-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-project-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources -Xcc -DDEBUG\\=1 -module-name HomeCookedTests -frontend-parseable-output -disable-clang-spi -target-sdk-version 17.5 -target-sdk-name iphonesimulator17.5 -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/local/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/local/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins -plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/lib/swift/host/plugins -o /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.o -index-unit-output-path /HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.o -index-store-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Index.noindex/DataStore -index-system-modules",
-                "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift:6:13: warning: main actor-isolated class 'CardMigrationTests' has different actor isolation from nonisolated superclass 'XCTestCase'; this is an error in Swift 6",
-                "final class CardMigrationTests: XCTestCase {",
-                "            ^",
-                "",
-                "SwiftDriver\\ Compilation\\ Requirements HomeCookedTests normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'HomeCookedTests' from project 'HomeCooked')",
-                "    cd /Users/runner/work/minello/minello/HomeCooked"
               ]
             },
             {
@@ -413,6 +368,24 @@
                 "final class PersistenceIntegrationTests: XCTestCase {",
                 "            ^",
                 "",
+                "SwiftDriverJobDiscovery normal x86_64 Emitting module for HomeCookedTests (in target 'HomeCookedTests' from project 'HomeCooked')",
+                ""
+              ]
+            },
+            {
+              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift",
+              "line": 6,
+              "column": 13,
+              "error_type": "warning",
+              "message": "main actor-isolated class 'BoardsRepositoryTests' has different actor isolation from nonisolated superclass 'XCTestCase'; this is an error in Swift 6",
+              "context": [
+                "SwiftCompile normal x86_64 /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')",
+                "    cd /Users/runner/work/minello/minello/HomeCooked",
+                "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -c -primary-file /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift /Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift -emit-dependencies-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.d -emit-const-values-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.swiftconstvalues -emit-reference-dependencies-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.swiftdeps -serialize-diagnostics-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.dia -target x86_64-apple-ios17.0-simulator -enable-objc-interop -sdk /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk -I /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/Developer/Library/Frameworks -no-color-diagnostics -enable-testing -g -module-cache-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex -profile-generate -profile-coverage-mapping -swift-version 5 -enforce-exclusivity\\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/HomeCookedTests_const_extract_protocols.json -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/runner/work/minello/minello/HomeCooked -resource-dir /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift -enable-anonymous-context-mangled-names -Xcc -ivfsstatcache -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/SDKStatCaches.noindex/iphonesimulator17.5-21F77-23950cd4b3f73050108268841b0fa1a8.sdkstatcache -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-generated-files.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-own-target-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-project-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources-normal/x86_64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources/x86_64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources -Xcc -DDEBUG\\=1 -module-name HomeCookedTests -frontend-parseable-output -disable-clang-spi -target-sdk-version 17.5 -target-sdk-name iphonesimulator17.5 -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/local/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/local/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins -plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/lib/swift/host/plugins -o /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.o -index-unit-output-path /HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/x86_64/BoardsRepositoryTests.o -index-store-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Index.noindex/DataStore -index-system-modules",
+                "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift:6:13: warning: main actor-isolated class 'BoardsRepositoryTests' has different actor isolation from nonisolated superclass 'XCTestCase'; this is an error in Swift 6",
+                "final class BoardsRepositoryTests: XCTestCase {",
+                "            ^",
+                "",
                 "SwiftCompile normal x86_64 Compiling\\ PersistenceIntegrationTests.swift /Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')",
                 "    cd /Users/runner/work/minello/minello/HomeCooked"
               ]
@@ -431,8 +404,26 @@
                 "final class PersistenceIntegrationTests: XCTestCase {",
                 "            ^",
                 "",
-                "SwiftDriverJobDiscovery normal x86_64 Compiling CardMigrationTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')",
+                "SwiftDriverJobDiscovery normal arm64 Compiling PersistenceIntegrationTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')",
                 ""
+              ]
+            },
+            {
+              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift",
+              "line": 6,
+              "column": 13,
+              "error_type": "warning",
+              "message": "main actor-isolated class 'CardMigrationTests' has different actor isolation from nonisolated superclass 'XCTestCase'; this is an error in Swift 6",
+              "context": [
+                "SwiftCompile normal arm64 /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')",
+                "    cd /Users/runner/work/minello/minello/HomeCooked",
+                "    /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -c /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift -primary-file /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift /Users/runner/work/minello/minello/HomeCooked/Tests/Integration/PersistenceIntegrationTests.swift -emit-dependencies-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.d -emit-const-values-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.swiftconstvalues -emit-reference-dependencies-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.swiftdeps -serialize-diagnostics-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.dia -target arm64-apple-ios17.0-simulator -Xllvm -aarch64-use-tbi -enable-objc-interop -sdk /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk -I /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/Developer/Library/Frameworks -no-color-diagnostics -enable-testing -g -module-cache-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex -profile-generate -profile-coverage-mapping -swift-version 5 -enforce-exclusivity\\=checked -Onone -D DEBUG -serialize-debugging-options -const-gather-protocols-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/HomeCookedTests_const_extract_protocols.json -enable-bare-slash-regex -empty-abi-descriptor -validate-clang-modules-once -clang-build-session-file /Users/runner/work/minello/minello/HomeCooked/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -working-directory -Xcc /Users/runner/work/minello/minello/HomeCooked -resource-dir /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift -enable-anonymous-context-mangled-names -Xcc -ivfsstatcache -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/SDKStatCaches.noindex/iphonesimulator17.5-21F77-23950cd4b3f73050108268841b0fa1a8.sdkstatcache -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/swift-overrides.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-generated-files.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-own-target-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/HomeCookedTests-project-headers.hmap -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/DerivedSources -Xcc -DDEBUG\\=1 -module-name HomeCookedTests -frontend-parseable-output -disable-clang-spi -target-sdk-version 17.5 -target-sdk-name iphonesimulator17.5 -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/local/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator17.5.sdk/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/local/lib/swift/host/plugins\\#/Applications/Xcode_15.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/usr/bin/swift-plugin-server -plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins -plugin-path /Applications/Xcode_15.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/lib/swift/host/plugins -o /Users/runner/work/minello/minello/HomeCooked/DerivedData/Build/Intermediates.noindex/HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.o -index-unit-output-path /HomeCooked.build/Debug-iphonesimulator/HomeCookedTests.build/Objects-normal/arm64/CardMigrationTests.o -index-store-path /Users/runner/work/minello/minello/HomeCooked/DerivedData/Index.noindex/DataStore -index-system-modules",
+                "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardMigrationTests.swift:6:13: warning: main actor-isolated class 'CardMigrationTests' has different actor isolation from nonisolated superclass 'XCTestCase'; this is an error in Swift 6",
+                "final class CardMigrationTests: XCTestCase {",
+                "            ^",
+                "",
+                "SwiftCompile normal arm64 Compiling\\ BoardsRepositoryTests.swift /Users/runner/work/minello/minello/HomeCooked/Tests/Unit/BoardsRepositoryTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')",
+                "    cd /Users/runner/work/minello/minello/HomeCooked"
               ]
             },
             {
@@ -449,19 +440,12 @@
                 "final class BoardsRepositoryTests: XCTestCase {",
                 "            ^",
                 "",
-                "SwiftDriver\\ Compilation HomeCooked normal arm64 com.apple.xcode.tools.swift.compiler (in target 'HomeCooked' from project 'HomeCooked')",
-                "    cd /Users/runner/work/minello/minello/HomeCooked"
+                "SwiftDriverJobDiscovery normal arm64 Compiling CardMigrationTests.swift (in target 'HomeCookedTests' from project 'HomeCooked')",
+                ""
               ]
             }
           ],
           "test_failures": [
-            {
-              "test_name": "HomeCookedTests",
-              "test_case": "BoardsRepositoryTests testCreateBoardWithColumnsAndCards",
-              "failure_message": "Test failed (no details)",
-              "file_path": null,
-              "line_number": null
-            },
             {
               "test_name": "HomeCookedTests",
               "test_case": "PersistenceIntegrationTests testCascadingDelete",
@@ -474,11 +458,11 @@
           "error_summary": {
             "compilation_errors": 0,
             "compilation_warnings": 12,
-            "test_failures": 2
+            "test_failures": 1
           }
         }
       ],
-      "total_errors": 2,
+      "total_errors": 1,
       "total_warnings": 12
     },
     {
@@ -536,6 +520,37 @@
             "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/CardRow.swift:159:1: error: (indent) Indent code in accordance with the scope level."
           ],
           "log_tail": [
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:246:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:248:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:249:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:250:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:252:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:253:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:254:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:255:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:256:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:257:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:258:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:259:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:260:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:261:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:262:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:264:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:265:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:266:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:267:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:269:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:270:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:271:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:273:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:274:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:275:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:277:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:279:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:281:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:282:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:283:1: error: (indent) Indent code in accordance with the scope level.",
+            "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:284:1: error: (indent) Indent code in accordance with the scope level.",
             "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:285:1: error: (indent) Indent code in accordance with the scope level.",
             "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:287:1: error: (indent) Indent code in accordance with the scope level.",
             "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:288:1: error: (indent) Indent code in accordance with the scope level.",
@@ -551,40 +566,9 @@
             "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:300:1: error: (indent) Indent code in accordance with the scope level.",
             "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:301:1: error: (indent) Indent code in accordance with the scope level.",
             "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift:302:1: error: (indent) Indent code in accordance with the scope level.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:1:1: error: (sortImports) Sort import statements alphabetically.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:2:1: error: (sortImports) Sort import statements alphabetically.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:23:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:39:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:54:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:69:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:89:1: error: (preferKeyPath) Convert trivial map { $0.foo } closures to keyPath-based syntax.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:94:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:154:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:176:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift:232:1: error: (numberFormatting) Use consistent grouping for numeric literals. Groups will be separated by _ delimiters to improve readability. For each numeric type you can specify a group size (the number of digits in each group) and a threshold (the minimum number of digits in a number before grouping is applied).",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:1:1: error: (sortImports) Sort import statements alphabetically.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:2:1: error: (sortImports) Sort import statements alphabetically.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:28:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:57:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:86:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:119:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:138:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:189:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:215:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:253:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift:283:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift:1:1: error: (sortImports) Sort import statements alphabetically.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift:2:1: error: (sortImports) Sort import statements alphabetically.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift:23:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift:64:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift:116:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift:153:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift:196:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift:222:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift:256:1: error: (swiftTestingTestCaseNames) In Swift Testing, don't prefix @Test methods with 'test'.",
-            "SwiftFormat completed in 0.16s.",
+            "SwiftFormat completed in 0.13s.",
             "Source input did not pass lint check.",
-            "8/25 files require formatting."
+            "6/25 files require formatting."
           ],
           "compilation_errors": [],
           "test_failures": [],
@@ -1342,6 +1326,22 @@
               "severity": "error"
             },
             {
+              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
+              "line": 89,
+              "column": 1,
+              "rule": "preferKeyPath",
+              "message": "Convert trivial map { $0.foo } closures to keyPath-based syntax.",
+              "severity": "error"
+            },
+            {
+              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
+              "line": 232,
+              "column": 1,
+              "rule": "numberFormatting",
+              "message": "Use consistent grouping for numeric literals. Groups will be separated by _ delimiters to improve readability. For each numeric type you can specify a group size (the number of digits in each group) and a threshold (the minimum number of digits in a number before grouping is applied).",
+              "severity": "error"
+            },
+            {
               "file_path": "/Users/runner/work/minello/minello/HomeCooked/Features/BoardDetail/BoardDetailView.swift",
               "line": 1,
               "column": 1,
@@ -1788,263 +1788,15 @@
               "rule": "indent",
               "message": "Indent code in accordance with the scope level.",
               "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 1,
-              "column": 1,
-              "rule": "sortImports",
-              "message": "Sort import statements alphabetically.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 2,
-              "column": 1,
-              "rule": "sortImports",
-              "message": "Sort import statements alphabetically.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 23,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 39,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 54,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 69,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 89,
-              "column": 1,
-              "rule": "preferKeyPath",
-              "message": "Convert trivial map { $0.foo } closures to keyPath-based syntax.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 94,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 154,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 176,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/UI/BoardDetailSnapshots.swift",
-              "line": 232,
-              "column": 1,
-              "rule": "numberFormatting",
-              "message": "Use consistent grouping for numeric literals. Groups will be separated by _ delimiters to improve readability. For each numeric type you can specify a group size (the number of digits in each group) and a threshold (the minimum number of digits in a number before grouping is applied).",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 1,
-              "column": 1,
-              "rule": "sortImports",
-              "message": "Sort import statements alphabetically.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 2,
-              "column": 1,
-              "rule": "sortImports",
-              "message": "Sort import statements alphabetically.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 28,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 57,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 86,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 119,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 138,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 189,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 215,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 253,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Unit/CardReorderServiceTests.swift",
-              "line": 283,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift",
-              "line": 1,
-              "column": 1,
-              "rule": "sortImports",
-              "message": "Sort import statements alphabetically.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift",
-              "line": 2,
-              "column": 1,
-              "rule": "sortImports",
-              "message": "Sort import statements alphabetically.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift",
-              "line": 23,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift",
-              "line": 64,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift",
-              "line": 116,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift",
-              "line": 153,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift",
-              "line": 196,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift",
-              "line": 222,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
-            },
-            {
-              "file_path": "/Users/runner/work/minello/minello/HomeCooked/Tests/Integration/DragAndDropIntegrationTests.swift",
-              "line": 256,
-              "column": 1,
-              "rule": "swiftTestingTestCaseNames",
-              "message": "In Swift Testing, don't prefix @Test methods with 'test'.",
-              "severity": "error"
             }
           ],
           "error_summary": {
-            "lint_errors": 181,
+            "lint_errors": 152,
             "lint_warnings": 0
           }
         }
       ],
-      "total_errors": 181,
+      "total_errors": 152,
       "total_warnings": 0
     }
   ],
@@ -2075,6 +1827,6 @@
     }
   ],
   "total_compilation_errors": 0,
-  "total_test_failures": 2,
-  "total_lint_violations": 181
+  "total_test_failures": 1,
+  "total_lint_violations": 152
 }
