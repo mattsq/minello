@@ -9,7 +9,7 @@
 **Goal**: Keep the baseline persistence stack healthy—run the suite regularly, unblock the `claude/fix-ci-cascading-delete` branch, and document any workflow pitfalls discovered while doing so.
 
 **Next 3 Steps**:
-1. Watch the next CI run for `claude/fix-ci-cascading-delete` (now containing the UUID fallbacks from d6d7d70) to confirm boards/columns hydrate correctly outside our local environment.
+1. Watch the next CI run for `claude/fix-ci-cascading-delete` (now with the descriptor retries from `minello-lci`) to confirm boards/columns hydrate correctly outside our local environment.
 2. If that run succeeds, start pruning the BoardsRepository debug logging back down to the essentials before we merge the branch.
 3. Capture any additional SwiftData predicate/filter quirks we learn from CI in docs/ADRs so they’re easy to reference later.
 
@@ -19,6 +19,22 @@
 ---
 
 ## Session Log
+
+### 2025-12-22: Descriptor retries for BoardsRepository fetches
+
+**What Changed**:
+- Added descriptor retries that re-filter on `parent?.persistentModelID` and `parent?.id` when the stored parent UUID predicate returns zero rows so CI's older SwiftData build still hydrates BoardsRepository columns/cards/checklists.
+- Reran `xcodebuild -scheme HomeCooked -destination 'platform=iOS Simulator,name=iPhone 15' test` from `HomeCooked/` (green) to verify the new fetch flow.
+- Logged the work under beads issue `minello-lci`.
+
+**Decisions Made**:
+- Keep the verbose BoardsRepository logging plus the new descriptor retries until a remote CI run confirms everything is stable, then tighten logging separately.
+
+**Failures Tried / Ruled Out**:
+- Attempted to pipe the test run through `xcbeautify`, but the binary isn't installed here, so re-ran `xcodebuild` directly.
+
+**Next Steps**:
+- Monitor the next CI run for `claude/fix-ci-cascading-delete` to confirm the descriptor retries unblock the persistence tests before trimming logs.
 
 ### 2025-12-22: BoardsRepository UUID fallbacks pushed
 

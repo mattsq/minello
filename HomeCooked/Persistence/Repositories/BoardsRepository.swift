@@ -145,11 +145,26 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         do {
             var candidates = try modelContext.fetch(descriptor)
             if candidates.isEmpty {
-                var fallbackDescriptor = FetchDescriptor<Column>(
+                print("[BoardsRepository] fetchColumns board=\(board.id) descriptor retry on persistentModelID")
+                var persistentDescriptor = FetchDescriptor<Column>(
+                    predicate: #Predicate { column in
+                        column.board?.persistentModelID == boardModelID
+                    },
                     sortBy: [SortDescriptor(\Column.index)]
                 )
-                fallbackDescriptor.includePendingChanges = true
-                candidates = (try? modelContext.fetch(fallbackDescriptor)) ?? []
+                persistentDescriptor.includePendingChanges = true
+                candidates = (try? modelContext.fetch(persistentDescriptor)) ?? []
+            }
+            if candidates.isEmpty {
+                print("[BoardsRepository] fetchColumns board=\(board.id) descriptor retry on board UUID")
+                var uuidDescriptor = FetchDescriptor<Column>(
+                    predicate: #Predicate { column in
+                        column.board?.id == boardID
+                    },
+                    sortBy: [SortDescriptor(\Column.index)]
+                )
+                uuidDescriptor.includePendingChanges = true
+                candidates = (try? modelContext.fetch(uuidDescriptor)) ?? []
             }
             print(
                 "[BoardsRepository] fetchColumns board=\(board.id) boardModelID=\(boardModelID) fetched=\(candidates.count)"
@@ -198,11 +213,26 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         do {
             var candidates = try modelContext.fetch(descriptor)
             if candidates.isEmpty {
-                var fallbackDescriptor = FetchDescriptor<Card>(
+                print("[BoardsRepository] fetchCards column=\(column.id) descriptor retry on persistentModelID")
+                var persistentDescriptor = FetchDescriptor<Card>(
+                    predicate: #Predicate { card in
+                        card.column?.persistentModelID == columnModelID
+                    },
                     sortBy: [SortDescriptor(\Card.sortKey)]
                 )
-                fallbackDescriptor.includePendingChanges = true
-                candidates = (try? modelContext.fetch(fallbackDescriptor)) ?? []
+                persistentDescriptor.includePendingChanges = true
+                candidates = (try? modelContext.fetch(persistentDescriptor)) ?? []
+            }
+            if candidates.isEmpty {
+                print("[BoardsRepository] fetchCards column=\(column.id) descriptor retry on column UUID")
+                var uuidDescriptor = FetchDescriptor<Card>(
+                    predicate: #Predicate { card in
+                        card.column?.id == columnID
+                    },
+                    sortBy: [SortDescriptor(\Card.sortKey)]
+                )
+                uuidDescriptor.includePendingChanges = true
+                candidates = (try? modelContext.fetch(uuidDescriptor)) ?? []
             }
             print(
                 "[BoardsRepository] fetchCards column=\(column.id) columnModelID=\(columnModelID) fetched=\(candidates.count)"
@@ -250,9 +280,24 @@ final class SwiftDataBoardsRepository: BoardsRepository {
         do {
             var candidates = try modelContext.fetch(descriptor)
             if candidates.isEmpty {
-                var fallbackDescriptor = FetchDescriptor<ChecklistItem>()
-                fallbackDescriptor.includePendingChanges = true
-                candidates = (try? modelContext.fetch(fallbackDescriptor)) ?? []
+                print("[BoardsRepository] fetchChecklist card=\(card.id) descriptor retry on persistentModelID")
+                var persistentDescriptor = FetchDescriptor<ChecklistItem>(
+                    predicate: #Predicate { item in
+                        item.card?.persistentModelID == cardModelID
+                    }
+                )
+                persistentDescriptor.includePendingChanges = true
+                candidates = (try? modelContext.fetch(persistentDescriptor)) ?? []
+            }
+            if candidates.isEmpty {
+                print("[BoardsRepository] fetchChecklist card=\(card.id) descriptor retry on card UUID")
+                var uuidDescriptor = FetchDescriptor<ChecklistItem>(
+                    predicate: #Predicate { item in
+                        item.card?.id == cardID
+                    }
+                )
+                uuidDescriptor.includePendingChanges = true
+                candidates = (try? modelContext.fetch(uuidDescriptor)) ?? []
             }
             print(
                 "[BoardsRepository] fetchChecklist card=\(card.id) cardModelID=\(cardModelID) fetched=\(candidates.count)"
