@@ -132,12 +132,18 @@ final class PersistenceIntegrationTests: XCTestCase {
             print("Remaining card checklists: \(allCardChecklists.count)")
         }
 
-        XCTAssertTrue(allColumns.isEmpty,
-                      "Expected 0 columns after cascade delete, found \(allColumns.count)")
-        XCTAssertTrue(allCards.isEmpty,
-                      "Expected 0 cards after cascade delete, found \(allCards.count)")
-        XCTAssertTrue(allCardChecklists.isEmpty,
-                      "Expected 0 checklist items after cascade delete, found \(allCardChecklists.count)")
+        XCTAssertTrue(
+            allColumns.isEmpty,
+            "Expected 0 columns after cascade delete, found \(allColumns.count)"
+        )
+        XCTAssertTrue(
+            allCards.isEmpty,
+            "Expected 0 cards after cascade delete, found \(allCards.count)"
+        )
+        XCTAssertTrue(
+            allCardChecklists.isEmpty,
+            "Expected 0 checklist items after cascade delete, found \(allCardChecklists.count)"
+        )
     }
 
     private func logBoardState(_ board: Board?, context: String) {
