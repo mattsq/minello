@@ -7,7 +7,6 @@ let package = Package(
     name: "HomeCooked",
     platforms: [
         .iOS(.v17),
-        .macOS(.v14),
     ],
     products: [
         .library(
@@ -31,6 +30,8 @@ let package = Package(
             sources: [
                 "App",
                 "Persistence",
+                "Features",
+                "DesignSystem",
             ],
             swiftSettings: [
                 .enableUpcomingFeature("BareSlashRegexLiterals"),
