@@ -86,7 +86,7 @@ struct BoardDetailSnapshots {
 
         // Then: View should render without errors
         #expect(board.columns.count == 3)
-        #expect(board.columns.allSatisfy { $0.cards.isEmpty })
+        #expect(board.columns.allSatisfy(\.cards.isEmpty))
         #expect(view != nil)
     }
 
@@ -229,7 +229,7 @@ struct BoardDetailSnapshots {
 
         let card4 = Card(
             title: "Deploy to production",
-            due: Date().addingTimeInterval(172800),
+            due: Date().addingTimeInterval(172_800),
             tags: ["deployment"],
             checklist: [
                 ChecklistItem(text: "Run tests", isDone: true),

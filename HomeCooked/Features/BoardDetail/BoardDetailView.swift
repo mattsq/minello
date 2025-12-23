@@ -1,5 +1,5 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 /// Main view for displaying a Kanban board with horizontally scrollable columns
 struct BoardDetailView: View {
@@ -187,7 +187,7 @@ private struct AddCardView: View {
                 TextField("Title", text: $title)
 
                 TextField("Description", text: $details, axis: .vertical)
-                    .lineLimit(3 ... 6)
+                    .lineLimit(3...6)
             }
         }
         .navigationTitle("Add Card")
@@ -234,70 +234,70 @@ private struct AddCardView: View {
 }
 
 #if DEBUG
-    #Preview("Board with multiple columns") {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(
-            for: Board.self, Column.self, Card.self, ChecklistItem.self,
-            configurations: config
-        )
+#Preview("Board with multiple columns") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: Board.self, Column.self, Card.self, ChecklistItem.self,
+        configurations: config
+    )
 
-        let context = container.mainContext
+    let context = container.mainContext
 
-        let board = Board(title: "Home Tasks")
+    let board = Board(title: "Home Tasks")
 
-        let todoColumn = Column(title: "To Do", index: 0)
-        let inProgressColumn = Column(title: "In Progress", index: 1)
-        let doneColumn = Column(title: "Done", index: 2)
+    let todoColumn = Column(title: "To Do", index: 0)
+    let inProgressColumn = Column(title: "In Progress", index: 1)
+    let doneColumn = Column(title: "Done", index: 2)
 
-        let card1 = Card(title: "Buy groceries", sortKey: 1000)
-        let card2 = Card(title: "Fix leaky faucet", tags: ["urgent"], sortKey: 2000)
-        let card3 = Card(title: "Plan vacation", sortKey: 1000)
-        let card4 = Card(
-            title: "Organize garage",
-            checklist: [
-                ChecklistItem(text: "Sort tools", isDone: true),
-                ChecklistItem(text: "Donate old items", isDone: false),
-            ],
-            sortKey: 1000
-        )
+    let card1 = Card(title: "Buy groceries", sortKey: 1000)
+    let card2 = Card(title: "Fix leaky faucet", tags: ["urgent"], sortKey: 2000)
+    let card3 = Card(title: "Plan vacation", sortKey: 1000)
+    let card4 = Card(
+        title: "Organize garage",
+        checklist: [
+            ChecklistItem(text: "Sort tools", isDone: true),
+            ChecklistItem(text: "Donate old items", isDone: false),
+        ],
+        sortKey: 1000
+    )
 
-        card1.column = todoColumn
-        card2.column = todoColumn
-        card3.column = inProgressColumn
-        card4.column = doneColumn
+    card1.column = todoColumn
+    card2.column = todoColumn
+    card3.column = inProgressColumn
+    card4.column = doneColumn
 
-        todoColumn.cards = [card1, card2]
-        inProgressColumn.cards = [card3]
-        doneColumn.cards = [card4]
+    todoColumn.cards = [card1, card2]
+    inProgressColumn.cards = [card3]
+    doneColumn.cards = [card4]
 
-        todoColumn.board = board
-        inProgressColumn.board = board
-        doneColumn.board = board
+    todoColumn.board = board
+    inProgressColumn.board = board
+    doneColumn.board = board
 
-        board.columns = [todoColumn, inProgressColumn, doneColumn]
+    board.columns = [todoColumn, inProgressColumn, doneColumn]
 
-        context.insert(board)
+    context.insert(board)
 
-        return NavigationStack {
-            BoardDetailView(board: board)
-                .modelContainer(container)
-        }
+    return NavigationStack {
+        BoardDetailView(board: board)
+            .modelContainer(container)
     }
+}
 
-    #Preview("Empty board") {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(
-            for: Board.self, Column.self, Card.self,
-            configurations: config
-        )
+#Preview("Empty board") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: Board.self, Column.self, Card.self,
+        configurations: config
+    )
 
-        let context = container.mainContext
-        let board = Board(title: "New Board")
-        context.insert(board)
+    let context = container.mainContext
+    let board = Board(title: "New Board")
+    context.insert(board)
 
-        return NavigationStack {
-            BoardDetailView(board: board)
-                .modelContainer(container)
-        }
+    return NavigationStack {
+        BoardDetailView(board: board)
+            .modelContainer(container)
     }
+}
 #endif

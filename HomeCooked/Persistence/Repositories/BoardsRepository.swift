@@ -19,23 +19,49 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func create(board: Board) async throws {
+        // Ensure the object graph is fully connected and manual IDs are populated
+        // Insert the root object
         modelContext.insert(board)
+
+        for column in board.columns {
+            column.board = board
+            modelContext.insert(column)
+
+            for card in column.cards {
+                card.column = column
+                modelContext.insert(card)
+
+                for checklistItem in card.checklist {
+                    checklistItem.card = card
+                    modelContext.insert(checklistItem)
+                }
+            }
+        }
+
         try modelContext.save()
+        print("[BoardsRepository] create(board:) completed for \(board.id)")
     }
 
     func fetch(id: UUID) async throws -> Board? {
-        let descriptor = FetchDescriptor<Board>()
-        guard let board = try modelContext.fetch(descriptor).first(where: { $0.id == id }) else {
+        var descriptor = boardFetchDescriptor()
+        descriptor.predicate = #Predicate { $0.id == id }
+
+        guard let board = try modelContext.fetch(descriptor).first else {
+            print("[BoardsRepository] fetch(\(id)) returned nil")
             return nil
         }
+
         sortRelationships(for: board)
+
+        print("[BoardsRepository] fetch(id:) found board \(board.id) with \(board.columns.count) columns")
         return board
     }
 
     func fetchAll() async throws -> [Board] {
-        let descriptor = FetchDescriptor<Board>()
-        let boards = try modelContext.fetch(descriptor)
-        boards.forEach { sortRelationships(for: $0) }
+        let boards = try modelContext.fetch(boardFetchDescriptor())
+        for board in boards {
+            sortRelationships(for: board)
+        }
         return boards.sorted { $0.updatedAt > $1.updatedAt }
     }
 
@@ -52,7 +78,31 @@ final class SwiftDataBoardsRepository: BoardsRepository {
     }
 
     func delete(board: Board) async throws {
+        // Use the passed-in object directly rather than re-fetching it
+        // Re-fetching creates a new instance which causes object identity mismatch in CI (Xcode 15.4)
+        // SwiftData will automatically load relationships when accessed (lazy loading)
+
+        // Manual cascade delete (required for CI where deleteRule: .cascade is unreliable)
+        // Delete in order from deepest children to shallowest
+        for column in board.columns {
+            for card in column.cards {
+                for checklistItem in card.checklist {
+                    modelContext.delete(checklistItem)
+                }
+                modelContext.delete(card)
+            }
+            modelContext.delete(column)
+        }
+
         modelContext.delete(board)
         try modelContext.save()
+
+        print("[BoardsRepository] delete(board:) completed for \(board.id)")
+    }
+
+    private func boardFetchDescriptor() -> FetchDescriptor<Board> {
+        var descriptor = FetchDescriptor<Board>()
+        descriptor.includePendingChanges = true
+        return descriptor
     }
 }

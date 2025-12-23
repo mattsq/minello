@@ -341,7 +341,7 @@ enum CardSortKeyMigration {
         }
     }
 
-    /// Migration plan that orchestrates the v1 → v2 migration
+    /// Migration plan that orchestrates the schema migrations
     enum MigrationPlan: SchemaMigrationPlan {
         static var schemas: [any VersionedSchema.Type] {
             [SchemaV1.self, SchemaV2.self]

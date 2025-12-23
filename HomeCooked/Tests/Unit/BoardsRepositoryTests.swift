@@ -2,11 +2,11 @@ import SwiftData
 import XCTest
 @testable import HomeCooked
 
-@MainActor
 final class BoardsRepositoryTests: XCTestCase {
     var container: ModelContainer!
     var repository: SwiftDataBoardsRepository!
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         container = try ModelContainerFactory.createInMemory()
@@ -15,12 +15,14 @@ final class BoardsRepositoryTests: XCTestCase {
         )
     }
 
+    @MainActor
     override func tearDown() async throws {
         container = nil
         repository = nil
         try await super.tearDown()
     }
 
+    @MainActor
     func testCreateBoardWithColumnsAndCards() async throws {
         // Given
         let board = Board(title: "Test Board")
@@ -44,6 +46,7 @@ final class BoardsRepositoryTests: XCTestCase {
 
         // Then
         let fetchedBoard = try await repository.fetch(id: board.id)
+        logBoardState(fetchedBoard, context: "After create")
         XCTAssertNotNil(fetchedBoard)
         XCTAssertEqual(fetchedBoard?.title, "Test Board")
         XCTAssertEqual(fetchedBoard?.columns.count, 2)
@@ -52,6 +55,7 @@ final class BoardsRepositoryTests: XCTestCase {
         XCTAssertEqual(fetchedBoard?.columns.first?.cards.first?.sortKey, 100)
     }
 
+    @MainActor
     func testFetchAllReturnsAllBoards() async throws {
         // Given
         let board1 = Board(title: "Board 1")
@@ -66,6 +70,7 @@ final class BoardsRepositoryTests: XCTestCase {
         XCTAssertEqual(boards.count, 2)
     }
 
+    @MainActor
     func testUpdateBoard() async throws {
         // Given
         let board = Board(title: "Original Title")
@@ -80,6 +85,7 @@ final class BoardsRepositoryTests: XCTestCase {
         XCTAssertEqual(fetchedBoard?.title, "Updated Title")
     }
 
+    @MainActor
     func testDeleteBoard() async throws {
         // Given
         let board = Board(title: "Test Board")
@@ -90,6 +96,24 @@ final class BoardsRepositoryTests: XCTestCase {
 
         // Then
         let fetchedBoard = try await repository.fetch(id: board.id)
+        logBoardState(fetchedBoard, context: "After delete")
         XCTAssertNil(fetchedBoard)
+    }
+
+    private func logBoardState(_ board: Board?, context: String) {
+        XCTContext.runActivity(named: "Board state: \(context)") { _ in
+            guard let board else {
+                print("Board is nil")
+                return
+            }
+
+            print("Board[\(board.id)] title=\(board.title) columns=\(board.columns.count)")
+            for column in board.columns {
+                print("  Column[\(column.id)] title=\(column.title) index=\(column.index) cards=\(column.cards.count)")
+                for card in column.cards {
+                    print("    Card[\(card.id)] title=\(card.title) sortKey=\(card.sortKey)")
+                }
+            }
+        }
     }
 }

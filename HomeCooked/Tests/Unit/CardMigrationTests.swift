@@ -2,23 +2,25 @@ import SwiftData
 import XCTest
 @testable import HomeCooked
 
-@MainActor
 final class CardMigrationTests: XCTestCase {
     var container: ModelContainer!
     var context: ModelContext!
 
+    @MainActor
     override func setUp() async throws {
         try await super.setUp()
         container = try ModelContainerFactory.createInMemory()
         context = container.mainContext
     }
 
+    @MainActor
     override func tearDown() async throws {
         container = nil
         context = nil
         try await super.tearDown()
     }
 
+    @MainActor
     func testSortKeyInitializedAscending() async throws {
         // Given: Create a column with cards with different sortKeys
         let board = Board(title: "Test Board")
@@ -53,6 +55,7 @@ final class CardMigrationTests: XCTestCase {
         XCTAssertEqual(sortedCards?[2].sortKey, 300)
     }
 
+    @MainActor
     func testMigrationHandlesMultipleColumns() async throws {
         // Given: Multiple columns with cards that have different sortKeys
         let board = Board(title: "Test Board")

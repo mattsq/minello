@@ -84,7 +84,7 @@ final class CardReorderService {
     private func shouldNormalize(_ cards: [Card]) -> Bool {
         let sorted = cards.sorted { $0.sortKey < $1.sortKey }
 
-        for i in 0 ..< sorted.count - 1 {
+        for i in 0..<sorted.count - 1 {
             let diff = sorted[i + 1].sortKey - sorted[i].sortKey
             if abs(diff) < normalizationThreshold {
                 return true

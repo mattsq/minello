@@ -128,43 +128,43 @@ struct CardRow: View {
 }
 
 #if DEBUG
-    #Preview("Card with details") {
-        let card = Card(
-            title: "Implement drag and drop",
-            details: "Add support for reordering cards across columns",
-            due: Date().addingTimeInterval(86400),
-            tags: ["feature", "ui"],
-            checklist: [
-                ChecklistItem(text: "Design UI", isDone: true),
-                ChecklistItem(text: "Implement logic", isDone: false),
-                ChecklistItem(text: "Add tests", isDone: false),
-            ]
-        )
+#Preview("Card with details") {
+    let card = Card(
+        title: "Implement drag and drop",
+        details: "Add support for reordering cards across columns",
+        due: Date().addingTimeInterval(86400),
+        tags: ["feature", "ui"],
+        checklist: [
+            ChecklistItem(text: "Design UI", isDone: true),
+            ChecklistItem(text: "Implement logic", isDone: false),
+            ChecklistItem(text: "Add tests", isDone: false),
+        ]
+    )
 
-        return CardRow(card: card, position: 0, totalCards: 3)
-            .padding()
-            .background(Color(.systemGroupedBackground))
-    }
+    return CardRow(card: card, position: 0, totalCards: 3)
+        .padding()
+        .background(Color(.systemGroupedBackground))
+}
 
-    #Preview("Simple card") {
-        let card = Card(
-            title: "Buy milk"
-        )
+#Preview("Simple card") {
+    let card = Card(
+        title: "Buy milk"
+    )
 
-        return CardRow(card: card, position: 1, totalCards: 3)
-            .padding()
-            .background(Color(.systemGroupedBackground))
-    }
+    return CardRow(card: card, position: 1, totalCards: 3)
+        .padding()
+        .background(Color(.systemGroupedBackground))
+}
 
-    #Preview("Dragging state") {
-        let card = Card(
-            title: "Card being dragged",
-            tags: ["important"]
-        )
+#Preview("Dragging state") {
+    let card = Card(
+        title: "Card being dragged",
+        tags: ["important"]
+    )
 
-        return CardRow(card: card, position: 0, totalCards: 1)
-            .dragging(true)
-            .padding()
-            .background(Color(.systemGroupedBackground))
-    }
+    return CardRow(card: card, position: 0, totalCards: 1)
+        .dragging(true)
+        .padding()
+        .background(Color(.systemGroupedBackground))
+}
 #endif

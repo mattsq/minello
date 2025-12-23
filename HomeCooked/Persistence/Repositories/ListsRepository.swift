@@ -39,6 +39,12 @@ final class SwiftDataListsRepository: ListsRepository {
     }
 
     func delete(list: PersonalList) async throws {
+        // Manual cascade delete for CI compatibility
+        // SwiftData will automatically load relationships when accessed (lazy loading)
+        for item in list.items {
+            modelContext.delete(item)
+        }
+
         modelContext.delete(list)
         try modelContext.save()
     }

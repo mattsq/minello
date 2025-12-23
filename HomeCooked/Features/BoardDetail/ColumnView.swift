@@ -1,5 +1,5 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 /// A view displaying a Kanban column with its cards
 struct ColumnView: View {
@@ -136,7 +136,7 @@ private struct CardDropDelegate: DropDelegate {
     let reorderService: CardReorderService
 
     func dropEntered(info: DropInfo) {
-        guard let draggedCard = draggedCard else { return }
+        guard let draggedCard else { return }
 
         // Don't show drop indicator if dropping on self
         if draggedCard.id == card.id {
@@ -153,7 +153,7 @@ private struct CardDropDelegate: DropDelegate {
     }
 
     func performDrop(info: DropInfo) -> Bool {
-        guard let draggedCard = draggedCard else { return false }
+        guard let draggedCard else { return false }
 
         // Calculate insertion index
         var targetIndex = index
@@ -206,7 +206,7 @@ private struct EndOfListDropDelegate: DropDelegate {
     }
 
     func performDrop(info: DropInfo) -> Bool {
-        guard let draggedCard = draggedCard else { return false }
+        guard let draggedCard else { return false }
 
         do {
             try reorderService.moveCard(draggedCard, to: column, at: sortedCards.count)
@@ -228,66 +228,66 @@ private struct EndOfListDropDelegate: DropDelegate {
 }
 
 #if DEBUG
-    #Preview("Column with cards") {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(
-            for: Board.self, Column.self, Card.self, ChecklistItem.self,
-            configurations: config
-        )
+#Preview("Column with cards") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: Board.self, Column.self, Card.self, ChecklistItem.self,
+        configurations: config
+    )
 
-        let context = container.mainContext
+    let context = container.mainContext
 
-        let column = Column(title: "To Do", index: 0)
-        let card1 = Card(
-            title: "Design mockups",
-            details: "Create UI mockups for the new feature",
-            sortKey: 1000
-        )
-        let card2 = Card(
-            title: "Implement backend API",
-            tags: ["backend"],
-            sortKey: 2000
-        )
-        let card3 = Card(
-            title: "Write tests",
-            checklist: [
-                ChecklistItem(text: "Unit tests", isDone: true),
-                ChecklistItem(text: "Integration tests", isDone: false),
-            ],
-            sortKey: 3000
-        )
+    let column = Column(title: "To Do", index: 0)
+    let card1 = Card(
+        title: "Design mockups",
+        details: "Create UI mockups for the new feature",
+        sortKey: 1000
+    )
+    let card2 = Card(
+        title: "Implement backend API",
+        tags: ["backend"],
+        sortKey: 2000
+    )
+    let card3 = Card(
+        title: "Write tests",
+        checklist: [
+            ChecklistItem(text: "Unit tests", isDone: true),
+            ChecklistItem(text: "Integration tests", isDone: false),
+        ],
+        sortKey: 3000
+    )
 
-        card1.column = column
-        card2.column = column
-        card3.column = column
-        column.cards = [card1, card2, card3]
+    card1.column = column
+    card2.column = column
+    card3.column = column
+    column.cards = [card1, card2, card3]
 
-        context.insert(column)
+    context.insert(column)
 
-        let reorderService = CardReorderService(modelContext: context)
+    let reorderService = CardReorderService(modelContext: context)
 
-        return ColumnView(column: column, reorderService: reorderService)
-            .frame(height: 600)
-            .padding()
-            .background(Color(.systemGroupedBackground))
-    }
+    return ColumnView(column: column, reorderService: reorderService)
+        .frame(height: 600)
+        .padding()
+        .background(Color(.systemGroupedBackground))
+}
 
-    #Preview("Empty column") {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(
-            for: Board.self, Column.self, Card.self,
-            configurations: config
-        )
+#Preview("Empty column") {
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(
+        for: Board.self, Column.self, Card.self,
+        configurations: config
+    )
 
-        let context = container.mainContext
-        let column = Column(title: "Done", index: 2)
-        context.insert(column)
+    let context = container.mainContext
+    let column = Column(title: "Done", index: 2)
+    context.insert(column)
 
-        let reorderService = CardReorderService(modelContext: context)
+    let reorderService = CardReorderService(modelContext: context)
 
-        return ColumnView(column: column, reorderService: reorderService)
-            .frame(height: 600)
-            .padding()
-            .background(Color(.systemGroupedBackground))
-    }
+    return ColumnView(column: column, reorderService: reorderService)
+        .frame(height: 600)
+        .padding()
+        .background(Color(.systemGroupedBackground))
+}
 #endif
