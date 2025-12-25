@@ -5,14 +5,36 @@ import Foundation
 import SwiftUI
 import PersistenceInterfaces
 
+#if canImport(CloudKit)
+import SyncCloudKit
+#else
+import SyncNoop
+#endif
+
 /// Main dependency container for the app
 /// Use as an environment object to access repositories throughout the view hierarchy
 @MainActor
 final class AppDependencyContainer: ObservableObject {
     let repositoryProvider: RepositoryProvider
 
+    #if canImport(CloudKit)
+    let syncClient: CloudKitSyncClient
+    #else
+    let syncClient: NoopSyncClient
+    #endif
+
     init(repositoryProvider: RepositoryProvider) {
         self.repositoryProvider = repositoryProvider
+
+        #if canImport(CloudKit)
+        self.syncClient = CloudKitSyncClient(
+            boardsRepo: repositoryProvider.boardsRepository,
+            listsRepo: repositoryProvider.listsRepository,
+            recipesRepo: repositoryProvider.recipesRepository
+        )
+        #else
+        self.syncClient = NoopSyncClient()
+        #endif
     }
 
     /// Default container using GRDB with a file-based database
