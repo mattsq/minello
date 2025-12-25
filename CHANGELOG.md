@@ -266,6 +266,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Fallback to in-memory database on initialization failure
     - ContentView displaying BoardsListView
   - SwiftUI previews for all views with sample data
+- PersistenceSwiftData package (Apple-only, Ticket #8):
+  - SwiftData model classes mapping Domain types to SwiftData @Model classes
+  - BoardModel, ColumnModel, CardModel with cascade delete relationships
+  - PersonalListModel for personal list storage
+  - JSON encoding for complex types (column/card IDs, tags, checklist items)
+  - UUID-based unique identifiers with string storage
+  - SwiftDataBoardsRepository implementing BoardsRepository protocol
+  - SwiftDataListsRepository implementing ListsRepository protocol
+  - In-memory model container support for testing
+  - Full conformance to repository contracts
+  - Predicate-based queries for filtering and searching
+  - Fallback filtering for queries without SwiftData native support
+  - ConversionError for UUID validation
+- Contract tests for SwiftData implementations (macOS only):
+  - SwiftDataBoardsRepositoryContractTests: Full test suite against BoardsRepository
+  - SwiftDataListsRepositoryContractTests: Full test suite against ListsRepository
+  - Tests verify CRUD operations, cascade deletes, and query operations
+  - Tests run with in-memory SwiftData container
+  - Same comprehensive test coverage as GRDB contract tests
+  - Availability guards for macOS 14.0+ and iOS 17.0+
 
 ### Changed
 
