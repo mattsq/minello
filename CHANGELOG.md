@@ -206,6 +206,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Note operation tests (add, update, remove)
   - Statistics calculation tests (empty, all complete, partial, none complete)
   - Edge case tests (boundary values, negative values, nil handling)
+- iOS UI skeleton with SwiftUI screens (Ticket #7):
+  - BoardsListView: Main view showing all boards with navigation
+    - Add/delete board functionality
+    - Empty state with call-to-action
+    - Pull-to-refresh support
+    - Board row displaying column count and last updated time
+  - BoardDetailView: Board detail view with horizontal scrolling columns
+    - Horizontal column layout (Trello-style kanban board)
+    - Add column functionality
+    - Empty state for boards without columns
+    - Pull-to-refresh support
+  - ColumnView: Individual column view displaying cards
+    - Vertical card list within column
+    - Add card functionality
+    - Empty state for columns without cards
+    - Card count display in column header
+  - CardDetailView: Detailed card view with full editing
+    - Title and details editing
+    - Due date picker with clear option
+    - Tag editor with add/remove functionality
+    - Checklist with add/toggle/delete operations
+    - Progress indicator for checklist completion
+    - Metadata display (created/updated timestamps)
+  - Dependency injection infrastructure:
+    - AppDependencyContainer: Main DI container as environment object
+    - RepositoryProvider protocol for swapping implementations
+    - GRDBRepositoryProvider: GRDB-based implementation
+    - Support for in-memory preview databases
+    - Environment key integration for view hierarchy
+  - Drag and drop support with haptic feedback:
+    - DragDropHandler for managing card reordering
+    - Reorder cards within columns using midpoint calculation
+    - Move cards between columns
+    - Light haptic on drag start, medium on drop
+    - Success haptic on successful reorder/move
+    - Automatic normalization when sort keys get too close
+  - Comprehensive accessibility support:
+    - VoiceOver labels on all interactive elements
+    - Semantic labels for boards, columns, and cards
+    - Accessibility traits for headers and buttons
+    - Screen reader support for checklist progress
+    - Accessible add/edit/delete actions
+  - SwiftUI components:
+    - FlowLayout: Custom layout for tag display
+    - TagPill: Tag display component
+    - TagEditorView: Tag management UI
+    - ChecklistItemRow: Checklist item with toggle/delete
+    - CardRowView: Card preview with tags, checklist, due date indicators
+    - BoardRow: Board summary row
+  - Smoke UI tests (macOS/iOS only):
+    - App launch tests
+    - Board creation and navigation tests
+    - Column creation tests
+    - Card creation and detail view tests
+    - Accessibility label verification
+  - Updated app entry point:
+    - HomeCookedApp wired with dependency injection
+    - Fallback to in-memory database on initialization failure
+    - ContentView displaying BoardsListView
+  - SwiftUI previews for all views with sample data
 
 ### Changed
 
