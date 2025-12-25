@@ -410,6 +410,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Tests for board-scoped column lookup
     - Tests for card creation with details and due dates
     - Tests for automatic sort key increment behavior
+- GitHub Actions CI workflow (Ticket #12):
+  - Two-stage workflow: Linux then macOS (fail-fast approach)
+  - Linux stage with Swift 5.10 container:
+    - Preflight checks with scripts/preflight.sh
+    - SwiftPM build of all Linux-compatible packages
+    - Parallel test execution with swift test --parallel
+    - Artifact uploads for test logs and JSON fixtures
+    - One-line failure summary on errors
+  - macOS stage with Xcode 16.0 on macOS 14:
+    - Preflight checks for macOS environment
+    - DerivedData caching for faster builds (keyed by Package.swift + App sources)
+    - SwiftPM package caching (keyed by Package.resolved)
+    - iOS Simulator build (iPhone 15) using xcodebuild
+    - UI and unit tests with xcodebuild test
+    - Optional xcpretty for formatted output
+    - Artifact uploads for build logs, test results, and failure screenshots
+    - Separate artifact retention: 7 days for logs, 14 days for failure screenshots
+    - One-line failure summary on errors
+  - Workflow triggers: push to main/claude/** branches, pull requests, manual dispatch
+  - No continue-on-error flags - first failure stops the workflow
+  - Comprehensive artifact collection for debugging failures
+  - Cache strategy optimized for Swift dependency management
 
 ### Changed
 
