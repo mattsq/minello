@@ -53,6 +53,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Toolchain version pinning:
   - .swift-version (5.10)
   - .xcode-version (16.0)
+- PersistenceInterfaces package with repository protocols:
+  - BoardsRepository protocol for managing boards, columns, and cards
+  - CRUD operations for all entity types
+  - Query operations: search cards, find by tag, find by due date
+  - Typed PersistenceError enum for error handling
+- PersistenceGRDB package with SQLite/GRDB implementation:
+  - Database schema v1 with boards, columns, and cards tables
+  - Foreign key constraints with cascade delete
+  - Indices on common query paths (created_at, column_id, sort_key, due date)
+  - Full-text search support for card titles and details
+  - ISO8601 date formatting for consistent date storage
+  - GRDB record types mapping domain models to database rows
+  - GRDBBoardsRepository implementing BoardsRepository protocol
+  - HomeCookedMigrator with idempotent migrations
+- hc-migrate CLI tool for database migrations:
+  - List applied and pending migrations
+  - Run pending migrations
+  - Dry-run mode to preview changes
+- Contract tests for BoardsRepository:
+  - Comprehensive test suite covering all CRUD operations
+  - Tests for cascade deletes (board → columns → cards)
+  - Query tests (search, tag filtering, due date ranges)
+  - Tests run against GRDB implementation (can be extended to SwiftData)
+- Placeholder packages for future tickets:
+  - UseCases, ImportExport, SyncInterfaces, SyncNoop
+  - hc-import and hc-backup CLI stubs
 
 ### Changed
 
