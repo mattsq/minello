@@ -25,14 +25,14 @@ final class InMemoryBoardsRepository: BoardsRepository {
 
     func loadBoard(_ id: BoardID) async throws -> Board {
         guard let board = boards[id] else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Board with ID \(id)")
         }
         return board
     }
 
     func updateBoard(_ board: Board) async throws {
         guard boards[board.id] != nil else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Board with ID \(board.id)")
         }
         boards[board.id] = board
     }
@@ -60,14 +60,14 @@ final class InMemoryBoardsRepository: BoardsRepository {
 
     func loadColumn(_ id: ColumnID) async throws -> Column {
         guard let column = columns[id] else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Column with ID \(id)")
         }
         return column
     }
 
     func updateColumn(_ column: Column) async throws {
         guard columns[column.id] != nil else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Column with ID \(column.id)")
         }
         columns[column.id] = column
     }
@@ -101,14 +101,14 @@ final class InMemoryBoardsRepository: BoardsRepository {
 
     func loadCard(_ id: CardID) async throws -> Card {
         guard let card = cards[id] else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Card with ID \(id)")
         }
         return card
     }
 
     func updateCard(_ card: Card) async throws {
         guard cards[card.id] != nil else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Card with ID \(card.id)")
         }
         cards[card.id] = card
     }

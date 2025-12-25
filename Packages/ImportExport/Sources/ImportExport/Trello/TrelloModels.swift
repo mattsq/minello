@@ -5,13 +5,13 @@ import Foundation
 
 /// Root structure of a Trello JSON export
 public struct TrelloExport: Codable {
-    let id: String
-    let name: String
-    let desc: String?
-    let closed: Bool?
-    let lists: [TrelloList]
-    let cards: [TrelloCard]
-    let labels: [TrelloLabel]?
+    public let id: String
+    public let name: String
+    public let desc: String?
+    public let closed: Bool?
+    public let lists: [TrelloList]
+    public let cards: [TrelloCard]
+    public let labels: [TrelloLabel]?
 
     enum CodingKeys: String, CodingKey {
         case id, name, desc, closed, lists, cards, labels
@@ -20,10 +20,10 @@ public struct TrelloExport: Codable {
 
 /// A Trello list (maps to Column in our domain)
 public struct TrelloList: Codable {
-    let id: String
-    let name: String
-    let closed: Bool?
-    let pos: Double?
+    public let id: String
+    public let name: String
+    public let closed: Bool?
+    public let pos: Double?
 
     enum CodingKeys: String, CodingKey {
         case id, name, closed, pos
@@ -32,16 +32,16 @@ public struct TrelloList: Codable {
 
 /// A Trello card
 public struct TrelloCard: Codable {
-    let id: String
-    let name: String
-    let desc: String?
-    let idList: String
-    let due: String?
-    let dueComplete: Bool?
-    let labels: [TrelloLabel]?
-    let checklists: [TrelloChecklist]?
-    let pos: Double?
-    let closed: Bool?
+    public let id: String
+    public let name: String
+    public let desc: String?
+    public let idList: String
+    public let due: String?
+    public let dueComplete: Bool?
+    public let labels: [TrelloLabel]?
+    public let checklists: [TrelloChecklist]?
+    public let pos: Double?
+    public let closed: Bool?
 
     enum CodingKeys: String, CodingKey {
         case id, name, desc, idList, due, dueComplete, labels, checklists, pos, closed
@@ -50,9 +50,9 @@ public struct TrelloCard: Codable {
 
 /// A Trello label
 public struct TrelloLabel: Codable {
-    let id: String?
-    let name: String?
-    let color: String?
+    public let id: String?
+    public let name: String?
+    public let color: String?
 
     enum CodingKeys: String, CodingKey {
         case id, name, color
@@ -61,9 +61,9 @@ public struct TrelloLabel: Codable {
 
 /// A Trello checklist
 public struct TrelloChecklist: Codable {
-    let id: String
-    let name: String?
-    let checkItems: [TrelloCheckItem]
+    public let id: String
+    public let name: String?
+    public let checkItems: [TrelloCheckItem]
 
     enum CodingKeys: String, CodingKey {
         case id, name, checkItems
@@ -72,10 +72,10 @@ public struct TrelloChecklist: Codable {
 
 /// A Trello checklist item
 public struct TrelloCheckItem: Codable {
-    let id: String
-    let name: String
-    let state: String
-    let pos: Double?
+    public let id: String
+    public let name: String
+    public let state: String
+    public let pos: Double?
 
     enum CodingKeys: String, CodingKey {
         case id, name, state, pos
