@@ -355,11 +355,15 @@ final class TrelloImporterTests: XCTestCase {
         XCTAssertEqual(result.skipped, 0)
 
         // Verify repository calls
-        XCTAssertEqual(repository.boards.count, 1)
-        XCTAssertEqual(repository.columns.count, 3)
-        XCTAssertEqual(repository.cards.count, 3)
+        let boards = await repository.boards
+        let columns = await repository.columns
+        let cards = await repository.cards
 
-        XCTAssertEqual(repository.boards[0].title, "Minimal Test Board")
+        XCTAssertEqual(boards.count, 1)
+        XCTAssertEqual(columns.count, 3)
+        XCTAssertEqual(cards.count, 3)
+
+        XCTAssertEqual(boards[0].title, "Minimal Test Board")
     }
 
     func testImportFullBoard() async throws {
@@ -393,7 +397,8 @@ final class TrelloImporterTests: XCTestCase {
         XCTAssertEqual(result.skipped, 1)
 
         // Should still only have 1 board
-        XCTAssertEqual(repository.boards.count, 1)
+        let boards = await repository.boards
+        XCTAssertEqual(boards.count, 1)
     }
 
     func testDeduplicationIsCaseInsensitive() async throws {
@@ -408,7 +413,8 @@ final class TrelloImporterTests: XCTestCase {
         let result = try await importer.importFile(fixtureURL, deduplicate: true)
 
         XCTAssertEqual(result.skipped, 1)
-        XCTAssertEqual(repository.boards.count, 1)
+        let boards = await repository.boards
+        XCTAssertEqual(boards.count, 1)
     }
 
     func testImportWithoutDeduplication() async throws {
@@ -426,7 +432,8 @@ final class TrelloImporterTests: XCTestCase {
         XCTAssertEqual(result.skipped, 0)
 
         // Should now have 2 boards
-        XCTAssertEqual(repository.boards.count, 2)
+        let boards = await repository.boards
+        XCTAssertEqual(boards.count, 2)
     }
 
     // MARK: - Helpers
@@ -457,14 +464,14 @@ private actor MockBoardsRepository: BoardsRepository {
 
     func loadBoard(_ id: BoardID) async throws -> Board {
         guard let board = boards.first(where: { $0.id == id }) else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Board with ID \(id)")
         }
         return board
     }
 
     func updateBoard(_ board: Board) async throws {
         guard let index = boards.firstIndex(where: { $0.id == board.id }) else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Board with ID \(board.id)")
         }
         boards[index] = board
     }
@@ -483,14 +490,14 @@ private actor MockBoardsRepository: BoardsRepository {
 
     func loadColumn(_ id: ColumnID) async throws -> Column {
         guard let column = columns.first(where: { $0.id == id }) else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Column with ID \(id)")
         }
         return column
     }
 
     func updateColumn(_ column: Column) async throws {
         guard let index = columns.firstIndex(where: { $0.id == column.id }) else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Column with ID \(column.id)")
         }
         columns[index] = column
     }
@@ -519,14 +526,14 @@ private actor MockBoardsRepository: BoardsRepository {
 
     func loadCard(_ id: CardID) async throws -> Card {
         guard let card = cards.first(where: { $0.id == id }) else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Card with ID \(id)")
         }
         return card
     }
 
     func updateCard(_ card: Card) async throws {
         guard let index = cards.firstIndex(where: { $0.id == card.id }) else {
-            throw PersistenceError.notFound
+            throw PersistenceError.notFound("Card with ID \(card.id)")
         }
         cards[index] = card
     }

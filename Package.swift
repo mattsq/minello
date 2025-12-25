@@ -108,7 +108,7 @@ let package = Package(
         ),
         .testTarget(
             name: "SyncCloudKitTests",
-            dependencies: ["SyncCloudKit"],
+            dependencies: ["SyncCloudKit", "SyncNoop"],
             path: "Tests/SyncCloudKitTests"
         ),
 
