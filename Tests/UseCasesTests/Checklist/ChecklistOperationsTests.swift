@@ -144,6 +144,8 @@ final class ChecklistOperationsTests: XCTestCase {
             XCTFail("Expected error")
         } catch let error as ChecklistError {
             XCTAssertEqual(error, .itemNotFound(nonexistentID))
+        } catch {
+            XCTFail("Unexpected error: \(error)")
         }
     }
 
@@ -158,6 +160,8 @@ final class ChecklistOperationsTests: XCTestCase {
             XCTFail("Expected error")
         } catch let error as ChecklistError {
             XCTAssertEqual(error, .invalidIndex(10))
+        } catch {
+            XCTFail("Unexpected error: \(error)")
         }
     }
 

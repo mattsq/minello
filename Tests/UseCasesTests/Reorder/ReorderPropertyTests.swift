@@ -313,7 +313,7 @@ final class ReorderPropertyTests: XCTestCase {
                 }
 
                 group.addTask {
-                    _ = await self.service.needsNormalization([Double(i), Double(i + 0.00001)])
+                    _ = await self.service.needsNormalization([Double(i), Double(i) + 0.00001])
                 }
             }
 
