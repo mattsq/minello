@@ -2,12 +2,12 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("HomeCooked")
-            .font(.largeTitle)
-            .padding()
+        BoardsListView()
     }
 }
 
 #Preview {
-    ContentView()
+    let container = try! AppDependencyContainer.preview()
+    return ContentView()
+        .withDependencies(container)
 }
