@@ -116,7 +116,7 @@ struct HCMigrate {
             try migrator.completedMigrations(db)
         }
 
-        let pending = Set(migrator.migrations.map { $0.identifier })
+        let pending = Set(migrator.migrations)
             .subtracting(completedMigrations)
 
         if !pending.isEmpty {
@@ -129,7 +129,7 @@ struct HCMigrate {
 
     static func runMigrations(dbPath: String) throws {
         let dbQueue = try DatabaseQueue(path: dbPath)
-        var migrator = HomeCookedMigrator.makeMigrator()
+        let migrator = HomeCookedMigrator.makeMigrator()
 
         print("Running migrations on: \(dbPath)")
 
@@ -164,7 +164,6 @@ struct HCMigrate {
         }
 
         let pending = migrator.migrations
-            .map { $0.identifier }
             .filter { !completed.contains($0) }
 
         print("Dry run for: \(dbPath)")
