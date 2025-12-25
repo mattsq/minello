@@ -4,6 +4,7 @@
 import Domain
 import Foundation
 import GRDB
+import PersistenceInterfaces
 
 // MARK: - Date Formatting
 
@@ -90,7 +91,7 @@ struct ColumnRecord: Codable, FetchableRecord, PersistableRecord {
     var updated_at: String // ISO8601
 
     /// Converts domain Column to ColumnRecord
-    init(from column: Column) throws {
+    init(from column: Domain.Column) throws {
         self.id = column.id.rawValue.uuidString
         self.board_id = column.board.rawValue.uuidString
         self.title = column.title
@@ -105,7 +106,7 @@ struct ColumnRecord: Codable, FetchableRecord, PersistableRecord {
     }
 
     /// Converts ColumnRecord to domain Column
-    func toDomain() throws -> Column {
+    func toDomain() throws -> Domain.Column {
         guard let id = UUID(uuidString: self.id) else {
             throw PersistenceError.invalidData("Invalid column ID: \(self.id)")
         }
@@ -133,7 +134,7 @@ struct ColumnRecord: Codable, FetchableRecord, PersistableRecord {
             throw PersistenceError.invalidData("Invalid updated_at date: \(self.updated_at)")
         }
 
-        return Column(
+        return Domain.Column(
             id: ColumnID(rawValue: id),
             board: BoardID(rawValue: boardID),
             title: self.title,

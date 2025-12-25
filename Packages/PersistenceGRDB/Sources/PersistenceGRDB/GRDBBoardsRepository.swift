@@ -47,7 +47,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
     public func loadBoards() async throws -> [Board] {
         try await dbQueue.read { db in
             let records = try BoardRecord
-                .order(Column("created_at").asc)
+                .order(GRDB.Column("created_at").asc)
                 .fetchAll(db)
             return try records.map { try $0.toDomain() }
         }
@@ -85,25 +85,25 @@ public final class GRDBBoardsRepository: BoardsRepository {
 
     // MARK: - Column Operations
 
-    public func createColumn(_ column: Column) async throws {
+    public func createColumn(_ column: Domain.Column) async throws {
         try await dbQueue.write { db in
             let record = try ColumnRecord(from: column)
             try record.insert(db)
         }
     }
 
-    public func loadColumns(for boardID: BoardID) async throws -> [Column] {
+    public func loadColumns(for boardID: BoardID) async throws -> [Domain.Column] {
         try await dbQueue.read { db in
             let boardIDString = boardID.rawValue.uuidString
             let records = try ColumnRecord
-                .filter(Column("board_id") == boardIDString)
-                .order(Column("index").asc)
+                .filter(GRDB.Column("board_id") == boardIDString)
+                .order(GRDB.Column("index").asc)
                 .fetchAll(db)
             return try records.map { try $0.toDomain() }
         }
     }
 
-    public func loadColumn(_ id: ColumnID) async throws -> Column {
+    public func loadColumn(_ id: ColumnID) async throws -> Domain.Column {
         try await dbQueue.read { db in
             let idString = id.rawValue.uuidString
             guard let record = try ColumnRecord.fetchOne(db, key: idString) else {
@@ -113,7 +113,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
         }
     }
 
-    public func updateColumn(_ column: Column) async throws {
+    public func updateColumn(_ column: Domain.Column) async throws {
         try await dbQueue.write { db in
             let record = try ColumnRecord(from: column)
             let updated = try record.updateAndFetch(db)
@@ -123,7 +123,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
         }
     }
 
-    public func saveColumns(_ columns: [Column]) async throws {
+    public func saveColumns(_ columns: [Domain.Column]) async throws {
         try await dbQueue.write { db in
             for column in columns {
                 let record = try ColumnRecord(from: column)
@@ -155,8 +155,8 @@ public final class GRDBBoardsRepository: BoardsRepository {
         try await dbQueue.read { db in
             let columnIDString = columnID.rawValue.uuidString
             let records = try CardRecord
-                .filter(Column("column_id") == columnIDString)
-                .order(Column("sort_key").asc)
+                .filter(GRDB.Column("column_id") == columnIDString)
+                .order(GRDB.Column("sort_key").asc)
                 .fetchAll(db)
             return try records.map { try $0.toDomain() }
         }
@@ -222,8 +222,8 @@ public final class GRDBBoardsRepository: BoardsRepository {
             // Since tags are stored as JSON, we need to search using LIKE
             let pattern = "%\"\(tag)\"%"
             let records = try CardRecord
-                .filter(Column("tags").like(pattern))
-                .order(Column("sort_key").asc)
+                .filter(GRDB.Column("tags").like(pattern))
+                .order(GRDB.Column("sort_key").asc)
                 .fetchAll(db)
             return try records.map { try $0.toDomain() }
         }
@@ -235,8 +235,8 @@ public final class GRDBBoardsRepository: BoardsRepository {
             let toString = ISO8601DateFormatter.iso8601.string(from: to)
 
             let records = try CardRecord
-                .filter(Column("due") >= fromString && Column("due") <= toString)
-                .order(Column("due").asc)
+                .filter(GRDB.Column("due") >= fromString && GRDB.Column("due") <= toString)
+                .order(GRDB.Column("due").asc)
                 .fetchAll(db)
             return try records.map { try $0.toDomain() }
         }
