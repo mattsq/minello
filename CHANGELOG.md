@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Domain package with core value types and models:
+  - Type-safe ID wrappers: BoardID, ColumnID, CardID, ListID, RecipeID
+  - Domain models: Board, Column, Card, ChecklistItem, PersonalList, Recipe
+  - All models are Codable, Equatable, Hashable, and Sendable
+  - Pure Swift with minimal Foundation dependencies (Date, UUID only)
+- Domain helper utilities:
+  - TagHelpers: sanitize tags (lowercase, alphanumeric + hyphens/underscores)
+  - ChecklistHelpers: toggle, mark all done/undone, count completed, filter, reorder
+  - IDFactory: factory methods for creating typed IDs
+- Comprehensive unit tests for Domain package:
+  - ModelsTests: tests for all domain models, Codable compliance, equality
+  - HelpersTests: tests for tag sanitization, checklist operations, ID factories
 - Project preflight script (`scripts/preflight.sh`) with auto-fix capability
   - Verifies Swift toolchain (version 5.10)
   - Verifies Xcode version on macOS (version 16.0)
