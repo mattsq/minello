@@ -95,7 +95,7 @@ func main() async -> Int32 {
     do {
         // Initialize GRDB repository
         print("Opening database: \(args.databasePath)")
-        let repository = try GRDBBoardsRepository(path: args.databasePath)
+        let repository = try GRDBBoardsRepository.onDisk(at: args.databasePath)
 
         // Create importer
         let importer = TrelloImporter(repository: repository)
