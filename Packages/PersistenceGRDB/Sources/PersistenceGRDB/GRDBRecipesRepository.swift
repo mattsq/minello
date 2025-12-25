@@ -23,9 +23,9 @@ public actor GRDBRecipesRepository: RecipesRepository {
         return []
     }
 
-    public func loadRecipe(_ id: RecipeID) async throws -> Recipe? {
-        // TODO: Implement
-        return nil
+    public func loadRecipe(_ id: RecipeID) async throws -> Recipe {
+        // TODO: Implement - throw notFound when recipe doesn't exist
+        throw PersistenceError.notFound("Recipe with ID \(id.rawValue.uuidString) not found")
     }
 
     public func updateRecipe(_ recipe: Recipe) async throws {
@@ -34,5 +34,15 @@ public actor GRDBRecipesRepository: RecipesRepository {
 
     public func deleteRecipe(_ id: RecipeID) async throws {
         // TODO: Implement
+    }
+
+    public func searchRecipes(query: String) async throws -> [Recipe] {
+        // TODO: Implement
+        return []
+    }
+
+    public func findRecipesByTag(_ tag: String) async throws -> [Recipe] {
+        // TODO: Implement
+        return []
     }
 }
