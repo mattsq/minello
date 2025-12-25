@@ -13,4 +13,7 @@ protocol RepositoryProvider {
 
     /// The lists repository instance
     var listsRepository: ListsRepository { get }
+
+    /// The recipes repository instance
+    var recipesRepository: RecipesRepository { get }
 }

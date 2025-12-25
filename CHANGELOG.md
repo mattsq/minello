@@ -353,6 +353,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - CRUD operations for recipes
   - Query operations: search recipes, find by tag
   - Consistent error handling with existing PersistenceError types
+- CloudKit sharing per Board (Apple-only, Ticket #10):
+  - Board-scoped sharing functionality using CloudKit CKShare API
+  - Share creation with private permissions (no public sharing)
+  - Share management: create, retrieve, and revoke shares
+  - Participant count tracking for shared boards
+  - ShareViewModel for managing sharing state and operations
+  - ShareButton UI component with "Shared" pill badge
+  - Visual pill badge showing share status and participant count
+  - Menu interface for managing and stopping sharing
+  - UICloudSharingController integration for native sharing UI
+  - CloudSharingView wrapper for SwiftUI integration
+  - Integration tests for sharing functionality (BoardSharingTests)
+  - Snapshot tests for "Shared" pill badge in multiple states
+  - Error handling and confirmation dialogs for share operations
+  - Accessibility labels for sharing controls and status
+  - GRDBRecipesRepository stub implementation for dependency injection
 
 ### Changed
 

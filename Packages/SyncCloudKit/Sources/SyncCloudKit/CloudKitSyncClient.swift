@@ -354,5 +354,73 @@ public actor CloudKitSyncClient: SyncClient {
         let recordID = CKRecord.ID(recordName: recipeID.rawValue.uuidString, zoneID: customZoneID)
         _ = try await privateDatabase.deleteRecord(withID: recordID)
     }
+
+    // MARK: - Sharing Operations
+
+    /// Share a board with other users
+    /// - Parameter boardID: The ID of the board to share
+    /// - Returns: The CKShare object for presenting to users
+    public func shareBoard(_ boardID: BoardID) async throws -> CKShare {
+        // Get the board record
+        let recordID = CKRecord.ID(recordName: boardID.rawValue.uuidString, zoneID: customZoneID)
+        let boardRecord = try await privateDatabase.record(for: recordID)
+
+        // Create a share for this board
+        let share = CKShare(rootRecord: boardRecord)
+        share[CKShare.SystemFieldKey.title] = "Shared Board" as CKRecordValue
+        share.publicPermission = .none // Private sharing only
+
+        // Save both the share and the board record
+        _ = try await privateDatabase.modifyRecords(saving: [boardRecord, share], deleting: [])
+
+        return share
+    }
+
+    /// Get the share for a board if it exists
+    /// - Parameter boardID: The ID of the board
+    /// - Returns: The CKShare if the board is shared, nil otherwise
+    public func getShareForBoard(_ boardID: BoardID) async throws -> CKShare? {
+        let recordID = CKRecord.ID(recordName: boardID.rawValue.uuidString, zoneID: customZoneID)
+
+        do {
+            let boardRecord = try await privateDatabase.record(for: recordID)
+
+            // Check if the record has a share reference
+            guard let shareReference = boardRecord.share else {
+                return nil
+            }
+
+            // Fetch the share
+            let share = try await privateDatabase.record(for: shareReference.recordID) as? CKShare
+            return share
+        } catch {
+            // If the record doesn't exist or has no share, return nil
+            return nil
+        }
+    }
+
+    /// Stop sharing a board
+    /// - Parameter boardID: The ID of the board to stop sharing
+    public func stopSharingBoard(_ boardID: BoardID) async throws {
+        guard let share = try await getShareForBoard(boardID) else {
+            return // Board is not shared
+        }
+
+        // Delete the share
+        _ = try await privateDatabase.deleteRecord(withID: share.recordID)
+    }
+
+    /// Get the number of participants for a shared board
+    /// - Parameter boardID: The ID of the board
+    /// - Returns: The number of participants (including owner), or 0 if not shared
+    public func getParticipantCount(for boardID: BoardID) async throws -> Int {
+        guard let share = try await getShareForBoard(boardID) else {
+            return 0
+        }
+
+        // Fetch the full share with participants
+        let fetchedShare = try await privateDatabase.record(for: share.recordID) as? CKShare
+        return fetchedShare?.participants.count ?? 0
+    }
 }
 #endif

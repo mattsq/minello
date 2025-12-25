@@ -50,6 +50,16 @@ struct BoardDetailView: View {
         .navigationTitle(board.title)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
+            #if canImport(CloudKit)
+            ToolbarItem(placement: .topBarLeading) {
+                let viewModel = ShareViewModel(
+                    syncClient: dependencies.syncClient,
+                    boardID: board.id
+                )
+                ShareButton(viewModel: viewModel)
+            }
+            #endif
+
             ToolbarItem(placement: .primaryAction) {
                 Button {
                     showingAddColumn = true
