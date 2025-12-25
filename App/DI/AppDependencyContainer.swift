@@ -15,6 +15,9 @@ import SyncNoop
 /// Use as an environment object to access repositories throughout the view hierarchy
 @MainActor
 final class AppDependencyContainer: ObservableObject {
+    /// Shared instance for App Intents and other non-view contexts
+    static var shared: AppDependencyContainer!
+
     let repositoryProvider: RepositoryProvider
 
     #if canImport(CloudKit)

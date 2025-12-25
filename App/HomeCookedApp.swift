@@ -10,6 +10,10 @@ struct HomeCookedApp: App {
         do {
             let container = try AppDependencyContainer.default()
             _dependencies = StateObject(wrappedValue: container)
+            // Set shared instance for App Intents
+            Task { @MainActor in
+                AppDependencyContainer.shared = container
+            }
         } catch {
             // If initialization fails, use an in-memory database for development
             print("Warning: Failed to initialize default database: \(error)")
@@ -17,6 +21,10 @@ struct HomeCookedApp: App {
             do {
                 let container = try AppDependencyContainer.preview()
                 _dependencies = StateObject(wrappedValue: container)
+                // Set shared instance for App Intents
+                Task { @MainActor in
+                    AppDependencyContainer.shared = container
+                }
             } catch {
                 fatalError("Failed to initialize app dependencies: \(error)")
             }
