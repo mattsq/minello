@@ -79,7 +79,7 @@ struct CLI {
         do {
             print("Exporting from \(dbPath)...")
 
-            let repository = try GRDBBoardsRepository(path: dbPath)
+            let repository = try GRDBBoardsRepository.onDisk(at: dbPath)
             let exporter = BackupExporter(boardsRepository: repository)
 
             let outputURL = URL(fileURLWithPath: outputPath)
@@ -151,7 +151,7 @@ struct CLI {
         do {
             print("Restoring to \(dbPath) (mode: \(mode))...")
 
-            let repository = try GRDBBoardsRepository(path: dbPath)
+            let repository = try GRDBBoardsRepository.onDisk(at: dbPath)
             let restorer = BackupRestorer(boardsRepository: repository)
 
             let inputURL = URL(fileURLWithPath: inputPath)
