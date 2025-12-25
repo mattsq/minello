@@ -300,6 +300,33 @@ Ensure you're using Swift 5.10:
 swift --version
 ```
 
+**SQLite Snapshot Support**:
+GRDB requires SQLite to be compiled with `SQLITE_ENABLE_SNAPSHOT` support for optimal performance with `ValueObservation`. If you encounter linker errors like:
+```
+undefined reference to 'sqlite3_snapshot_open'
+```
+
+This means your system SQLite lacks snapshot support. The CI automatically builds SQLite with this flag. For local development on Linux:
+
+1. Build SQLite from source with the flag:
+```bash
+cd /tmp
+wget https://www.sqlite.org/2024/sqlite-autoconf-3470200.tar.gz
+tar xzf sqlite-autoconf-3470200.tar.gz
+cd sqlite-autoconf-3470200
+CFLAGS="-DSQLITE_ENABLE_SNAPSHOT=1 -O2" ./configure --prefix=/usr/local
+make -j$(nproc)
+sudo make install
+sudo ldconfig
+```
+
+2. Verify snapshot support:
+```bash
+sqlite3 :memory: "PRAGMA compile_options;" | grep SNAPSHOT
+```
+
+See [GRDB Custom SQLite Builds](https://github.com/groue/GRDB.swift/blob/master/Documentation/CustomSQLiteBuilds.md) for more details.
+
 ### Xcode Issues
 
 1. Clean derived data: `rm -rf ~/Library/Developer/Xcode/DerivedData`

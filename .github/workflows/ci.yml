@@ -23,7 +23,36 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install build tools
-        run: apt-get update && apt-get install -y make libsqlite3-dev pkg-config
+        run: apt-get update && apt-get install -y make pkg-config wget unzip
+
+      - name: Build SQLite with SQLITE_ENABLE_SNAPSHOT
+        run: |
+          cd /tmp
+          wget -q https://www.sqlite.org/2024/sqlite-autoconf-3470200.tar.gz
+          tar xzf sqlite-autoconf-3470200.tar.gz
+          cd sqlite-autoconf-3470200
+          CFLAGS="-DSQLITE_ENABLE_SNAPSHOT=1 -O2" ./configure --prefix=/usr/local
+          make -j$(nproc)
+          make install
+          ldconfig
+          # Verify installation
+          echo "=== SQLite Installation Verification ==="
+          ls -l /usr/local/lib/libsqlite3.so*
+          sqlite3 --version
+          echo "Checking for snapshot support..."
+          sqlite3 :memory: "PRAGMA compile_options;" | grep -i snapshot || echo "Warning: SNAPSHOT not found in compile options"
+          # Verify pkg-config can find our custom SQLite
+          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
+          echo "PKG_CONFIG_PATH=${PKG_CONFIG_PATH}"
+          echo "pkg-config --modversion sqlite3:"
+          pkg-config --modversion sqlite3 || echo "ERROR: pkg-config cannot find sqlite3"
+          echo "pkg-config --cflags sqlite3:"
+          pkg-config --cflags sqlite3 || true
+          echo "pkg-config --libs sqlite3:"
+          pkg-config --libs sqlite3 || true
+          # Verify the library has the required symbols
+          echo "=== Symbol Verification ==="
+          nm -D /usr/local/lib/libsqlite3.so | grep -E 'sqlite3_sql|sqlite3_snapshot_open' || echo "Warning: symbols not found"
 
       - name: Display Swift version
         run: swift --version
@@ -33,10 +62,20 @@ jobs:
           chmod +x scripts/preflight.sh
           make preflight
         continue-on-error: false
+        env:
+          PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+          LIBRARY_PATH: /usr/local/lib
+          LD_LIBRARY_PATH: /usr/local/lib
+          CPATH: /usr/local/include
 
       - name: Build Swift packages
-        run: swift build
+        run: swift build -v
         continue-on-error: false
+        env:
+          PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+          LIBRARY_PATH: /usr/local/lib
+          LD_LIBRARY_PATH: /usr/local/lib
+          CPATH: /usr/local/include
 
       - name: Run tests (parallel)
         id: test
@@ -44,6 +83,11 @@ jobs:
           swift test --parallel 2>&1 | tee /tmp/test-output.log
           exit ${PIPESTATUS[0]}
         continue-on-error: false
+        env:
+          PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+          LIBRARY_PATH: /usr/local/lib
+          LD_LIBRARY_PATH: /usr/local/lib
+          CPATH: /usr/local/include
 
       - name: Upload test logs
         if: always()
