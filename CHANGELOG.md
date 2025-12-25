@@ -131,6 +131,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Import tests with mock repository
   - Deduplication tests (case-insensitive, enabled/disabled)
   - Edge case tests for various Trello export variations
+- ImportExport package with backup/restore functionality:
+  - BackupModels: Versioned JSON schema for backup exports (v1)
+  - BackupExport structure with boards, columns, cards, lists, and recipes
+  - BoardExport and ColumnExport for hierarchical data organization
+  - BackupExporter actor for exporting data to versioned JSON backups
+  - Export to Data or File with pretty-printing and compact options
+  - ISO8601 date encoding for consistent date serialization
+  - BackupRestorer actor for restoring data from JSON backups
+  - Two restore modes: merge (skip existing items) and overwrite (update existing items)
+  - Schema version validation (supports version 1)
+  - BackupError enum for typed error handling
+  - Export and restore result structures with summary statistics
+- hc-backup CLI tool for backup and restore operations:
+  - Export command: `hc-backup export --db <path> --output <path>`
+  - Restore command: `hc-backup restore --db <path> --input <path>`
+  - Support for merge and overwrite restore modes
+  - Optional --compact flag for minimized JSON output
+  - Progress logging and summary statistics
+  - User-friendly error messages and usage help
+  - Exit codes: 0 for success, 1 for errors
+- Comprehensive round-trip tests for backup/restore:
+  - InMemoryBoardsRepository for testing without database dependency
+  - Tests for empty database export
+  - Single board round-trip test with full verification
+  - Multiple boards and cards round-trip test
+  - Merge mode tests (skips existing boards by ID)
+  - Overwrite mode tests (updates existing boards by ID)
+  - JSON encoding/decoding tests with ISO8601 dates
+  - Checklist items round-trip tests (text, isDone, quantity, unit, note)
+  - Due dates round-trip tests with date precision validation
+  - Schema version validation tests (rejects unsupported versions)
+  - Comprehensive verification of restored data integrity
 
 ### Changed
 
