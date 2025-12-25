@@ -77,8 +77,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Query tests (search, tag filtering, due date ranges)
   - Tests run against GRDB implementation (can be extended to SwiftData)
 - Placeholder packages for future tickets:
-  - UseCases, ImportExport, SyncInterfaces, SyncNoop
+  - ImportExport, SyncInterfaces, SyncNoop
   - hc-import and hc-backup CLI stubs
+- UseCases package with card reordering service:
+  - CardReorderService actor for thread-safe reordering operations
+  - Midpoint calculation algorithm for fractional sort keys
+  - Normalization function to prevent precision loss from repeated reorders
+  - Idle normalization scheduling with configurable debounce delay
+  - Normalization detection to identify when keys are too close
+  - Convenience methods for common reorder operations
+  - Full Sendable conformance for Swift concurrency safety
+- Comprehensive test suite for CardReorderService:
+  - Unit tests for midpoint calculation (basic, edge cases, extreme values)
+  - Unit tests for normalization (simple, fractional, unsorted, negative, large values)
+  - Unit tests for normalization detection and configuration
+  - Unit tests for idle normalization scheduling and cancellation
+  - Thread safety tests for concurrent access
+- Property-based tests for reorder edge cases:
+  - Duplicate key handling and elimination
+  - Large delta preservation and normalization
+  - Repeated operations and precision stability
+  - Extreme value handling (tiny gaps, large numbers, negative values)
+  - Boundary conditions (empty, single element, well-spaced keys)
+  - Idempotency verification for normalization
+  - Stress tests with thousands of consecutive reorders
+  - Concurrent access safety verification
 
 ### Changed
 
