@@ -163,6 +163,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Due dates round-trip tests with date precision validation
   - Schema version validation tests (rejects unsupported versions)
   - Comprehensive verification of restored data integrity
+- PersistenceInterfaces package extended with ListsRepository:
+  - ListsRepository protocol for managing PersonalList entities
+  - CRUD operations for personal lists (grocery, packing, etc.)
+  - Query operations: search lists by title, find lists with incomplete items
+  - Consistent error handling with existing PersistenceError types
+- PersistenceGRDB package extended with Lists support:
+  - Database schema v2 with personal_lists table
+  - PersonalListRecord mapping domain PersonalList to database rows
+  - Full-text search support for list titles
+  - GRDBListsRepository implementing ListsRepository protocol
+  - Migration v2_personal_lists with indices and FTS triggers
+  - JSON storage for checklist items with quantities, units, and notes
+- UseCases package with checklist operations service:
+  - ChecklistOperations actor for thread-safe checklist item operations
+  - Toggle operations: toggle single item, toggle all items with bulk action policy
+  - Clear completed items operation with confirmation policy
+  - Reorder operations: reorder item, move to top/bottom
+  - Quantity and unit operations: update, increment, decrement with min value 0
+  - Note operations: add, update, remove notes on items
+  - Statistics calculation: completion percentages and counts
+  - BulkActionPolicy with threshold of 10 items for confirmation requirement
+  - BulkActionResult enum for handling confirmation flow
+  - ChecklistError for typed error handling (itemNotFound, invalidIndex)
+  - Full Sendable conformance for Swift concurrency safety
+- Contract tests for ListsRepository:
+  - Comprehensive test suite covering all CRUD operations
+  - Tests for lists with empty, simple, and complex items (quantities, units, notes)
+  - Query tests (search by title, find lists with incomplete items)
+  - Tests for creation date ordering
+  - Tests for update operations preserving IDs
+  - Error handling tests (not found, invalid operations)
+  - Tests run against GRDB implementation (extensible to SwiftData)
+- Comprehensive test suite for ChecklistOperations:
+  - Unit tests for toggle operations (single item, all items)
+  - Bulk action policy tests (threshold at 10 items)
+  - Bulk action confirmation flow tests (skip confirmation mode)
+  - Clear completed items tests with policy enforcement
+  - Reorder operation tests (arbitrary index, top, bottom)
+  - Error handling tests (item not found, invalid index)
+  - Quantity and unit operation tests (update, increment, decrement)
+  - Note operation tests (add, update, remove)
+  - Statistics calculation tests (empty, all complete, partial, none complete)
+  - Edge case tests (boundary values, negative values, nil handling)
 
 ### Changed
 

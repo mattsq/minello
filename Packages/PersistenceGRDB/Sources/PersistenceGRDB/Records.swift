@@ -231,3 +231,57 @@ struct CardRecord: Codable, FetchableRecord, PersistableRecord {
         )
     }
 }
+
+// MARK: - PersonalListRecord
+
+/// GRDB record for PersonalList
+struct PersonalListRecord: Codable, FetchableRecord, PersistableRecord {
+    static let databaseTableName = "personal_lists"
+
+    var id: String
+    var title: String
+    var items: String // JSON array of ChecklistItem
+    var created_at: String // ISO8601
+    var updated_at: String // ISO8601
+
+    /// Converts domain PersonalList to PersonalListRecord
+    init(from list: PersonalList) throws {
+        self.id = list.id.rawValue.uuidString
+        self.title = list.title
+
+        let jsonEncoder = JSONEncoder()
+        let itemsData = try jsonEncoder.encode(list.items)
+        self.items = String(data: itemsData, encoding: .utf8)!
+
+        self.created_at = ISO8601DateFormatter.iso8601.string(from: list.createdAt)
+        self.updated_at = ISO8601DateFormatter.iso8601.string(from: list.updatedAt)
+    }
+
+    /// Converts PersonalListRecord to domain PersonalList
+    func toDomain() throws -> PersonalList {
+        guard let id = UUID(uuidString: self.id) else {
+            throw PersistenceError.invalidData("Invalid list ID: \(self.id)")
+        }
+
+        guard let itemsData = self.items.data(using: .utf8) else {
+            throw PersistenceError.invalidData("Invalid items JSON")
+        }
+        let items = try JSONDecoder().decode([ChecklistItem].self, from: itemsData)
+
+        guard let createdAt = ISO8601DateFormatter.iso8601.date(from: self.created_at) else {
+            throw PersistenceError.invalidData("Invalid created_at date: \(self.created_at)")
+        }
+
+        guard let updatedAt = ISO8601DateFormatter.iso8601.date(from: self.updated_at) else {
+            throw PersistenceError.invalidData("Invalid updated_at date: \(self.updated_at)")
+        }
+
+        return PersonalList(
+            id: ListID(rawValue: id),
+            title: self.title,
+            items: items,
+            createdAt: createdAt,
+            updatedAt: updatedAt
+        )
+    }
+}

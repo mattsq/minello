@@ -92,6 +92,47 @@ public struct HomeCookedMigrator {
                 """)
         }
 
+        // Migration v2: Add personal_lists table
+        migrator.registerMigration("v2_personal_lists") { db in
+            // Create personal_lists table
+            try db.create(table: "personal_lists") { t in
+                t.column("id", .text).primaryKey()
+                t.column("title", .text).notNull()
+                t.column("items", .text).notNull() // JSON array of ChecklistItem
+                t.column("created_at", .text).notNull() // ISO8601
+                t.column("updated_at", .text).notNull() // ISO8601
+            }
+
+            // Create index on personal_lists.created_at for sorting
+            try db.create(index: "idx_lists_created_at", on: "personal_lists", columns: ["created_at"])
+
+            // Create full-text search table for personal_lists
+            try db.create(virtualTable: "personal_lists_fts", using: FTS5()) { t in
+                t.column("title")
+            }
+
+            // Trigger to keep FTS index in sync with personal_lists table
+            try db.execute(sql: """
+                CREATE TRIGGER personal_lists_fts_insert AFTER INSERT ON personal_lists BEGIN
+                    INSERT INTO personal_lists_fts(rowid, title)
+                    VALUES (new.rowid, new.title);
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER personal_lists_fts_update AFTER UPDATE ON personal_lists BEGIN
+                    UPDATE personal_lists_fts SET title = new.title
+                    WHERE rowid = new.rowid;
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER personal_lists_fts_delete AFTER DELETE ON personal_lists BEGIN
+                    DELETE FROM personal_lists_fts WHERE rowid = old.rowid;
+                END;
+                """)
+        }
+
         return migrator
     }
 }
