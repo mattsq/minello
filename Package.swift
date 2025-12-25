@@ -16,6 +16,7 @@ let package = Package(
         .library(name: "ImportExport", targets: ["ImportExport"]),
         .library(name: "SyncInterfaces", targets: ["SyncInterfaces"]),
         .library(name: "SyncNoop", targets: ["SyncNoop"]),
+        .library(name: "SyncCloudKit", targets: ["SyncCloudKit"]),
 
         // CLIs
         .executable(name: "hc-import", targets: ["hc-import"]),
@@ -97,6 +98,18 @@ let package = Package(
             name: "SyncNoop",
             dependencies: ["SyncInterfaces"],
             path: "Packages/SyncNoop"
+        ),
+
+        // SyncCloudKit - CloudKit sync implementation (Apple only)
+        .target(
+            name: "SyncCloudKit",
+            dependencies: ["Domain", "SyncInterfaces", "PersistenceInterfaces"],
+            path: "Packages/SyncCloudKit"
+        ),
+        .testTarget(
+            name: "SyncCloudKitTests",
+            dependencies: ["SyncCloudKit"],
+            path: "Tests/SyncCloudKitTests"
         ),
 
         // CLIs
