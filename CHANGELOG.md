@@ -369,6 +369,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Error handling and confirmation dialogs for share operations
   - Accessibility labels for sharing controls and status
   - GRDBRecipesRepository stub implementation for dependency injection
+- App Intents for Shortcuts integration (Ticket #11):
+  - UseCases package extended with fuzzy name lookup service
+    - FuzzyMatcher: Levenshtein distance-based fuzzy string matching
+    - Similarity scoring with exact, prefix, contains, and word-based matching
+    - EntityLookup service for finding boards, columns, and lists by name
+    - Configurable similarity threshold (default: 0.5)
+    - Result sorting by similarity score (best match first)
+    - Linux-compatible implementation with pure Swift
+  - AddListItemIntent: "Add [item] to [list name]" intent
+    - Fuzzy list name lookup with configurable threshold
+    - Support for item text, quantity, and unit parameters
+    - Success dialog with formatted quantity and unit display
+    - IntentError enum for user-friendly error messages
+  - AddCardIntent: "Add [card title] to [board] → [column]" intent
+    - Fuzzy board and column name lookup
+    - Support for card title, details, and due date parameters
+    - Automatic sort key assignment (increments max existing sort key)
+    - Success dialog with board, column, and due date confirmation
+  - IntentsProvider: App Shortcuts provider exposing intents to iOS Shortcuts
+    - Phrase suggestions for natural language invocation
+    - System image icons for Shortcuts UI
+    - Application name token support in phrases
+  - AppDependencyContainer extended with shared instance for intent access
+    - Thread-safe @MainActor access to repositories from intents
+    - Initialized on app launch for intent availability
+  - Comprehensive test suite for fuzzy matching and entity lookup:
+    - FuzzyMatcherTests: 15+ tests for similarity scoring edge cases
+    - Tests for exact, prefix, contains, word-based, and Levenshtein matches
+    - Tests for empty queries, case-insensitive matching, and thresholds
+    - EntityLookupTests: 25+ tests for board, column, and list lookup
+    - Tests for exact and fuzzy matches, case sensitivity, and sorting
+    - Tests for board-scoped column lookup and missing entity handling
+  - Integration tests for intent functionality (macOS only):
+    - AddListItemIntentTests: Fuzzy lookup and item addition verification
+    - Tests for exact/fuzzy/case-insensitive list matching
+    - Tests for adding items with/without quantity and unit
+    - AddCardIntentTests: Fuzzy lookup and card creation verification
+    - Tests for exact/fuzzy board and column matching
+    - Tests for board-scoped column lookup
+    - Tests for card creation with details and due dates
+    - Tests for automatic sort key increment behavior
 
 ### Changed
 
