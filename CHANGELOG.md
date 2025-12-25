@@ -102,6 +102,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Idempotency verification for normalization
   - Stress tests with thousands of consecutive reorders
   - Concurrent access safety verification
+- ImportExport package with Trello importer:
+  - TrelloModels: Codable structures for decoding Trello JSON exports
+  - TrelloMapper: Maps Trello structures to Domain models (Board, Column, Card)
+  - TrelloImporter actor for idempotent imports with deduplication
+  - Filters out closed lists and cards during import
+  - Sorts columns and cards by Trello position values
+  - Maps Trello labels to sanitized tags using TagHelpers
+  - Maps Trello checklists and check items to ChecklistItem domain models
+  - ISO8601 date parsing for Trello due dates
+  - Deduplication based on board title (case-insensitive)
+  - Import summary with counts of boards, columns, cards imported
+- hc-import CLI tool for importing Trello boards:
+  - Command-line interface for Trello JSON import
+  - Accepts file path and optional --db flag for database location
+  - Optional --no-dedupe flag to disable duplicate detection
+  - Prints import progress and summary statistics
+  - Proper error handling with user-friendly messages
+  - Exit codes: 0 for success, 1 for errors
+- Test fixtures for Trello importer:
+  - trello_minimal.json: Simple board with 3 lists and 3 cards
+  - trello_full.json: Comprehensive board with labels, checklists, closed items, due dates
+- Comprehensive test suite for TrelloImporter:
+  - Decoding tests for Trello JSON formats
+  - Mapping tests for basic boards, labels, checklists
+  - Filtering tests for closed lists and cards
+  - Sorting tests for position-based ordering
+  - Import tests with mock repository
+  - Deduplication tests (case-insensitive, enabled/disabled)
+  - Edge case tests for various Trello export variations
 
 ### Changed
 
