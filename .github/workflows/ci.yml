@@ -39,6 +39,13 @@ jobs:
           sqlite3 --version
           echo "Checking for snapshot support..."
           sqlite3 :memory: "PRAGMA compile_options;" | grep -i snapshot || echo "Warning: SNAPSHOT not found in compile options"
+          # Verify pkg-config can find our custom SQLite
+          export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:${PKG_CONFIG_PATH}
+          echo "PKG_CONFIG_PATH=${PKG_CONFIG_PATH}"
+          pkg-config --modversion sqlite3 || echo "pkg-config cannot find sqlite3"
+          pkg-config --cflags --libs sqlite3 || true
+          # Verify the library has the required symbols
+          nm -D /usr/local/lib/libsqlite3.so | grep -E 'sqlite3_sql|sqlite3_snapshot_open' || echo "Warning: symbols not found"
 
       - name: Display Swift version
         run: swift --version
@@ -48,10 +55,16 @@ jobs:
           chmod +x scripts/preflight.sh
           make preflight
         continue-on-error: false
+        env:
+          PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+          LD_LIBRARY_PATH: /usr/local/lib
 
       - name: Build Swift packages
         run: swift build
         continue-on-error: false
+        env:
+          PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+          LD_LIBRARY_PATH: /usr/local/lib
 
       - name: Run tests (parallel)
         id: test
@@ -59,6 +72,9 @@ jobs:
           swift test --parallel 2>&1 | tee /tmp/test-output.log
           exit ${PIPESTATUS[0]}
         continue-on-error: false
+        env:
+          PKG_CONFIG_PATH: /usr/local/lib/pkgconfig
+          LD_LIBRARY_PATH: /usr/local/lib
 
       - name: Upload test logs
         if: always()
