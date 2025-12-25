@@ -286,6 +286,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Tests run with in-memory SwiftData container
   - Same comprehensive test coverage as GRDB contract tests
   - Availability guards for macOS 14.0+ and iOS 17.0+
+- SyncInterfaces package with sync protocol definitions (Ticket #9):
+  - SyncClient protocol for implementing sync backends (CloudKit, etc.)
+  - SyncStatus enum with states: idle, syncing, success, failed, unavailable
+  - SyncResult enum for tracking sync operation outcomes
+  - SyncConflict enum representing conflicts between local and remote data
+  - ConflictResolutionStrategy enum: lastWriteWins, preferLocal, preferRemote
+  - ConflictResolver protocol for implementing conflict resolution strategies
+  - LWWConflictResolver with Last-Write-Wins implementation using updatedAt timestamps
+  - SyncStatusObserver protocol for observing sync status changes
+  - Full Sendable conformance for Swift concurrency safety
+- SyncNoop package with no-op sync implementation (Ticket #9):
+  - NoopSyncClient actor implementing SyncClient protocol
+  - Returns unavailable status and no-ops for all operations
+  - Used for Linux builds and when sync is disabled
+  - Zero network operations, safe for offline mode
+- SyncCloudKit package with CloudKit private database sync (Apple-only, Ticket #9):
+  - CloudKitSyncClient actor implementing SyncClient protocol
+  - Private database sync using custom CloudKit zone
+  - Record type mapping for Board, Column, Card, PersonalList, Recipe
+  - CloudKitRecordMapper for bidirectional domain ↔ CKRecord conversion
+  - Last-Write-Wins conflict resolution using updatedAt timestamps
+  - iCloud account availability checking
+  - Custom zone creation and management
+  - Full sync operation (fetch all, resolve conflicts, upload new)
+  - Upload/delete operations for individual entities
+  - JSON encoding for complex types (checklist items, ingredients)
+  - CloudKitSyncError for typed error handling
+  - Offline graceful degradation
+  - Status observer pattern for UI updates
+- SyncStatusView UI component (Ticket #9):
+  - SwiftUI view displaying current sync status with visual indicators
+  - Status icons: checkmark (synced), progress (syncing), error (failed), cloud slash (unavailable)
+  - Color-coded background: green (success), blue (syncing), red (failed), gray (unavailable)
+  - "Sync Now" button with disabled state during sync
+  - Last synced timestamp with relative time formatting
+  - Error message display for failed syncs
+  - SyncStatusViewModel with @MainActor for thread-safe UI updates
+  - Availability check on view appearance
+  - SwiftUI preview support with mock PreviewSyncClient
+- Comprehensive test suite for sync functionality (Ticket #9):
+  - ConflictResolverTests: LWW strategy tests for all entity types
+  - Tests for local newer, remote newer, identical timestamps
+  - Tests for preferLocal and preferRemote strategies
+  - SyncStatusTests: Equality and inequality tests for SyncStatus and SyncResult
+  - NoopSyncClientTests: Verification of no-op behavior for all operations
+  - Tests for unavailable status and zero-count sync results
+- Manual test documentation (Ticket #9):
+  - SyncManualTests.md with comprehensive manual test plan
+  - 10 detailed test cases covering all sync scenarios
+  - TC-1: Availability detection (iCloud account status)
+  - TC-2: Initial sync upload (fresh device to iCloud)
+  - TC-3: Initial sync download (iCloud to fresh device)
+  - TC-4: Conflict resolution with LWW strategy
+  - TC-5: Offline behavior and graceful degradation
+  - TC-6: Sync error recovery and retry
+  - TC-7: Large dataset sync performance
+  - TC-8: Delete sync propagation
+  - TC-9: Sync status UI updates and real-time reflection
+  - TC-10: Multiple rapid sync prevention
+  - Prerequisites, setup instructions, and debugging tips
+  - Known limitations documentation
+  - Test execution checklist
+- PersistenceInterfaces extended with RecipesRepository (Ticket #9):
+  - RecipesRepository protocol for managing Recipe entities
+  - CRUD operations for recipes
+  - Query operations: search recipes, find by tag
+  - Consistent error handling with existing PersistenceError types
 
 ### Changed
 
