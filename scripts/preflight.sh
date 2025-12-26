@@ -265,7 +265,8 @@ if $IS_MACOS; then
     fi
 
     if command -v xcodebuild >/dev/null 2>&1; then
-        XCODE_VERSION=$(xcodebuild -version 2>&1 | head -n1 | awk '{print $2}')
+        # Use || true to handle SIGPIPE from head -n1
+        XCODE_VERSION=$(xcodebuild -version 2>&1 | head -n1 | awk '{print $2}' || true)
         echo "  Found: Xcode $XCODE_VERSION"
 
         if [[ -n "$EXPECTED_XCODE_VERSION" ]]; then
