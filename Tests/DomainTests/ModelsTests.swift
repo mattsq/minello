@@ -253,15 +253,39 @@ final class ModelsTests: XCTestCase {
     }
 
     func testPersonalListCodable() throws {
+        print("=== DEBUG: testPersonalListCodable START ===")
+
+        print("Creating PersonalList...")
         let list = PersonalList(title: "Groceries")
+        print("Created list with title: \(list.title)")
+        print("List ID: \(list.id.rawValue.uuidString)")
 
+        print("Creating JSONEncoder...")
         let encoder = JSONEncoder()
+        print("Encoder created")
+
+        print("Encoding list to JSON...")
         let data = try encoder.encode(list)
+        print("Encoded \(data.count) bytes")
 
+        if let jsonString = String(data: data, encoding: .utf8) {
+            print("JSON: \(jsonString)")
+        }
+
+        print("Creating JSONDecoder...")
         let decoder = JSONDecoder()
-        let decoded = try decoder.decode(PersonalList.self, from: data)
+        print("Decoder created")
 
+        print("Decoding JSON to PersonalList...")
+        let decoded = try decoder.decode(PersonalList.self, from: data)
+        print("Decoded list with title: \(decoded.title)")
+        print("Decoded list ID: \(decoded.id.rawValue.uuidString)")
+
+        print("Asserting titles are equal...")
         XCTAssertEqual(list.title, decoded.title)
+        print("Assertion passed")
+
+        print("=== DEBUG: testPersonalListCodable END ===")
     }
 
     // MARK: - Recipe Tests

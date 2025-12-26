@@ -64,8 +64,10 @@ public struct HomeCookedMigrator {
             try db.create(index: "idx_cards_column_sort", on: "cards", columns: ["column_id", "sort_key"])
             try db.create(index: "idx_cards_due", on: "cards", columns: ["due"])
 
-            // Create full-text search table for cards
+            // Create full-text search table for cards with porter tokenizer for stemming
+            // This allows "grocery" to match "groceries", etc.
             try db.create(virtualTable: "cards_fts", using: FTS5()) { t in
+                t.tokenizer = .porter()
                 t.column("title")
                 t.column("details")
             }
@@ -106,8 +108,9 @@ public struct HomeCookedMigrator {
             // Create index on personal_lists.created_at for sorting
             try db.create(index: "idx_lists_created_at", on: "personal_lists", columns: ["created_at"])
 
-            // Create full-text search table for personal_lists
+            // Create full-text search table for personal_lists with porter tokenizer for stemming
             try db.create(virtualTable: "personal_lists_fts", using: FTS5()) { t in
+                t.tokenizer = .porter()
                 t.column("title")
             }
 

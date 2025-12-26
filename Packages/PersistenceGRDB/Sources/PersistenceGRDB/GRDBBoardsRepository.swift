@@ -206,8 +206,8 @@ public final class GRDBBoardsRepository: BoardsRepository {
     public func searchCards(query: String) async throws -> [Card] {
         try await dbQueue.read { db in
             // Use prefix matching with wildcards to handle cases like "grocery" matching "groceries"
-            // Split query into tokens and add wildcard to each
-            // Use OR to match if the token appears in ANY column (title OR details)
+            // Split query into tokens and add wildcard to each for prefix matching
+            // The porter tokenizer stems words, so "grocery*" matches "groceries", "grocer", etc.
             let tokens = query.split(separator: " ").map { String($0) + "*" }
             let ftsQuery = tokens.joined(separator: " OR ")
 

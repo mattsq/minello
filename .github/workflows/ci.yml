@@ -79,6 +79,7 @@ jobs:
 
       - name: Run tests (parallel)
         id: test
+        shell: bash
         run: |
           swift test --parallel 2>&1 | tee /tmp/test-output.log
           exit ${PIPESTATUS[0]}
