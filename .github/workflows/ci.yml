@@ -242,45 +242,60 @@ jobs:
         id: build
         run: |
           set -o pipefail
-          echo "━━━ Starting iOS app build ━━━"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Starting iOS app build"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "Destination: id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}"
           echo "Device: ${{ steps.select-simulator.outputs.SIMULATOR_NAME }} (iOS ${{ steps.select-simulator.outputs.SIMULATOR_OS }})"
           echo "Scheme: HomeCooked"
+          echo "DerivedData: ~/Library/Developer/Xcode/DerivedData/HomeCooked"
           echo ""
-          if command -v xcpretty &> /dev/null; then
-            xcodebuild -project HomeCooked.xcodeproj \
-              -scheme HomeCooked \
-              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
-              -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
-              -verbose \
-              build 2>&1 | tee /tmp/xcodebuild-build.log | xcpretty
-          else
-            xcodebuild -project HomeCooked.xcodeproj \
-              -scheme HomeCooked \
-              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
-              -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
-              -verbose \
-              build 2>&1 | tee /tmp/xcodebuild-build.log
+
+          # Build without xcpretty to see full verbose output
+          echo "━━━ Running xcodebuild build (full verbose output) ━━━"
+          xcodebuild -project HomeCooked.xcodeproj \
+            -scheme HomeCooked \
+            -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
+            -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
+            build 2>&1 | tee /tmp/xcodebuild-build.log
+
+          BUILD_EXIT_CODE=${PIPESTATUS[0]}
+          echo ""
+          echo "━━━ Build command completed with exit code: $BUILD_EXIT_CODE ━━━"
+
+          if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            echo "━━━ BUILD FAILED - Showing last 100 lines ━━━"
+            tail -100 /tmp/xcodebuild-build.log
           fi
+
+          exit $BUILD_EXIT_CODE
         continue-on-error: false
 
       - name: Run tests
         id: test
         run: |
           set -o pipefail
-          if command -v xcpretty &> /dev/null; then
-            xcodebuild -project HomeCooked.xcodeproj \
-              -scheme HomeCooked \
-              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
-              -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
-              test 2>&1 | tee /tmp/xcodebuild-test.log | xcpretty
-          else
-            xcodebuild -project HomeCooked.xcodeproj \
-              -scheme HomeCooked \
-              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
-              -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
-              test 2>&1 | tee /tmp/xcodebuild-test.log
-          fi
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Starting test run with verbose logging"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Destination: id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}"
+          echo "Device: ${{ steps.select-simulator.outputs.SIMULATOR_NAME }} (iOS ${{ steps.select-simulator.outputs.SIMULATOR_OS }})"
+          echo "Scheme: HomeCooked"
+          echo "DerivedData: ~/Library/Developer/Xcode/DerivedData/HomeCooked"
+          echo ""
+
+          # Run tests without xcpretty to see full verbose output
+          echo "━━━ Running xcodebuild test (full verbose output) ━━━"
+          xcodebuild -project HomeCooked.xcodeproj \
+            -scheme HomeCooked \
+            -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
+            -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
+            test 2>&1 | tee /tmp/xcodebuild-test.log
+
+          TEST_EXIT_CODE=${PIPESTATUS[0]}
+          echo ""
+          echo "━━━ Test command completed with exit code: $TEST_EXIT_CODE ━━━"
+          exit $TEST_EXIT_CODE
         continue-on-error: false
 
       - name: Upload build logs
@@ -295,23 +310,42 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
-      - name: Display build failure details
+      - name: Display build/test failure details
         if: failure()
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "BUILD FAILED - Showing last 100 lines of build log:"
+          echo "FAILURE DETECTED - Displaying diagnostics"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          tail -100 /tmp/xcodebuild-build.log || echo "Build log not found"
           echo ""
+
+          if [ -f /tmp/xcodebuild-test.log ]; then
+            echo "━━━ Last 200 lines of TEST log ━━━"
+            tail -200 /tmp/xcodebuild-test.log
+            echo ""
+            echo "━━━ Searching for SSU/AppIntents errors ━━━"
+            grep -i "ssu\|appintents\|could not archive\|resolution.*error" /tmp/xcodebuild-test.log || echo "No SSU/AppIntents errors found"
+            echo ""
+          fi
+
+          if [ -f /tmp/xcodebuild-build.log ]; then
+            echo "━━━ Last 100 lines of BUILD log ━━━"
+            tail -100 /tmp/xcodebuild-build.log
+            echo ""
+          fi
+
           echo "━━━ Checking for common issues ━━━"
+          echo ""
           echo "Scheme issues:"
-          grep -i "scheme.*not found\|could not find scheme" /tmp/xcodebuild-build.log || echo "No scheme errors found"
+          grep -i "scheme.*not found\|could not find scheme" /tmp/xcodebuild-*.log 2>/dev/null || echo "No scheme errors found"
           echo ""
           echo "Package resolution issues:"
-          grep -i "package.*error\|dependencies could not be resolved" /tmp/xcodebuild-build.log || echo "No package errors found"
+          grep -i "package.*error\|dependencies could not be resolved" /tmp/xcodebuild-*.log 2>/dev/null || echo "No package errors found"
           echo ""
           echo "Code signing issues:"
-          grep -i "signing\|provisioning" /tmp/xcodebuild-build.log || echo "No signing errors found"
+          grep -i "signing\|provisioning" /tmp/xcodebuild-*.log 2>/dev/null || echo "No signing errors found"
+          echo ""
+          echo "App Intents / SSU issues:"
+          grep -i "appintentsnltrainingprocessor\|ssutraining\|utskit.*error\|archive ssu" /tmp/xcodebuild-*.log 2>/dev/null || echo "No App Intents/SSU errors found"
 
       - name: Upload test results
         if: always()
