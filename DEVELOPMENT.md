@@ -28,6 +28,21 @@ Verify installation:
 xcodebuild -version
 ```
 
+### XcodeGen (macOS only)
+
+- **Purpose**: Generates the Xcode project from `project.yml` configuration
+- **Installation**:
+  ```bash
+  brew install xcodegen
+  ```
+
+Verify installation:
+```bash
+xcodegen --version
+```
+
+The Xcode project is **not committed** to the repository. Instead, it's generated from `project.yml` during builds. This ensures a consistent, reproducible project structure and avoids merge conflicts in project files.
+
 ## Getting Started
 
 ### 1. Clone and Verify

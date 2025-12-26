@@ -25,12 +25,14 @@ test-linux:
 
 # macOS tests - Xcode build and test (requires macOS)
 test-macos:
-	@echo "Building and testing iOS app..."
-	@if [ ! -f "HomeCooked.xcodeproj/project.pbxproj" ]; then \
-		echo "Error: HomeCooked.xcodeproj not found."; \
-		echo "The Xcode project should be committed to the repository."; \
+	@echo "Generating Xcode project with XcodeGen..."
+	@if ! command -v xcodegen >/dev/null 2>&1; then \
+		echo "Error: xcodegen not installed."; \
+		echo "Install with: brew install xcodegen"; \
 		exit 1; \
 	fi
+	xcodegen generate
+	@echo "Building and testing iOS app..."
 	xcodebuild -project HomeCooked.xcodeproj \
 		-scheme HomeCooked \
 		-destination 'platform=iOS Simulator,name=iPhone 15' \
