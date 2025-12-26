@@ -174,12 +174,14 @@ jobs:
         run: |
           set -o pipefail
           if command -v xcpretty &> /dev/null; then
-            xcodebuild -scheme HomeCooked \
+            xcodebuild -project HomeCooked.xcodeproj \
+              -scheme HomeCooked \
               -destination 'platform=iOS Simulator,name=iPhone 15' \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
               build 2>&1 | tee /tmp/xcodebuild-build.log | xcpretty
           else
-            xcodebuild -scheme HomeCooked \
+            xcodebuild -project HomeCooked.xcodeproj \
+              -scheme HomeCooked \
               -destination 'platform=iOS Simulator,name=iPhone 15' \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
               build 2>&1 | tee /tmp/xcodebuild-build.log
@@ -191,12 +193,14 @@ jobs:
         run: |
           set -o pipefail
           if command -v xcpretty &> /dev/null; then
-            xcodebuild -scheme HomeCooked \
+            xcodebuild -project HomeCooked.xcodeproj \
+              -scheme HomeCooked \
               -destination 'platform=iOS Simulator,name=iPhone 15' \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
               test 2>&1 | tee /tmp/xcodebuild-test.log | xcpretty
           else
-            xcodebuild -scheme HomeCooked \
+            xcodebuild -project HomeCooked.xcodeproj \
+              -scheme HomeCooked \
               -destination 'platform=iOS Simulator,name=iPhone 15' \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
               test 2>&1 | tee /tmp/xcodebuild-test.log

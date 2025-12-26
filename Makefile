@@ -26,11 +26,13 @@ test-linux:
 # macOS tests - Xcode build and test (requires macOS)
 test-macos:
 	@echo "Building and testing iOS app..."
-	@if [ ! -f "HomeCooked.xcworkspace" ] && [ ! -f "HomeCooked.xcodeproj" ]; then \
-		echo "Generating Xcode project..."; \
-		swift package generate-xcodeproj; \
+	@if [ ! -f "HomeCooked.xcodeproj/project.pbxproj" ]; then \
+		echo "Error: HomeCooked.xcodeproj not found."; \
+		echo "The Xcode project should be committed to the repository."; \
+		exit 1; \
 	fi
-	xcodebuild -scheme HomeCooked \
+	xcodebuild -project HomeCooked.xcodeproj \
+		-scheme HomeCooked \
 		-destination 'platform=iOS Simulator,name=iPhone 15' \
 		build test
 
