@@ -20,7 +20,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
     /// - Returns: A new repository with an in-memory database
     public static func inMemory() throws -> GRDBBoardsRepository {
         let dbQueue = try DatabaseQueue()
-        var migrator = HomeCookedMigrator.makeMigrator()
+        let migrator = HomeCookedMigrator.makeMigrator()
         try migrator.migrate(dbQueue)
         return GRDBBoardsRepository(dbQueue: dbQueue)
     }
@@ -30,7 +30,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
     /// - Returns: A new repository with a file-based database
     public static func onDisk(at path: String) throws -> GRDBBoardsRepository {
         let dbQueue = try DatabaseQueue(path: path)
-        var migrator = HomeCookedMigrator.makeMigrator()
+        let migrator = HomeCookedMigrator.makeMigrator()
         try migrator.migrate(dbQueue)
         return GRDBBoardsRepository(dbQueue: dbQueue)
     }

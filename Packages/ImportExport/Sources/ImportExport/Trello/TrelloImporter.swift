@@ -77,7 +77,7 @@ public actor TrelloImporter {
     /// - Throws: Persistence errors
     public func importExport(_ export: TrelloExport, deduplicate: Bool = true) async throws -> TrelloImportResult {
         // Check for duplicates if requested
-        var skipped = 0
+        let skipped = 0
 
         if deduplicate {
             let existingBoards = try await repository.loadBoards()
