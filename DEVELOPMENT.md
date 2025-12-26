@@ -8,9 +8,9 @@ HomeCooked is a local-first task and collaboration app designed to replace Trell
 
 ### Swift
 
-- **Version**: 5.10 (see `.swift-version`)
+- **Version**: 6.0 (see `.swift-version`)
 - **Installation**:
-  - **macOS**: Install Xcode 16.0+ or Swift toolchain from swift.org
+  - **macOS**: Install Xcode 16.1+ or Swift toolchain from swift.org
   - **Linux**: Download from [swift.org/download](https://swift.org/download/)
 
 Verify installation:
@@ -20,7 +20,7 @@ swift --version
 
 ### Xcode (macOS only)
 
-- **Version**: 16.0 (see `.xcode-version`)
+- **Version**: 16.1 (see `.xcode-version`)
 - **Installation**: Download from the Mac App Store or [developer.apple.com](https://developer.apple.com/xcode/)
 
 Verify installation:
@@ -295,7 +295,7 @@ make preflight ARGS="--autofix"
 
 ### Build Fails on Linux
 
-Ensure you're using Swift 5.10:
+Ensure you're using Swift 6.0:
 ```bash
 swift --version
 ```
