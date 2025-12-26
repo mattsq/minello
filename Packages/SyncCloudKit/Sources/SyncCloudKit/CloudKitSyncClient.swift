@@ -166,9 +166,14 @@ public actor CloudKitSyncClient: SyncClient {
 
         for recordType in recordTypes {
             let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
-            let results = try await privateDatabase.records(matching: query, inZoneWith: customZoneID)
+            let response = try await privateDatabase.records(
+                matching: query,
+                inZoneWith: customZoneID,
+                desiredKeys: nil,
+                resultsLimit: CKQueryOperation.maximumResults
+            )
 
-            for (_, result) in results.matchResults {
+            for (_, result) in response.matchResults {
                 switch result {
                 case let .success(record):
                     try processRecord(record, boards: &boards, columns: &columns, cards: &cards, lists: &lists, recipes: &recipes)
