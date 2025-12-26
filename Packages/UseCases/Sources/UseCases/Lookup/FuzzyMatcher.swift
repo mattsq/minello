@@ -33,13 +33,16 @@ public enum FuzzyMatcher {
 
         // Word-based matching (split on spaces and check if any word starts with query)
         // This must come BEFORE general contains matching to ensure "Do" in "To Do" scores 0.8 not 0.7
+        // Only apply word-based matching for multi-word targets
         let targetWords = normalizedTarget.split(separator: " ")
-        for word in targetWords {
-            if word.hasPrefix(normalizedQuery) {
-                return 0.8
-            }
-            if word.contains(normalizedQuery) {
-                return 0.6
+        if targetWords.count > 1 {
+            for word in targetWords {
+                if word.hasPrefix(normalizedQuery) {
+                    return 0.8
+                }
+                if word.contains(normalizedQuery) {
+                    return 0.6
+                }
             }
         }
 

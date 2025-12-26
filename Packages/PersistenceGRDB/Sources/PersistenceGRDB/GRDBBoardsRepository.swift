@@ -205,19 +205,14 @@ public final class GRDBBoardsRepository: BoardsRepository {
 
     public func searchCards(query: String) async throws -> [Card] {
         try await dbQueue.read { db in
-            // Use prefix matching with wildcards to handle cases like "grocery" matching "groceries"
-            // Split query into tokens and add wildcard to each
-            // Use OR to match if the token appears in ANY column (title OR details)
-            let tokens = query.split(separator: " ").map { String($0) + "*" }
-            let ftsQuery = tokens.joined(separator: " OR ")
-
+            let pattern = FTS5Pattern(matchingAllTokensIn: query)
             let sql = """
                 SELECT cards.* FROM cards
                 JOIN cards_fts ON cards.rowid = cards_fts.rowid
                 WHERE cards_fts MATCH ?
                 ORDER BY cards.sort_key ASC
                 """
-            let records = try CardRecord.fetchAll(db, sql: sql, arguments: [ftsQuery])
+            let records = try CardRecord.fetchAll(db, sql: sql, arguments: [pattern])
             return try records.map { try $0.toDomain() }
         }
     }
