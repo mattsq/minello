@@ -8,10 +8,10 @@ import UseCases
 
 /// App Intent for adding a card to a board's column
 /// Example: "Add 'Pay strata' to 'Home' → 'To Do'"
-@available(iOS 16.0, macOS 13.0, *)
+@available(iOS 17.0, macOS 14.0, *)
 struct AddCardIntent: AppIntent {
-    static var title: LocalizedStringResource = "Add Card to Board"
-    static var description = IntentDescription("Add a card to a specific column on a board")
+    static let title: LocalizedStringResource = "Add Card to Board"
+    static let description = IntentDescription("Add a card to a specific column on a board")
 
     @Parameter(title: "Card Title")
     var cardTitle: String
