@@ -210,13 +210,23 @@ public final class GRDBBoardsRepository: BoardsRepository {
             let tokens = query.split(separator: " ").map { String($0) + "*" }
             let ftsQuery = tokens.joined(separator: " OR ")
 
+            print("=== REPO DEBUG: searchCards ===")
+            print("Input query: \"\(query)\"")
+            print("Tokens: \(tokens)")
+            print("FTS5 query: \"\(ftsQuery)\"")
+
             let sql = """
                 SELECT cards.* FROM cards
                 JOIN cards_fts ON cards.rowid = cards_fts.rowid
                 WHERE cards_fts MATCH ?
                 ORDER BY cards.sort_key ASC
                 """
+            print("SQL: \(sql)")
+
             let records = try CardRecord.fetchAll(db, sql: sql, arguments: [ftsQuery])
+            print("Found \(records.count) records")
+            print("=== END REPO DEBUG ===")
+
             return try records.map { try $0.toDomain() }
         }
     }

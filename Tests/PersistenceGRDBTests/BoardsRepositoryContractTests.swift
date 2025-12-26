@@ -380,11 +380,26 @@ final class BoardsRepositoryContractTests: XCTestCase {
         try await repository.createCard(card2)
         try await repository.createCard(card3)
 
+        print("=== TEST DEBUG: testSearchCards ===")
+        print("Created 3 cards:")
+        print("  Card1: title=\"\(card1.title)\" details=\"\(card1.details)\"")
+        print("  Card2: title=\"\(card2.title)\" details=\"\(card2.details)\"")
+        print("  Card3: title=\"\(card3.title)\" details=\"\(card3.details)\"")
+        print("Search query: \"grocery\"")
+
         let results = try await repository.searchCards(query: "grocery")
-        XCTAssertEqual(results.count, 2)
+
+        print("Search returned \(results.count) results:")
+        for (i, card) in results.enumerated() {
+            print("  Result[\(i)]: title=\"\(card.title)\" details=\"\(card.details)\"")
+        }
+        print("Expected 2 results: \"Buy groceries\" and \"Fix bug\"")
+        print("=== END DEBUG ===")
+
+        XCTAssertEqual(results.count, 2, "Expected 2 cards matching 'grocery', got \(results.count). Titles: \(results.map { $0.title })")
         let titles = Set(results.map { $0.title })
-        XCTAssertTrue(titles.contains("Buy groceries"))
-        XCTAssertTrue(titles.contains("Fix bug"))
+        XCTAssertTrue(titles.contains("Buy groceries"), "Expected to find 'Buy groceries' in results")
+        XCTAssertTrue(titles.contains("Fix bug"), "Expected to find 'Fix bug' in results")
     }
 
     func testFindCardsByTag() async throws {
