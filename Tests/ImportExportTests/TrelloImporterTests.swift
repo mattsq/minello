@@ -376,8 +376,8 @@ final class TrelloImporterTests: XCTestCase {
         XCTAssertEqual(result.boardsImported, 1)
         // Should only import 2 columns (one is closed)
         XCTAssertEqual(result.columnsImported, 2)
-        // Should only import 2 cards (one is closed, one is in closed list)
-        XCTAssertEqual(result.cardsImported, 2)
+        // Should only import 3 cards (one is closed, one is in closed list - filtered out)
+        XCTAssertEqual(result.cardsImported, 3)
     }
 
     func testDeduplicationSkipsDuplicate() async throws {

@@ -31,12 +31,8 @@ public enum FuzzyMatcher {
             return 0.9
         }
 
-        // Contains match
-        if normalizedTarget.contains(normalizedQuery) {
-            return 0.7
-        }
-
         // Word-based matching (split on spaces and check if any word starts with query)
+        // This must come BEFORE general contains matching to ensure "Do" in "To Do" scores 0.8 not 0.7
         let targetWords = normalizedTarget.split(separator: " ")
         for word in targetWords {
             if word.hasPrefix(normalizedQuery) {
@@ -45,6 +41,11 @@ public enum FuzzyMatcher {
             if word.contains(normalizedQuery) {
                 return 0.6
             }
+        }
+
+        // Contains match (general substring)
+        if normalizedTarget.contains(normalizedQuery) {
+            return 0.7
         }
 
         // Check if query matches target with spaces removed (e.g., "todo" matches "To Do")

@@ -64,13 +64,24 @@ public final class GRDBListsRepository: ListsRepository {
     }
 
     public func updateList(_ list: PersonalList) async throws {
-        try await dbQueue.write { db in
-            let record = try PersonalListRecord(from: list)
-            try record.update(db)
-            // Check if any rows were actually updated
-            if db.changesCount == 0 {
+        do {
+            try await dbQueue.write { db in
+                let record = try PersonalListRecord(from: list)
+                try record.update(db)
+                // Check if any rows were actually updated
+                if db.changesCount == 0 {
+                    throw PersistenceError.notFound("List with ID \(list.id.rawValue.uuidString) not found")
+                }
+            }
+        } catch let error as PersistenceError {
+            // Re-throw our own errors
+            throw error
+        } catch {
+            // Convert GRDB errors (like "Key not found") to PersistenceError
+            if error.localizedDescription.contains("not found") {
                 throw PersistenceError.notFound("List with ID \(list.id.rawValue.uuidString) not found")
             }
+            throw PersistenceError.databaseError(error.localizedDescription)
         }
     }
 
