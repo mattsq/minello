@@ -6,7 +6,7 @@ help:
 	@echo ""
 	@echo "  make preflight        Run preflight checks (toolchain, build, skeleton)"
 	@echo "  make test-linux       Build and test all Linux-compatible targets"
-	@echo "  make test-macos       Build and test iOS app + UI tests (macOS only)"
+	@echo "  make test-macos       Build iOS app (macOS only, no XCTest targets yet)"
 	@echo "  make lint             Run swiftformat + swiftlint"
 	@echo "  make import-sample    Import sample Trello data"
 	@echo "  make backup-sample    Create sample backup"
@@ -23,7 +23,8 @@ test-linux:
 	swift build
 	swift test --parallel
 
-# macOS tests - Xcode build and test (requires macOS)
+# macOS build - Xcode build only (requires macOS)
+# Note: No XCTest targets exist yet. All tests run on Linux via SwiftPM.
 test-macos:
 	@echo "Generating Xcode project with XcodeGen..."
 	@if ! command -v xcodegen >/dev/null 2>&1; then \
@@ -39,10 +40,11 @@ test-macos:
 		SIMULATOR_ID=$$(xcrun simctl list devices available iPhone -j | jq -r '.devices | to_entries[] | select(.key | startswith("com.apple.CoreSimulator.SimRuntime.iOS")) | .value[] | select(.name | startswith("iPhone")) | select(.isAvailable == true) | .udid' | head -1); \
 	fi; \
 	echo "Selected simulator: $$SIMULATOR_ID"; \
+	echo "Building iOS app (no XCTest targets configured yet)..."; \
 	xcodebuild -project HomeCooked.xcodeproj \
 		-scheme HomeCooked \
 		-destination "id=$$SIMULATOR_ID" \
-		build test
+		build
 
 # Linting - format and lint check
 lint:
