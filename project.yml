@@ -17,19 +17,7 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
 
 packages:
-  Domain:
-    path: .
-  UseCases:
-    path: .
-  PersistenceInterfaces:
-    path: .
-  PersistenceGRDB:
-    path: .
-  ImportExport:
-    path: .
-  SyncInterfaces:
-    path: .
-  SyncCloudKit:
+  HomeCookedPackage:
     path: .
 
 targets:
@@ -64,13 +52,20 @@ targets:
           UIApplicationSupportsMultipleScenes: false
 
     dependencies:
-      - package: Domain
-      - package: UseCases
-      - package: PersistenceInterfaces
-      - package: PersistenceGRDB
-      - package: ImportExport
-      - package: SyncInterfaces
-      - package: SyncCloudKit
+      - package: HomeCookedPackage
+        product: Domain
+      - package: HomeCookedPackage
+        product: UseCases
+      - package: HomeCookedPackage
+        product: PersistenceInterfaces
+      - package: HomeCookedPackage
+        product: PersistenceGRDB
+      - package: HomeCookedPackage
+        product: ImportExport
+      - package: HomeCookedPackage
+        product: SyncInterfaces
+      - package: HomeCookedPackage
+        product: SyncCloudKit
 
     settings:
       base:
