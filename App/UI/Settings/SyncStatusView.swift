@@ -3,6 +3,7 @@
 
 import SwiftUI
 import SyncInterfaces
+import Domain
 
 /// View displaying current sync status
 struct SyncStatusView: View {

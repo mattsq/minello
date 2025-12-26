@@ -7,7 +7,7 @@ import PersistenceInterfaces
 import SwiftData
 
 /// SwiftData implementation of ListsRepository
-public final class SwiftDataListsRepository: ListsRepository {
+public final class SwiftDataListsRepository: @unchecked Sendable, ListsRepository {
     private let modelContext: ModelContext
 
     /// Creates a new SwiftData repository

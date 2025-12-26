@@ -13,7 +13,7 @@ struct HomeCookedShortcuts: AppShortcutsProvider {
                 "Add \(.applicationName) item to list",
                 "Add item to \(.applicationName) list",
                 "Add to my list in \(.applicationName)",
-                "Add \(\.$itemName) to \(\.$listName)"
+                "Add \(\.$itemName)"
             ],
             shortTitle: "Add to List",
             systemImageName: "checklist"
@@ -25,7 +25,7 @@ struct HomeCookedShortcuts: AppShortcutsProvider {
                 "Add \(.applicationName) card",
                 "Create card in \(.applicationName)",
                 "Add task to \(.applicationName) board",
-                "Add \(\.$cardTitle) to \(\.$boardName)"
+                "Add \(\.$cardTitle)"
             ],
             shortTitle: "Add Card",
             systemImageName: "rectangle.on.rectangle"

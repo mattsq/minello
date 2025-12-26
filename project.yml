@@ -2,7 +2,7 @@ name: HomeCooked
 options:
   bundleIdPrefix: com.homecooked
   deploymentTarget:
-    iOS: "16.0"
+    iOS: "17.0"
   xcodeVersion: "16.1"
   developmentLanguage: en
 
@@ -24,7 +24,7 @@ targets:
   HomeCooked:
     type: application
     platform: iOS
-    deploymentTarget: "16.0"
+    deploymentTarget: "17.0"
 
     sources:
       - path: App

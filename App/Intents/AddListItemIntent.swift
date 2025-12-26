@@ -8,10 +8,10 @@ import UseCases
 
 /// App Intent for adding an item to a personal list
 /// Example: "Add milk to Groceries"
-@available(iOS 16.0, macOS 13.0, *)
+@available(iOS 17.0, macOS 14.0, *)
 struct AddListItemIntent: AppIntent {
-    static var title: LocalizedStringResource = "Add Item to List"
-    static var description = IntentDescription("Add an item to a personal list like Groceries or Packing")
+    static let title: LocalizedStringResource = "Add Item to List"
+    static let description = IntentDescription("Add an item to a personal list like Groceries or Packing")
 
     @Parameter(title: "Item Name")
     var itemName: String

@@ -5,6 +5,8 @@
 import CloudKit
 import SwiftUI
 import Domain
+import PersistenceInterfaces
+import SyncCloudKit
 
 /// Button for managing board sharing, displays a "Shared" pill when active
 struct ShareButton: View {
@@ -148,32 +150,53 @@ struct CloudSharingView: UIViewControllerRepresentable {
 private class MockBoardsRepository: @unchecked Sendable, BoardsRepository {
     func createBoard(_ board: Board) async throws {}
     func loadBoards() async throws -> [Board] { [] }
-    func loadBoard(_ id: BoardID) async throws -> Board? { nil }
+    func loadBoard(_ id: BoardID) async throws -> Board {
+        Board(id: id, title: "Mock Board", columns: [], createdAt: Date(), updatedAt: Date())
+    }
     func updateBoard(_ board: Board) async throws {}
     func deleteBoard(_ id: BoardID) async throws {}
     func createColumn(_ column: Column) async throws {}
     func loadColumns(for boardID: BoardID) async throws -> [Column] { [] }
+    func loadColumn(_ id: ColumnID) async throws -> Column {
+        Column(id: id, board: BoardID(), title: "Mock Column", index: 0, cards: [], createdAt: Date(), updatedAt: Date())
+    }
+    func updateColumn(_ column: Column) async throws {}
     func saveColumns(_ columns: [Column]) async throws {}
     func deleteColumn(_ id: ColumnID) async throws {}
     func createCard(_ card: Card) async throws {}
     func loadCards(for columnID: ColumnID) async throws -> [Card] { [] }
+    func loadCard(_ id: CardID) async throws -> Card {
+        Card(column: ColumnID(), title: "Mock Card", details: "", due: nil, sortKey: 0)
+    }
+    func updateCard(_ card: Card) async throws {}
     func saveCards(_ cards: [Card]) async throws {}
     func deleteCard(_ id: CardID) async throws {}
+    func searchCards(query: String) async throws -> [Card] { [] }
+    func findCards(byTag tag: String) async throws -> [Card] { [] }
+    func findCards(dueBetween from: Date, and to: Date) async throws -> [Card] { [] }
 }
 
 private class MockListsRepository: @unchecked Sendable, ListsRepository {
     func createList(_ list: PersonalList) async throws {}
     func loadLists() async throws -> [PersonalList] { [] }
-    func loadList(_ id: ListID) async throws -> PersonalList? { nil }
+    func loadList(_ id: ListID) async throws -> PersonalList {
+        PersonalList(id: id, title: "Mock List", items: [], createdAt: Date(), updatedAt: Date())
+    }
     func updateList(_ list: PersonalList) async throws {}
     func deleteList(_ id: ListID) async throws {}
+    func searchLists(query: String) async throws -> [PersonalList] { [] }
+    func findListsWithIncompleteItems() async throws -> [PersonalList] { [] }
 }
 
 private class MockRecipesRepository: @unchecked Sendable, RecipesRepository {
     func createRecipe(_ recipe: Recipe) async throws {}
     func loadRecipes() async throws -> [Recipe] { [] }
-    func loadRecipe(_ id: RecipeID) async throws -> Recipe? { nil }
+    func loadRecipe(_ id: RecipeID) async throws -> Recipe {
+        Recipe(id: id, title: "Mock Recipe", ingredients: [], methodMarkdown: "", tags: [], createdAt: Date(), updatedAt: Date())
+    }
     func updateRecipe(_ recipe: Recipe) async throws {}
     func deleteRecipe(_ id: RecipeID) async throws {}
+    func searchRecipes(query: String) async throws -> [Recipe] { [] }
+    func findRecipesByTag(_ tag: String) async throws -> [Recipe] { [] }
 }
 #endif
