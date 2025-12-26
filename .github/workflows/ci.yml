@@ -164,6 +164,51 @@ jobs:
             -scheme HomeCooked \
             -showBuildSettings | head -50
 
+      - name: Select iOS Simulator
+        id: select-simulator
+        run: |
+          echo "━━━ Finding available iOS Simulators ━━━"
+
+          # List all available iPhone simulators
+          xcrun simctl list devices available iPhone -j > /tmp/simulators.json
+
+          # Try to find iPhone 15 with highest available iOS version
+          SIMULATOR_ID=$(cat /tmp/simulators.json | jq -r '
+            .devices
+            | to_entries[]
+            | select(.key | startswith("com.apple.CoreSimulator.SimRuntime.iOS"))
+            | .value[]
+            | select(.name | startswith("iPhone 15") and (. | endswith("Plus") | not) and (. | endswith("Pro") | not))
+            | select(.isAvailable == true)
+            | .udid' | head -1)
+
+          # If iPhone 15 not found, fall back to any available iPhone
+          if [ -z "$SIMULATOR_ID" ]; then
+            echo "iPhone 15 not found, selecting first available iPhone..."
+            SIMULATOR_ID=$(cat /tmp/simulators.json | jq -r '
+              .devices
+              | to_entries[]
+              | select(.key | startswith("com.apple.CoreSimulator.SimRuntime.iOS"))
+              | .value[]
+              | select(.name | startswith("iPhone"))
+              | select(.isAvailable == true)
+              | .udid' | head -1)
+          fi
+
+          # Get simulator details
+          SIMULATOR_NAME=$(cat /tmp/simulators.json | jq -r ".devices | to_entries[] | .value[] | select(.udid == \"$SIMULATOR_ID\") | .name")
+          SIMULATOR_OS=$(cat /tmp/simulators.json | jq -r ".devices | to_entries[] | select(.value[] | .udid == \"$SIMULATOR_ID\") | .key" | sed 's/com.apple.CoreSimulator.SimRuntime.iOS-//' | sed 's/-/./g')
+
+          echo "Selected Simulator:"
+          echo "  Name: $SIMULATOR_NAME"
+          echo "  OS: iOS $SIMULATOR_OS"
+          echo "  UDID: $SIMULATOR_ID"
+
+          # Export for use in subsequent steps
+          echo "SIMULATOR_ID=$SIMULATOR_ID" >> $GITHUB_OUTPUT
+          echo "SIMULATOR_NAME=$SIMULATOR_NAME" >> $GITHUB_OUTPUT
+          echo "SIMULATOR_OS=$SIMULATOR_OS" >> $GITHUB_OUTPUT
+
       - name: Cache DerivedData
         uses: actions/cache@v4
         with:
@@ -198,20 +243,21 @@ jobs:
         run: |
           set -o pipefail
           echo "━━━ Starting iOS app build ━━━"
-          echo "Destination: platform=iOS Simulator,name=iPhone 15"
+          echo "Destination: id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}"
+          echo "Device: ${{ steps.select-simulator.outputs.SIMULATOR_NAME }} (iOS ${{ steps.select-simulator.outputs.SIMULATOR_OS }})"
           echo "Scheme: HomeCooked"
           echo ""
           if command -v xcpretty &> /dev/null; then
             xcodebuild -project HomeCooked.xcodeproj \
               -scheme HomeCooked \
-              -destination 'platform=iOS Simulator,name=iPhone 15' \
+              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
               -verbose \
               build 2>&1 | tee /tmp/xcodebuild-build.log | xcpretty
           else
             xcodebuild -project HomeCooked.xcodeproj \
               -scheme HomeCooked \
-              -destination 'platform=iOS Simulator,name=iPhone 15' \
+              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
               -verbose \
               build 2>&1 | tee /tmp/xcodebuild-build.log
@@ -225,13 +271,13 @@ jobs:
           if command -v xcpretty &> /dev/null; then
             xcodebuild -project HomeCooked.xcodeproj \
               -scheme HomeCooked \
-              -destination 'platform=iOS Simulator,name=iPhone 15' \
+              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
               test 2>&1 | tee /tmp/xcodebuild-test.log | xcpretty
           else
             xcodebuild -project HomeCooked.xcodeproj \
               -scheme HomeCooked \
-              -destination 'platform=iOS Simulator,name=iPhone 15' \
+              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
               test 2>&1 | tee /tmp/xcodebuild-test.log
           fi

@@ -32,10 +32,16 @@ test-macos:
 		exit 1; \
 	fi
 	xcodegen generate
-	@echo "Building and testing iOS app..."
+	@echo "Selecting iOS Simulator..."
+	@SIMULATOR_ID=$$(xcrun simctl list devices available iPhone -j | jq -r '.devices | to_entries[] | select(.key | startswith("com.apple.CoreSimulator.SimRuntime.iOS")) | .value[] | select(.name | startswith("iPhone 15") and (.name | endswith("Plus") | not) and (.name | endswith("Pro") | not)) | select(.isAvailable == true) | .udid' | head -1); \
+	if [ -z "$$SIMULATOR_ID" ]; then \
+		echo "iPhone 15 not found, using first available iPhone..."; \
+		SIMULATOR_ID=$$(xcrun simctl list devices available iPhone -j | jq -r '.devices | to_entries[] | select(.key | startswith("com.apple.CoreSimulator.SimRuntime.iOS")) | .value[] | select(.name | startswith("iPhone")) | select(.isAvailable == true) | .udid' | head -1); \
+	fi; \
+	echo "Selected simulator: $$SIMULATOR_ID"; \
 	xcodebuild -project HomeCooked.xcodeproj \
 		-scheme HomeCooked \
-		-destination 'platform=iOS Simulator,name=iPhone 15' \
+		-destination "id=$$SIMULATOR_ID" \
 		build test
 
 # Linting - format and lint check
