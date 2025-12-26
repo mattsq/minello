@@ -64,8 +64,10 @@ public struct HomeCookedMigrator {
             try db.create(index: "idx_cards_column_sort", on: "cards", columns: ["column_id", "sort_key"])
             try db.create(index: "idx_cards_due", on: "cards", columns: ["due"])
 
-            // Create full-text search table for cards
+            // Create full-text search table for cards with porter tokenizer for stemming
+            // This allows "grocery" to match "groceries", etc.
             try db.create(virtualTable: "cards_fts", using: FTS5()) { t in
+                t.tokenizer = .porter()
                 t.column("title")
                 t.column("details")
             }
@@ -106,8 +108,9 @@ public struct HomeCookedMigrator {
             // Create index on personal_lists.created_at for sorting
             try db.create(index: "idx_lists_created_at", on: "personal_lists", columns: ["created_at"])
 
-            // Create full-text search table for personal_lists
+            // Create full-text search table for personal_lists with porter tokenizer for stemming
             try db.create(virtualTable: "personal_lists_fts", using: FTS5()) { t in
+                t.tokenizer = .porter()
                 t.column("title")
             }
 
@@ -130,6 +133,88 @@ public struct HomeCookedMigrator {
                 CREATE TRIGGER personal_lists_fts_delete AFTER DELETE ON personal_lists BEGIN
                     DELETE FROM personal_lists_fts WHERE rowid = old.rowid;
                 END;
+                """)
+        }
+
+        // Migration v3: Update FTS tables to use porter tokenizer for stemming
+        migrator.registerMigration("v3_fts_porter_tokenizer") { db in
+            // Drop existing cards FTS table and triggers
+            try db.execute(sql: "DROP TRIGGER IF EXISTS cards_fts_insert")
+            try db.execute(sql: "DROP TRIGGER IF EXISTS cards_fts_update")
+            try db.execute(sql: "DROP TRIGGER IF EXISTS cards_fts_delete")
+            try db.execute(sql: "DROP TABLE IF EXISTS cards_fts")
+
+            // Recreate cards FTS table with porter tokenizer
+            try db.create(virtualTable: "cards_fts", using: FTS5()) { t in
+                t.tokenizer = .porter()
+                t.column("title")
+                t.column("details")
+            }
+
+            // Recreate triggers
+            try db.execute(sql: """
+                CREATE TRIGGER cards_fts_insert AFTER INSERT ON cards BEGIN
+                    INSERT INTO cards_fts(rowid, title, details)
+                    VALUES (new.rowid, new.title, new.details);
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER cards_fts_update AFTER UPDATE ON cards BEGIN
+                    UPDATE cards_fts SET title = new.title, details = new.details
+                    WHERE rowid = new.rowid;
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER cards_fts_delete AFTER DELETE ON cards BEGIN
+                    DELETE FROM cards_fts WHERE rowid = old.rowid;
+                END;
+                """)
+
+            // Repopulate FTS table from existing cards
+            try db.execute(sql: """
+                INSERT INTO cards_fts(rowid, title, details)
+                SELECT rowid, title, details FROM cards
+                """)
+
+            // Drop existing personal_lists FTS table and triggers
+            try db.execute(sql: "DROP TRIGGER IF EXISTS personal_lists_fts_insert")
+            try db.execute(sql: "DROP TRIGGER IF EXISTS personal_lists_fts_update")
+            try db.execute(sql: "DROP TRIGGER IF EXISTS personal_lists_fts_delete")
+            try db.execute(sql: "DROP TABLE IF EXISTS personal_lists_fts")
+
+            // Recreate personal_lists FTS table with porter tokenizer
+            try db.create(virtualTable: "personal_lists_fts", using: FTS5()) { t in
+                t.tokenizer = .porter()
+                t.column("title")
+            }
+
+            // Recreate triggers
+            try db.execute(sql: """
+                CREATE TRIGGER personal_lists_fts_insert AFTER INSERT ON personal_lists BEGIN
+                    INSERT INTO personal_lists_fts(rowid, title)
+                    VALUES (new.rowid, new.title);
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER personal_lists_fts_update AFTER UPDATE ON personal_lists BEGIN
+                    UPDATE personal_lists_fts SET title = new.title
+                    WHERE rowid = new.rowid;
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER personal_lists_fts_delete AFTER DELETE ON personal_lists BEGIN
+                    DELETE FROM personal_lists_fts WHERE rowid = old.rowid;
+                END;
+                """)
+
+            // Repopulate FTS table from existing lists
+            try db.execute(sql: """
+                INSERT INTO personal_lists_fts(rowid, title)
+                SELECT rowid, title FROM personal_lists
                 """)
         }
 

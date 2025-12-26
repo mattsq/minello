@@ -207,13 +207,9 @@ public final class GRDBBoardsRepository: BoardsRepository {
         try await dbQueue.read { db in
             // Use prefix matching with wildcards to handle cases like "grocery" matching "groceries"
             // Split query into tokens and add wildcard to each for prefix matching
+            // The porter tokenizer stems words, so "grocery*" matches "groceries", "grocer", etc.
             let tokens = query.split(separator: " ").map { String($0) + "*" }
             let ftsQuery = tokens.joined(separator: " OR ")
-
-            print("=== REPO DEBUG: searchCards ===")
-            print("Input query: \"\(query)\"")
-            print("Tokens: \(tokens)")
-            print("FTS5 query: \"\(ftsQuery)\"")
 
             let sql = """
                 SELECT cards.* FROM cards
@@ -221,12 +217,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
                 WHERE cards_fts MATCH ?
                 ORDER BY cards.sort_key ASC
                 """
-            print("SQL: \(sql)")
-
             let records = try CardRecord.fetchAll(db, sql: sql, arguments: [ftsQuery])
-            print("Found \(records.count) records")
-            print("=== END REPO DEBUG ===")
-
             return try records.map { try $0.toDomain() }
         }
     }
