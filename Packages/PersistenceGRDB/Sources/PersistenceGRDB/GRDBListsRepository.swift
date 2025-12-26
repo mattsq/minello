@@ -64,12 +64,17 @@ public final class GRDBListsRepository: ListsRepository {
     }
 
     public func updateList(_ list: PersonalList) async throws {
-        try await dbQueue.write { db in
-            let record = try PersonalListRecord(from: list)
-            let updated = try record.updateAndFetch(db)
-            if updated == nil {
-                throw PersistenceError.notFound("List with ID \(list.id.rawValue.uuidString) not found")
+        do {
+            try await dbQueue.write { db in
+                let record = try PersonalListRecord(from: list)
+                try record.update(db)
             }
+        } catch let error as GRDB.RecordError {
+            // GRDB throws RecordError.recordNotFound when trying to update a non-existent record
+            throw PersistenceError.notFound("List with ID \(list.id.rawValue.uuidString) not found")
+        } catch {
+            // Other database errors
+            throw PersistenceError.databaseError(error.localizedDescription)
         }
     }
 
