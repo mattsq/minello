@@ -22,10 +22,10 @@ struct AddCardIntent: AppIntent {
     @Parameter(title: "Column Name")
     var columnName: String
 
-    @Parameter(title: "Details", default: "")
-    var details: String
+    @Parameter(title: "Details")
+    var details: String?
 
-    @Parameter(title: "Due Date", default: nil)
+    @Parameter(title: "Due Date")
     var dueDate: Date?
 
     static var parameterSummary: some ParameterSummary {
@@ -80,7 +80,7 @@ struct AddCardIntent: AppIntent {
         let newCard = Card(
             column: targetColumn.id,
             title: cardTitle,
-            details: details,
+            details: details ?? "",
             due: dueDate,
             sortKey: newSortKey
         )
