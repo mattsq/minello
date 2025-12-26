@@ -144,7 +144,25 @@ jobs:
         run: brew install xcodegen
 
       - name: Generate Xcode project
-        run: xcodegen generate
+        run: |
+          echo "━━━ Generating Xcode project from project.yml ━━━"
+          xcodegen generate --spec project.yml
+          echo ""
+          echo "━━━ Generated project structure ━━━"
+          ls -la HomeCooked.xcodeproj/
+          echo ""
+          echo "━━━ Checking if scheme exists ━━━"
+          ls -la HomeCooked.xcodeproj/xcshareddata/xcschemes/ || echo "No shared schemes found"
+
+      - name: Validate Xcode project
+        run: |
+          echo "━━━ Listing available schemes ━━━"
+          xcodebuild -list -project HomeCooked.xcodeproj
+          echo ""
+          echo "━━━ Showing build settings for HomeCooked scheme ━━━"
+          xcodebuild -project HomeCooked.xcodeproj \
+            -scheme HomeCooked \
+            -showBuildSettings | head -50
 
       - name: Cache DerivedData
         uses: actions/cache@v4
@@ -179,17 +197,23 @@ jobs:
         id: build
         run: |
           set -o pipefail
+          echo "━━━ Starting iOS app build ━━━"
+          echo "Destination: platform=iOS Simulator,name=iPhone 15"
+          echo "Scheme: HomeCooked"
+          echo ""
           if command -v xcpretty &> /dev/null; then
             xcodebuild -project HomeCooked.xcodeproj \
               -scheme HomeCooked \
               -destination 'platform=iOS Simulator,name=iPhone 15' \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
+              -verbose \
               build 2>&1 | tee /tmp/xcodebuild-build.log | xcpretty
           else
             xcodebuild -project HomeCooked.xcodeproj \
               -scheme HomeCooked \
               -destination 'platform=iOS Simulator,name=iPhone 15' \
               -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
+              -verbose \
               build 2>&1 | tee /tmp/xcodebuild-build.log
           fi
         continue-on-error: false
@@ -224,6 +248,24 @@ jobs:
             /tmp/preflight*.log
           retention-days: 7
           if-no-files-found: ignore
+
+      - name: Display build failure details
+        if: failure()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "BUILD FAILED - Showing last 100 lines of build log:"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          tail -100 /tmp/xcodebuild-build.log || echo "Build log not found"
+          echo ""
+          echo "━━━ Checking for common issues ━━━"
+          echo "Scheme issues:"
+          grep -i "scheme.*not found\|could not find scheme" /tmp/xcodebuild-build.log || echo "No scheme errors found"
+          echo ""
+          echo "Package resolution issues:"
+          grep -i "package.*error\|dependencies could not be resolved" /tmp/xcodebuild-build.log || echo "No package errors found"
+          echo ""
+          echo "Code signing issues:"
+          grep -i "signing\|provisioning" /tmp/xcodebuild-build.log || echo "No signing errors found"
 
       - name: Upload test results
         if: always()
