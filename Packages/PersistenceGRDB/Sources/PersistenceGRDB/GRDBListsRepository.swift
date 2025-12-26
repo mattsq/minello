@@ -66,8 +66,8 @@ public final class GRDBListsRepository: ListsRepository {
     public func updateList(_ list: PersonalList) async throws {
         try await dbQueue.write { db in
             let record = try PersonalListRecord(from: list)
-            let updated = try record.updateAndFetch(db)
-            if updated == nil {
+            let didUpdate = try record.update(db)
+            if !didUpdate {
                 throw PersistenceError.notFound("List with ID \(list.id.rawValue.uuidString) not found")
             }
         }

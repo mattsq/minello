@@ -118,7 +118,8 @@ final class EntityLookupTests: XCTestCase {
             boards: [board]
         )
 
-        XCTAssertGreaterThanOrEqual(results.count, 1)
+        XCTAssertGreaterThanOrEqual(results.count, 1, "Expected at least 1 result for query 'todo'")
+        XCTAssertFalse(results.isEmpty, "Results should not be empty")
         XCTAssertEqual(results[0].column.title, "To Do")
     }
 

@@ -47,6 +47,18 @@ public enum FuzzyMatcher {
             }
         }
 
+        // Check if query matches target with spaces removed (e.g., "todo" matches "To Do")
+        let compressedTarget = normalizedTarget.replacingOccurrences(of: " ", with: "")
+        if compressedTarget == normalizedQuery {
+            return 0.85
+        }
+        if compressedTarget.hasPrefix(normalizedQuery) {
+            return 0.75
+        }
+        if compressedTarget.contains(normalizedQuery) {
+            return 0.65
+        }
+
         // Levenshtein distance for close matches
         let distance = levenshteinDistance(normalizedQuery, normalizedTarget)
         let maxLength = max(normalizedQuery.count, normalizedTarget.count)

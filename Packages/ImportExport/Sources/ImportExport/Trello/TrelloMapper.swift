@@ -61,8 +61,11 @@ public enum TrelloMapper {
         var cards: [Card] = []
         var columnCardMap: [ColumnID: [CardID]] = [:]
 
-        for (listID, cardsInList) in cardsByList {
-            guard let columnID = listIDMap[listID] else { continue }
+        // Process lists in sorted order to ensure deterministic behavior
+        let sortedListIDs = cardsByList.keys.sorted()
+        for listID in sortedListIDs {
+            guard let columnID = listIDMap[listID],
+                  let cardsInList = cardsByList[listID] else { continue }
 
             for (index, trelloCard) in cardsInList.enumerated() {
                 let cardID = CardID()
