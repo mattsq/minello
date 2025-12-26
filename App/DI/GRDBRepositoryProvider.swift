@@ -20,9 +20,8 @@ final class GRDBRepositoryProvider: RepositoryProvider {
         self.dbQueue = try DatabaseQueue(path: databaseURL.path)
 
         // Run migrations
-        try dbQueue.write { db in
-            try Migrations.runMigrations(db)
-        }
+        let migrator = HomeCookedMigrator.makeMigrator()
+        try migrator.migrate(dbQueue)
 
         // Initialize repositories
         self.boardsRepository = GRDBBoardsRepository(dbQueue: dbQueue)
@@ -33,9 +32,10 @@ final class GRDBRepositoryProvider: RepositoryProvider {
     /// Create an in-memory database for previews and testing
     static func inMemory() throws -> GRDBRepositoryProvider {
         let dbQueue = try DatabaseQueue()
-        try dbQueue.write { db in
-            try Migrations.runMigrations(db)
-        }
+
+        // Run migrations
+        let migrator = HomeCookedMigrator.makeMigrator()
+        try migrator.migrate(dbQueue)
 
         return try GRDBRepositoryProvider(dbQueue: dbQueue)
     }

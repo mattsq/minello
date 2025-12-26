@@ -6,6 +6,7 @@ import CloudKit
 import SwiftUI
 import Domain
 import PersistenceInterfaces
+import SyncCloudKit
 
 /// Button for managing board sharing, displays a "Shared" pill when active
 struct ShareButton: View {
