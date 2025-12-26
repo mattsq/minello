@@ -20,7 +20,7 @@ public final class GRDBListsRepository: ListsRepository {
     /// - Returns: A new repository with an in-memory database
     public static func inMemory() throws -> GRDBListsRepository {
         let dbQueue = try DatabaseQueue()
-        var migrator = HomeCookedMigrator.makeMigrator()
+        let migrator = HomeCookedMigrator.makeMigrator()
         try migrator.migrate(dbQueue)
         return GRDBListsRepository(dbQueue: dbQueue)
     }
@@ -30,7 +30,7 @@ public final class GRDBListsRepository: ListsRepository {
     /// - Returns: A new repository with a file-based database
     public static func onDisk(at path: String) throws -> GRDBListsRepository {
         let dbQueue = try DatabaseQueue(path: path)
-        var migrator = HomeCookedMigrator.makeMigrator()
+        let migrator = HomeCookedMigrator.makeMigrator()
         try migrator.migrate(dbQueue)
         return GRDBListsRepository(dbQueue: dbQueue)
     }
@@ -64,12 +64,24 @@ public final class GRDBListsRepository: ListsRepository {
     }
 
     public func updateList(_ list: PersonalList) async throws {
-        try await dbQueue.write { db in
-            let record = try PersonalListRecord(from: list)
-            let updated = try record.updateAndFetch(db)
-            if updated == nil {
-                throw PersistenceError.notFound("List with ID \(list.id.rawValue.uuidString) not found")
+        do {
+            try await dbQueue.write { db in
+                let record = try PersonalListRecord(from: list)
+                try record.update(db)
+                // Check if any rows were actually updated
+                if db.changesCount == 0 {
+                    throw PersistenceInterfaces.PersistenceError.notFound("List with ID \(list.id.rawValue.uuidString) not found")
+                }
             }
+        } catch let error as PersistenceInterfaces.PersistenceError {
+            // Re-throw our own errors
+            throw error
+        } catch {
+            // Convert GRDB errors (like "Key not found") to PersistenceError
+            if error.localizedDescription.contains("not found") {
+                throw PersistenceInterfaces.PersistenceError.notFound("List with ID \(list.id.rawValue.uuidString) not found")
+            }
+            throw PersistenceInterfaces.PersistenceError.databaseError(error.localizedDescription)
         }
     }
 

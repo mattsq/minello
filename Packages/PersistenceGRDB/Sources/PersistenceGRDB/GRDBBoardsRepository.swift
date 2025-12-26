@@ -20,7 +20,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
     /// - Returns: A new repository with an in-memory database
     public static func inMemory() throws -> GRDBBoardsRepository {
         let dbQueue = try DatabaseQueue()
-        var migrator = HomeCookedMigrator.makeMigrator()
+        let migrator = HomeCookedMigrator.makeMigrator()
         try migrator.migrate(dbQueue)
         return GRDBBoardsRepository(dbQueue: dbQueue)
     }
@@ -30,7 +30,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
     /// - Returns: A new repository with a file-based database
     public static func onDisk(at path: String) throws -> GRDBBoardsRepository {
         let dbQueue = try DatabaseQueue(path: path)
-        var migrator = HomeCookedMigrator.makeMigrator()
+        let migrator = HomeCookedMigrator.makeMigrator()
         try migrator.migrate(dbQueue)
         return GRDBBoardsRepository(dbQueue: dbQueue)
     }
@@ -205,14 +205,19 @@ public final class GRDBBoardsRepository: BoardsRepository {
 
     public func searchCards(query: String) async throws -> [Card] {
         try await dbQueue.read { db in
-            let pattern = FTS5Pattern(matchingAllTokensIn: query)
+            // Use prefix matching with wildcards to handle cases like "grocery" matching "groceries"
+            // Split query into tokens and add wildcard to each
+            // Use OR to match if the token appears in ANY column (title OR details)
+            let tokens = query.split(separator: " ").map { String($0) + "*" }
+            let ftsQuery = tokens.joined(separator: " OR ")
+
             let sql = """
                 SELECT cards.* FROM cards
                 JOIN cards_fts ON cards.rowid = cards_fts.rowid
                 WHERE cards_fts MATCH ?
                 ORDER BY cards.sort_key ASC
                 """
-            let records = try CardRecord.fetchAll(db, sql: sql, arguments: [pattern])
+            let records = try CardRecord.fetchAll(db, sql: sql, arguments: [ftsQuery])
             return try records.map { try $0.toDomain() }
         }
     }

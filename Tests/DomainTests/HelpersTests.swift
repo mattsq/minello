@@ -56,10 +56,11 @@ final class HelpersTests: XCTestCase {
         let tags = ["MyTag", "  Another  ", "special!", "duplicate", "DUPLICATE"]
         let result = TagHelpers.sanitize(tags)
 
-        XCTAssertEqual(result.count, 3)
+        XCTAssertEqual(result.count, 4)
         XCTAssertTrue(result.contains("mytag"))
         XCTAssertTrue(result.contains("another"))
         XCTAssertTrue(result.contains("special"))
+        XCTAssertTrue(result.contains("duplicate"))
     }
 
     func testTagSanitizeArrayRemovesDuplicates() {
