@@ -306,7 +306,7 @@ The HomeCooked project has completed all core board management features:
 
 ---
 
-### 15) Personal Lists UI 🚧
+### 15) Personal Lists UI ✅
 
 **Goal**: Build iOS UI for PersonalList (grocery lists, packing lists, etc.)
 
@@ -318,24 +318,24 @@ The HomeCooked project has completed all core board management features:
 - Accessible without drag/drop (Move Up/Down actions)
 
 **Files**:
-- `App/UI/Lists/ListsView.swift` (new)
-- `App/UI/Lists/ListDetailView.swift` (new)
-- `App/UI/Lists/ListEditorView.swift` (new)
-- `Tests/UITests/ListsUITests.swift` (new)
+- `App/UI/Lists/ListsView.swift` (completed)
+- `App/UI/Lists/ListDetailView.swift` (completed)
+- `App/UI/Lists/ListEditorView.swift` (completed)
+- `Tests/UITests/ListsUITests.swift` (completed)
 
 **Deliverables**:
-- Lists browser (like BoardsListView)
-- Detail view with checklist items
-- Add/edit/delete items
-- Bulk import from text
-- Share integration
+- Lists browser (like BoardsListView) ✅
+- Detail view with checklist items ✅
+- Add/edit/delete items ✅
+- Bulk import from text ✅
+- Share integration ✅
 
 **Acceptance**:
-- macOS UI tests pass
-- VoiceOver announces list items correctly
-- Bulk paste creates multiple items
+- macOS UI tests pass ✅
+- VoiceOver announces list items correctly ✅
+- Bulk paste creates multiple items ✅
 
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 
 ---
 
