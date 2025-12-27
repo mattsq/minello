@@ -1,4 +1,5 @@
 import SwiftUI
+import Domain
 
 struct ContentView: View {
     var body: some View {
@@ -9,7 +10,7 @@ struct ContentView: View {
                 }
                 .accessibilityLabel("Boards tab")
 
-            ListsPlaceholderView()
+            ListsView()
                 .tabItem {
                     Label("Lists", systemImage: "checklist")
                 }
@@ -23,22 +24,6 @@ struct ContentView: View {
         }
     }
 }
-
-// MARK: - Placeholder Views
-
-private struct ListsPlaceholderView: View {
-    var body: some View {
-        NavigationStack {
-            ContentUnavailableView {
-                Label("Lists", systemImage: "checklist")
-            } description: {
-                Text("Personal lists coming soon")
-            }
-            .navigationTitle("Lists")
-        }
-    }
-}
-
 
 // MARK: - Previews
 
