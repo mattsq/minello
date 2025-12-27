@@ -9,6 +9,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Recipe management UI (iOS app):
+  - RecipesListView: Main view showing all recipes with navigation
+    - Add/delete recipe functionality
+    - Search functionality for recipe titles, tags, and method content
+    - Tag filtering with horizontal scrollable tag chips
+    - Empty state with call-to-action
+    - Pull-to-refresh support
+    - Recipe row displaying ingredient count, tags, and last updated time
+  - RecipeDetailView: Recipe detail view with ingredient list and method display
+    - Display of recipe title, tags, and metadata
+    - Ingredients section with quantities, units, and notes
+    - Method section with markdown text display (text selection enabled)
+    - "Add to Shopping List" action for copying ingredients to personal lists
+    - Edit and delete actions in menu
+    - Confirmation dialog for deletion
+  - RecipeEditorView: Comprehensive recipe editor for creating and editing
+    - Title and tags editor with add/remove functionality
+    - Ingredients list with add/remove operations
+    - AddIngredientSheet for detailed ingredient entry (name, quantity, unit, note)
+    - Method text editor with multi-line support
+    - Form validation (title required)
+    - Create and edit modes with appropriate labels
+    - FlowLayout for tag display
+  - ContentView updated with TabView navigation:
+    - Three tabs: Boards, Lists (placeholder), and Recipes
+    - Tab icons and accessibility labels
+    - Environment object integration for dependency injection
+  - Integration with AppDependencyContainer:
+    - RecipesRepository access via dependency injection
+    - Support for both GRDB and SwiftData backends
+  - Comprehensive accessibility support:
+    - VoiceOver labels on all interactive elements
+    - Semantic labels for recipes, ingredients, and tags
+    - Accessible add/edit/delete actions
+  - SwiftUI previews for all recipe views with sample data
 - Recipe management backend (persistence layer):
   - RecipeRecord in PersistenceGRDB for SQLite storage of recipes
   - Database migration v3 adding recipes table with indices

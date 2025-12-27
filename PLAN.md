@@ -261,14 +261,14 @@ The HomeCooked project has completed all core board management features:
 - ✅ CI/CD with fail-fast Linux and macOS jobs
 - ✅ Comprehensive accessibility support
 
-**Partially Complete**:
-- 🚧 Recipes: Domain model and interface exist, but implementations are stubs (TODOs)
+**Recently Completed**:
+- ✅ Recipes: Full implementation with GRDB/SwiftData backends and complete iOS UI
 
 ---
 
 ## Phase 2: Missing Features & Enhancements
 
-### 14) Recipe Management (Complete Implementation) 🚧
+### 14) Recipe Management (Complete Implementation) ✅
 
 **Goal**: Implement complete recipe support (persistence + UI)
 
@@ -302,7 +302,7 @@ The HomeCooked project has completed all core board management features:
 - macOS UI tests for recipe CRUD operations
 - Recipes appear in main navigation alongside Boards and Lists
 
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 
 ---
 
