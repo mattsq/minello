@@ -9,6 +9,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Personal Lists UI (iOS app):
+  - ListsView: Main view showing all personal lists with navigation
+    - Add/delete list functionality with swipe-to-delete
+    - Search functionality for list titles and item text
+    - Empty state with call-to-action
+    - Pull-to-refresh support
+    - List row displaying total items, incomplete count, and last updated time
+    - Lists sorted alphabetically by title
+  - ListDetailView: Detailed list view with interactive checklist
+    - Statistics badges showing total, to-do, and completed item counts
+    - Interactive checklist with checkbox toggles (tap to check/uncheck)
+    - Swipe or tap to delete individual items
+    - "Check All" and "Uncheck All" bulk actions
+    - "Clear Completed" action to remove checked items
+    - Bulk import functionality for adding multiple items at once (one per line)
+    - Share sheet integration for exporting lists as formatted text
+    - Edit and delete actions in menu
+    - Confirmation dialog for list deletion
+    - Real-time updates to statistics when items change
+  - ListEditorView: Comprehensive list editor for creating and editing
+    - Title editor with validation (title required)
+    - Items list with add/remove operations
+    - AddItemSheet for detailed item entry (name, quantity, unit, note)
+    - Item reordering with drag-and-drop and Move Up/Down buttons
+    - EditButton for enabling drag-to-reorder mode
+    - Create and edit modes with appropriate labels
+    - Form-based interface with sections
+  - BulkImportSheet: Multi-line text import for quick item addition
+    - TextEditor with line count preview
+    - One item per line parsing
+    - Automatic trimming and empty line filtering
+    - Auto-focus on text field for immediate input
+  - ShareSheet: Native iOS share sheet integration
+    - Formatted text export with checkboxes (☐/☑)
+    - Includes quantities, units, and notes
+    - Standard iOS sharing activities (Messages, Mail, Copy, etc.)
+  - ContentView updated to replace Lists placeholder:
+    - Active ListsView in Lists tab (replaced placeholder)
+    - Full navigation stack integration
+    - Tab bar with Boards, Lists, and Recipes tabs
+  - Integration with AppDependencyContainer:
+    - ListsRepository access via dependency injection
+    - Support for both GRDB and SwiftData backends
+  - Comprehensive accessibility support:
+    - VoiceOver labels on all interactive elements
+    - Accessible checkbox state announcements ("checked"/"unchecked")
+    - Screen reader support for item counts and statistics
+    - Accessible item actions (delete, toggle, reorder)
+    - Hint text for checkbox interaction
+    - Move Up/Down actions for non-drag accessibility
+  - SwiftUI previews for all list views with sample data
+  - Comprehensive UI tests (ListsUITests.swift):
+    - Navigation tests: Lists tab existence and navigation
+    - CRUD tests: Create list, add items, delete list
+    - Interaction tests: Toggle checkboxes, bulk import
+    - Search tests: Filter lists by name and content
+    - Swipe action tests: Swipe-to-delete functionality
+    - Accessibility tests: VoiceOver label verification
 - Recipe management UI (iOS app):
   - RecipesListView: Main view showing all recipes with navigation
     - Add/delete recipe functionality
