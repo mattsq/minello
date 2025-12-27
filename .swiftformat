@@ -12,10 +12,8 @@
 --wraparguments before-first
 --wrapparameters before-first
 --wrapcollections before-first
---closingparen balanced
 
 # Organization
---enable sortImports
 --importgrouping testable-bottom
 
 # Spacing
@@ -23,12 +21,8 @@
 --linebreaks lf
 --semicolons never
 --commas always
---trimwhitespace always
 
 # Wrapping
---wraparguments before-first
---wrapparameters before-first
---wrapcollections before-first
 --wrapreturntype preserve
 --wrapconditions preserve
 --wrapternary default
@@ -38,7 +32,7 @@
 --selfrequired
 
 # Headers
---header "// {file}\n// {project}\n"
+--header "// {file}\n// HomeCooked"
 
 # Unused code
 --stripunusedargs closure-only
@@ -47,23 +41,6 @@
 --marktypes always
 --markextensions always
 --extensionacl on-extension
-
-# Redundancy
---redundanttype inferred
---redundantparens false
---redundantget true
---redundantfiletype always
-
-# Enabled rules
---enable isEmpty
---enable sortedImports
---enable trailingCommas
---enable wrapMultilineStatementBraces
-
-# Disabled rules (opinionated choices)
---disable blankLinesAroundMark
---disable consecutiveSpaces
---disable redundantSelf
 
 # Swift version
 --swiftversion 6.0
