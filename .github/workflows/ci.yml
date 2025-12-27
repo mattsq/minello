@@ -122,7 +122,7 @@ jobs:
 
   # macOS stage - runs after Linux succeeds
   macos:
-    name: macOS Build & Test
+    name: macOS Build (no XCTest targets yet)
     runs-on: macos-14
     needs: linux
 
@@ -242,46 +242,44 @@ jobs:
         id: build
         run: |
           set -o pipefail
-          echo "━━━ Starting iOS app build ━━━"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Starting iOS app build"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "Destination: id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}"
           echo "Device: ${{ steps.select-simulator.outputs.SIMULATOR_NAME }} (iOS ${{ steps.select-simulator.outputs.SIMULATOR_OS }})"
           echo "Scheme: HomeCooked"
+          echo "DerivedData: ~/Library/Developer/Xcode/DerivedData/HomeCooked"
           echo ""
-          if command -v xcpretty &> /dev/null; then
-            xcodebuild -project HomeCooked.xcodeproj \
-              -scheme HomeCooked \
-              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
-              -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
-              -verbose \
-              build 2>&1 | tee /tmp/xcodebuild-build.log | xcpretty
-          else
-            xcodebuild -project HomeCooked.xcodeproj \
-              -scheme HomeCooked \
-              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
-              -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
-              -verbose \
-              build 2>&1 | tee /tmp/xcodebuild-build.log
+
+          # Build without xcpretty to see full verbose output
+          echo "━━━ Running xcodebuild build (full verbose output) ━━━"
+          xcodebuild -project HomeCooked.xcodeproj \
+            -scheme HomeCooked \
+            -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
+            -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
+            build 2>&1 | tee /tmp/xcodebuild-build.log
+
+          BUILD_EXIT_CODE=${PIPESTATUS[0]}
+          echo ""
+          echo "━━━ Build command completed with exit code: $BUILD_EXIT_CODE ━━━"
+
+          if [ $BUILD_EXIT_CODE -ne 0 ]; then
+            echo "━━━ BUILD FAILED - Showing last 100 lines ━━━"
+            tail -100 /tmp/xcodebuild-build.log
           fi
+
+          exit $BUILD_EXIT_CODE
         continue-on-error: false
 
-      - name: Run tests
-        id: test
+      - name: Verify build success
         run: |
-          set -o pipefail
-          if command -v xcpretty &> /dev/null; then
-            xcodebuild -project HomeCooked.xcodeproj \
-              -scheme HomeCooked \
-              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
-              -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
-              test 2>&1 | tee /tmp/xcodebuild-test.log | xcpretty
-          else
-            xcodebuild -project HomeCooked.xcodeproj \
-              -scheme HomeCooked \
-              -destination "id=${{ steps.select-simulator.outputs.SIMULATOR_ID }}" \
-              -derivedDataPath ~/Library/Developer/Xcode/DerivedData/HomeCooked \
-              test 2>&1 | tee /tmp/xcodebuild-test.log
-          fi
-        continue-on-error: false
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✓ iOS app build completed successfully"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Note: All unit/integration tests run on Linux via SwiftPM."
+          echo "The macOS job only verifies the iOS app builds correctly."
+          echo "XCTest UI tests will be added in a future ticket."
 
       - name: Upload build logs
         if: always()
@@ -290,7 +288,6 @@ jobs:
           name: macos-build-logs
           path: |
             /tmp/xcodebuild-build.log
-            /tmp/xcodebuild-test.log
             /tmp/preflight*.log
           retention-days: 7
           if-no-files-found: ignore
@@ -299,45 +296,37 @@ jobs:
         if: failure()
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "BUILD FAILED - Showing last 100 lines of build log:"
+          echo "BUILD FAILURE DETECTED - Displaying diagnostics"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          tail -100 /tmp/xcodebuild-build.log || echo "Build log not found"
           echo ""
-          echo "━━━ Checking for common issues ━━━"
+
+          if [ -f /tmp/xcodebuild-build.log ]; then
+            echo "━━━ Last 200 lines of BUILD log ━━━"
+            tail -200 /tmp/xcodebuild-build.log
+            echo ""
+          fi
+
+          echo "━━━ Checking for common build issues ━━━"
+          echo ""
           echo "Scheme issues:"
-          grep -i "scheme.*not found\|could not find scheme" /tmp/xcodebuild-build.log || echo "No scheme errors found"
+          grep -i "scheme.*not found\|could not find scheme" /tmp/xcodebuild-build.log 2>/dev/null || echo "No scheme errors found"
           echo ""
           echo "Package resolution issues:"
-          grep -i "package.*error\|dependencies could not be resolved" /tmp/xcodebuild-build.log || echo "No package errors found"
+          grep -i "package.*error\|dependencies could not be resolved" /tmp/xcodebuild-build.log 2>/dev/null || echo "No package errors found"
           echo ""
           echo "Code signing issues:"
-          grep -i "signing\|provisioning" /tmp/xcodebuild-build.log || echo "No signing errors found"
-
-      - name: Upload test results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-test-results
-          path: |
-            ~/Library/Developer/Xcode/DerivedData/HomeCooked/Logs/Test/*.xcresult
-          retention-days: 7
-          if-no-files-found: ignore
-
-      - name: Upload failure screenshots
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-test-failures
-          path: |
-            ~/Library/Developer/Xcode/DerivedData/HomeCooked/Logs/Test/Attachments/**/*.png
-            ~/Library/Developer/Xcode/DerivedData/HomeCooked/Logs/Test/Attachments/**/*.jpg
-          retention-days: 14
-          if-no-files-found: ignore
+          grep -i "signing\|provisioning" /tmp/xcodebuild-build.log 2>/dev/null || echo "No signing errors found"
+          echo ""
+          echo "App Intents / SSU issues:"
+          grep -i "appintentsnltrainingprocessor\|ssutraining\|utskit.*error\|archive ssu" /tmp/xcodebuild-build.log 2>/dev/null || echo "No App Intents/SSU errors found"
+          echo ""
+          echo "Swift compilation errors:"
+          grep -i "error:.*swift\|cannot find.*in scope" /tmp/xcodebuild-build.log 2>/dev/null | head -20 || echo "No Swift compilation errors found"
 
       - name: Failure summary
         if: failure()
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "✗ macOS CI failed - check logs and screenshots above"
+          echo "✗ macOS build failed - check logs above for details"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           exit 1
