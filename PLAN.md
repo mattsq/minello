@@ -242,17 +242,17 @@ This document tracks implementation tickets for the HomeCooked project. Each tic
 
 ---
 
-## Summary
+## Summary - Core Features Complete
 
-All planned tickets have been completed! The HomeCooked project has:
+The HomeCooked project has completed all core board management features:
 
 - ✅ Domain models and validators with comprehensive helpers
-- ✅ GRDB persistence with migrations and contract tests
+- ✅ GRDB persistence for boards/columns/cards with migrations and contract tests
 - ✅ SwiftData adapter for iOS (with contract tests)
 - ✅ CardReorderService with property-based tests
 - ✅ Trello importer with fixtures and tests
 - ✅ Backup/restore with round-trip tests
-- ✅ Personal lists with checklist operations
+- ✅ Personal lists backend (GRDB + SwiftData, no UI yet)
 - ✅ iOS UI with boards, columns, cards, and detail views
 - ✅ Drag & drop with haptics and accessibility
 - ✅ CloudKit private sync with conflict resolution
@@ -261,20 +261,367 @@ All planned tickets have been completed! The HomeCooked project has:
 - ✅ CI/CD with fail-fast Linux and macOS jobs
 - ✅ Comprehensive accessibility support
 
-## Future Enhancements
+**Partially Complete**:
+- 🚧 Recipes: Domain model and interface exist, but implementations are stubs (TODOs)
 
-Potential areas for future development:
+---
 
-1. **Recipe Management UI**: While the domain models and persistence are in place, the UI for managing recipes could be enhanced
-2. **Advanced Search**: Implement full-text search across boards, cards, and lists
-3. **Themes & Customization**: Dark mode, custom color schemes for boards
-4. **Widgets**: iOS widgets for quick access to lists and boards
-5. **Apple Watch**: Companion app for viewing lists and checking off items
-6. **Export Formats**: PDF export for boards, recipes
-7. **Templates**: Board and card templates for common workflows
-8. **Attachments**: Support for images and files on cards
-9. **Comments**: Discussion threads on cards
-10. **Calendar Integration**: Sync card due dates with system calendar
+## Phase 2: Missing Features & Enhancements
+
+### 14) Recipe Management (Complete Implementation) 🚧
+
+**Goal**: Implement complete recipe support (persistence + UI)
+
+**Constraints**:
+- Follow existing patterns (GRDB + SwiftData repos, contract tests)
+- Markdown rendering for method
+- Tag-based search and filtering
+- Export recipe to shopping list (copy ingredients to PersonalList)
+
+**Files**:
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBRecipesRepository.swift` (replace TODOs)
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/Migrations.swift` (add recipes table)
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/Records.swift` (add RecipeRecord)
+- `App/PersistenceSwiftData/Sources/PersistenceSwiftData/SwiftDataModels.swift` (add RecipeModel)
+- `App/PersistenceSwiftData/Sources/PersistenceSwiftData/SwiftDataRecipesRepository.swift` (new)
+- `App/UI/Recipes/RecipesListView.swift` (new)
+- `App/UI/Recipes/RecipeDetailView.swift` (new)
+- `App/UI/Recipes/RecipeEditorView.swift` (new)
+- `Tests/PersistenceGRDBTests/RecipesRepositoryContractTests.swift` (new)
+- `Tests/PersistenceSwiftDataTests/SwiftDataRecipesRepositoryContractTests.swift` (new)
+
+**Deliverables**:
+- GRDB implementation with schema migration
+- SwiftData implementation with contract tests
+- UI for browsing, viewing, editing, and creating recipes
+- "Add to Shopping List" action
+- Tag filtering and search
+
+**Acceptance**:
+- `swift test --filter RecipesRepositoryContractTests` passes (Linux)
+- macOS UI tests for recipe CRUD operations
+- Recipes appear in main navigation alongside Boards and Lists
+
+**Status**: ⬜ Not Started
+
+---
+
+### 15) Personal Lists UI 🚧
+
+**Goal**: Build iOS UI for PersonalList (grocery lists, packing lists, etc.)
+
+**Constraints**:
+- Follow board/card UI patterns
+- Swipe actions for quick delete/reorder
+- Bulk add/remove via text paste (one item per line)
+- Share list via standard iOS share sheet
+- Accessible without drag/drop (Move Up/Down actions)
+
+**Files**:
+- `App/UI/Lists/ListsView.swift` (new)
+- `App/UI/Lists/ListDetailView.swift` (new)
+- `App/UI/Lists/ListEditorView.swift` (new)
+- `Tests/UITests/ListsUITests.swift` (new)
+
+**Deliverables**:
+- Lists browser (like BoardsListView)
+- Detail view with checklist items
+- Add/edit/delete items
+- Bulk import from text
+- Share integration
+
+**Acceptance**:
+- macOS UI tests pass
+- VoiceOver announces list items correctly
+- Bulk paste creates multiple items
+
+**Status**: ⬜ Not Started
+
+---
+
+### 16) iOS Widgets (Home Screen & Lock Screen) ⬜
+
+**Goal**: Add iOS widgets for quick access to lists and upcoming cards
+
+**Constraints**:
+- Small widget: Shows one list with top 3 items
+- Medium widget: Shows 2-3 upcoming cards (by due date)
+- Lock screen widget: Count of unchecked items in selected list
+- Tap to open app to relevant screen
+- Use WidgetKit with AppIntents for configuration
+
+**Files**:
+- `App/Widgets/ListWidget.swift` (new)
+- `App/Widgets/UpcomingCardsWidget.swift` (new)
+- `App/Widgets/LockScreenWidget.swift` (new)
+- `App/Intents/ConfigureWidgetIntent.swift` (new)
+
+**Deliverables**:
+- Widget extension target
+- Three widget types (list, cards, lock screen)
+- Configuration via App Intents
+- Timeline updates
+
+**Acceptance**:
+- Widgets appear in widget gallery
+- Widgets update when data changes
+- Tap opens correct app screen
+
+**Status**: ⬜ Not Started
+
+---
+
+### 17) Advanced Search & Filtering ⬜
+
+**Goal**: Full-text search across all entities (boards, cards, lists, recipes)
+
+**Constraints**:
+- GRDB FTS5 for efficient full-text search
+- Search UI with filters (entity type, tags, date range)
+- Recent searches stored locally
+- Results grouped by entity type
+- Tap result to navigate to detail view
+
+**Files**:
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/Migrations.swift` (add FTS tables)
+- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/SearchRepository.swift` (new)
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBSearchRepository.swift` (new)
+- `App/UI/Search/SearchView.swift` (new)
+- `App/UI/Search/SearchResultsView.swift` (new)
+- `Tests/PersistenceGRDBTests/SearchRepositoryTests.swift` (new)
+
+**Deliverables**:
+- FTS5 virtual tables in GRDB
+- SearchRepository protocol and implementation
+- Search UI with filters
+- Recent searches
+- Result navigation
+
+**Acceptance**:
+- `swift test --filter SearchRepositoryTests` passes
+- Search returns results across entity types
+- Filters work correctly
+- VoiceOver announces result count
+
+**Status**: ⬜ Not Started
+
+---
+
+### 18) Themes & Customization ⬜
+
+**Goal**: Dark mode support and custom board color schemes
+
+**Constraints**:
+- System dark mode toggle (follow iOS setting)
+- Per-board color themes (8-10 preset palettes)
+- Color persistence in Board model
+- All UI respects theme colors
+- Accessibility contrast ratios maintained
+
+**Files**:
+- `Packages/Domain/Sources/Domain/Models.swift` (add Board.colorTheme)
+- `App/UI/Theme/ThemeProvider.swift` (new)
+- `App/UI/Theme/ColorPalettes.swift` (new)
+- `App/UI/BoardDetail/BoardThemePickerView.swift` (new)
+- Migration for Board.colorTheme column
+
+**Deliverables**:
+- Dark mode support throughout app
+- Board color theme picker
+- Theme persistence
+- Accessible color combinations
+
+**Acceptance**:
+- App follows system dark mode
+- Board themes persist across launches
+- All text remains readable with themes
+
+**Status**: ⬜ Not Started
+
+---
+
+### 19) Export Formats (PDF, Markdown) ⬜
+
+**Goal**: Export boards and recipes to PDF and Markdown
+
+**Constraints**:
+- PDF: Single board with all cards grouped by column
+- Markdown: Board structure with card details
+- Recipe PDF: Formatted with ingredients and method
+- Export via iOS share sheet
+- Linux-compatible export logic in ImportExport package
+
+**Files**:
+- `Packages/ImportExport/Sources/ImportExport/Export/PDFExporter.swift` (new)
+- `Packages/ImportExport/Sources/ImportExport/Export/MarkdownExporter.swift` (new)
+- `App/UI/BoardDetail/ExportMenuView.swift` (new)
+- `Tests/ImportExportTests/ExportTests.swift` (new)
+
+**Deliverables**:
+- PDF export for boards and recipes
+- Markdown export for boards
+- Share sheet integration
+- Unit tests for export formats
+
+**Acceptance**:
+- `swift test --filter ExportTests` passes (Linux)
+- Exported PDFs are readable and well-formatted
+- Markdown preserves structure
+
+**Status**: ⬜ Not Started
+
+---
+
+### 20) Templates (Boards & Cards) ⬜
+
+**Goal**: Save and reuse board/card templates for common workflows
+
+**Constraints**:
+- Save board as template (structure only, no data)
+- Card templates with default checklist/tags
+- Template library in UI
+- Templates stored in database
+- Export/import templates via JSON
+
+**Files**:
+- `Packages/Domain/Sources/Domain/Template.swift` (new)
+- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/TemplatesRepository.swift` (new)
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBTemplatesRepository.swift` (new)
+- `App/UI/Templates/TemplatesView.swift` (new)
+- Migration for templates table
+
+**Deliverables**:
+- Template domain model
+- Repository implementation
+- Template browser UI
+- Create board from template
+- Import/export templates
+
+**Acceptance**:
+- Save board as template preserves structure
+- Creating from template creates independent copy
+- Templates work offline
+
+**Status**: ⬜ Not Started
+
+---
+
+## Phase 3: Refactoring & Technical Improvements
+
+### 21) Reduce Code Duplication in Repositories ⬜
+
+**Goal**: Extract common patterns from GRDB and SwiftData repositories
+
+**Constraints**:
+- Create shared utilities for ID/UUID conversion
+- Shared JSON encoding/decoding for arrays
+- Protocol extensions for common queries
+- Maintain 100% test coverage
+
+**Files**:
+- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/RepositoryHelpers.swift` (new)
+- Refactor: `GRDBBoardsRepository.swift`, `SwiftDataBoardsRepository.swift`, etc.
+
+**Deliverables**:
+- Extracted helper utilities
+- Reduced duplication
+- All tests still pass
+
+**Acceptance**:
+- `make test-linux && make test-macos` passes
+- Code duplication reduced by >30% (measured by lines)
+
+**Status**: ⬜ Not Started
+
+---
+
+### 22) Improve Error Messages & Logging ⬜
+
+**Goal**: Better error messages, structured logging, redaction
+
+**Constraints**:
+- Use os.Logger on Apple platforms
+- Lightweight custom logger for Linux
+- Redact PII (user content, IDs in logs)
+- Error context (what operation failed, why)
+- No secrets in logs
+
+**Files**:
+- `Packages/Domain/Sources/Domain/Logging.swift` (new)
+- Update all repos and use cases with logging
+
+**Deliverables**:
+- Structured logging throughout codebase
+- PII redaction
+- Contextual error messages
+
+**Acceptance**:
+- Logs contain no user content
+- Errors include actionable context
+- Works on Linux and macOS
+
+**Status**: ⬜ Not Started
+
+---
+
+### 23) Performance Optimization ⬜
+
+**Goal**: Profile and optimize hot paths (reorder, search, sync)
+
+**Constraints**:
+- Benchmark key operations
+- Optimize GRDB queries (indices, joins)
+- Reduce allocations in reorder normalization
+- Profile CloudKit sync batch sizes
+- Document performance baselines
+
+**Files**:
+- `Tests/PerformanceTests/ReorderBenchmarks.swift` (new)
+- `Tests/PerformanceTests/SearchBenchmarks.swift` (new)
+- Optimize: Migrations.swift (add missing indices)
+
+**Deliverables**:
+- Performance benchmarks
+- Optimized queries
+- Documented baselines
+- <50ms for common operations
+
+**Acceptance**:
+- Benchmark suite runs in CI
+- Card reorder <10ms
+- Search <100ms for 1000 cards
+
+**Status**: ⬜ Not Started
+
+---
+
+### 24) Add swiftlint & swiftformat to CI ⬜
+
+**Goal**: Enforce code style consistency in CI
+
+**Constraints**:
+- Add .swiftlint.yml configuration
+- Add .swiftformat configuration
+- Run in CI (fail on violations)
+- Document style rules in DEVELOPMENT.md
+
+**Files**:
+- `.swiftlint.yml` (new)
+- `.swiftformat` (new)
+- `.github/workflows/ci.yml` (add lint stage)
+- `Makefile` (enhance lint target)
+
+**Deliverables**:
+- Lint configurations
+- CI enforcement
+- Documentation
+
+**Acceptance**:
+- `make lint` passes locally
+- CI fails on style violations
+- All existing code passes lint
+
+**Status**: ⬜ Not Started
 
 ## Agent Guidance
 
