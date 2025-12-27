@@ -1,0 +1,70 @@
+# SwiftFormat Configuration for HomeCooked
+# https://github.com/nicklockwood/SwiftFormat
+
+# File options
+--exclude .build,.swiftpm,DerivedData,HomeCooked.xcodeproj
+
+# Format options
+--indent 4
+--indentcase false
+--trimwhitespace always
+--maxwidth 120
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--closingparen balanced
+
+# Organization
+--enable sortImports
+--importgrouping testable-bottom
+
+# Spacing
+--ifdef no-indent
+--linebreaks lf
+--semicolons never
+--commas always
+--trimwhitespace always
+
+# Wrapping
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--wrapreturntype preserve
+--wrapconditions preserve
+--wrapternary default
+
+# Self
+--self remove
+--selfrequired
+
+# Headers
+--header "// {file}\n// {project}\n"
+
+# Unused code
+--stripunusedargs closure-only
+
+# Mark
+--marktypes always
+--markextensions always
+--extensionacl on-extension
+
+# Redundancy
+--redundanttype inferred
+--redundantbackticks false
+--redundantparens false
+--redundantget true
+--redundantfiletype always
+
+# Enabled rules
+--enable isEmpty
+--enable sortedImports
+--enable trailingCommas
+--enable wrapMultilineStatementBraces
+
+# Disabled rules (opinionated choices)
+--disable blankLinesAroundMark
+--disable consecutiveSpaces
+--disable redundantSelf
+
+# Swift version
+--swiftversion 6.0

@@ -238,6 +238,71 @@ git commit -m "fix: apply preflight auto-fixes"
 - Warnings are treated as errors
 - Document all public APIs
 
+### Code Formatting & Linting
+
+The project uses **SwiftFormat** for automatic code formatting and **SwiftLint** for style enforcement. Both tools are enforced in CI.
+
+#### Installation
+
+**macOS**:
+```bash
+brew install swiftformat swiftlint
+```
+
+**Linux**:
+SwiftFormat and SwiftLint are macOS-only tools, but the CI will check all code on push.
+
+#### Usage
+
+**Auto-fix formatting and lint issues** (local development):
+```bash
+make lint
+```
+
+This will:
+1. Run `swiftformat` to auto-fix formatting issues
+2. Run `swiftlint --fix` to auto-correct fixable lint violations
+
+**Check only** (used by CI):
+```bash
+make lint-check
+```
+
+This will:
+1. Run `swiftformat --lint` to check formatting (no changes)
+2. Run `swiftlint --strict` to check for violations (fails on warnings)
+
+#### Configuration
+
+- **`.swiftformat`**: SwiftFormat configuration (4-space indent, 120 char line width, etc.)
+- **`.swiftlint.yml`**: SwiftLint rules (enables missing docs, sorted imports, custom rules)
+
+#### CI Enforcement
+
+The CI pipeline runs `make lint-check` as the first stage. If linting fails:
+1. Pull the branch locally
+2. Run `make lint` to auto-fix issues
+3. Review the changes
+4. Commit and push
+
+#### Key Rules
+
+- **Line width**: 120 characters maximum
+- **Indentation**: 4 spaces (no tabs)
+- **Documentation**: Required for all public declarations
+- **MARK comments**: Must use format `// MARK: - Section Name`
+- **No print statements**: Use proper logging instead
+- **Force unwrapping**: Warning (avoid when possible)
+- **Force cast/try**: Error (never use)
+
+#### Excluded Paths
+
+The following directories are excluded from linting:
+- `.build/`
+- `.swiftpm/`
+- `DerivedData/`
+- `HomeCooked.xcodeproj/`
+
 ### Error Handling
 
 - Use typed errors in repository interfaces

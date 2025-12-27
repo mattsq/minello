@@ -1,4 +1,4 @@
-.PHONY: help preflight test-linux test-macos lint import-sample backup-sample clean
+.PHONY: help preflight test-linux test-macos lint lint-check import-sample backup-sample clean
 
 # Default target
 help:
@@ -7,7 +7,8 @@ help:
 	@echo "  make preflight        Run preflight checks (toolchain, build, skeleton)"
 	@echo "  make test-linux       Build and test all Linux-compatible targets"
 	@echo "  make test-macos       Build iOS app (macOS only, no XCTest targets yet)"
-	@echo "  make lint             Run swiftformat + swiftlint"
+	@echo "  make lint             Auto-fix formatting and lint issues"
+	@echo "  make lint-check       Check formatting and lint (used by CI)"
 	@echo "  make import-sample    Import sample Trello data"
 	@echo "  make backup-sample    Create sample backup"
 	@echo "  make clean            Clean build artifacts"
@@ -46,22 +47,41 @@ test-macos:
 		-destination "id=$$SIMULATOR_ID" \
 		build
 
-# Linting - format and lint check
+# Linting - auto-fix formatting and lint issues
 lint:
-	@echo "Running swiftformat..."
+	@echo "Auto-fixing with swiftformat..."
+	@if command -v swiftformat >/dev/null 2>&1; then \
+		swiftformat .; \
+	else \
+		echo "swiftformat not installed. Install with: brew install swiftformat"; \
+		exit 1; \
+	fi
+	@echo "Running swiftlint autocorrect..."
+	@if command -v swiftlint >/dev/null 2>&1; then \
+		swiftlint --fix --quiet || true; \
+	else \
+		echo "swiftlint not installed. Install with: brew install swiftlint"; \
+		exit 1; \
+	fi
+	@echo "✓ Lint auto-fix complete"
+
+# Linting - check only (for CI)
+lint-check:
+	@echo "Checking format with swiftformat..."
 	@if command -v swiftformat >/dev/null 2>&1; then \
 		swiftformat --lint .; \
 	else \
 		echo "swiftformat not installed. Install with: brew install swiftformat"; \
 		exit 1; \
 	fi
-	@echo "Running swiftlint..."
+	@echo "Checking with swiftlint..."
 	@if command -v swiftlint >/dev/null 2>&1; then \
-		swiftlint; \
+		swiftlint --strict; \
 	else \
 		echo "swiftlint not installed. Install with: brew install swiftlint"; \
 		exit 1; \
 	fi
+	@echo "✓ Lint check passed"
 
 # Import sample Trello data
 import-sample:
