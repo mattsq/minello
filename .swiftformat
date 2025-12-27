@@ -50,7 +50,6 @@
 
 # Redundancy
 --redundanttype inferred
---redundantbackticks false
 --redundantparens false
 --redundantget true
 --redundantfiletype always
