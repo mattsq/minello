@@ -9,35 +9,99 @@ Principle: 80–90% of the code builds/tests on Linux via SwiftPM; the iOS app i
 
 ```
 HomeCooked/
-  Package.swift
-  Packages/
-    Domain/                # Pure value types, IDs, validators (Linux)
-    UseCases/              # Reorder logic, search, list ops, markdown (Linux)
-    PersistenceInterfaces/ # Repository protocols + errors (Linux)
-    PersistenceGRDB/       # SQLite/GRDB implementation (Linux + Apple)
-    ImportExport/          # Trello importer; JSON backup/restore (Linux)
-    SyncInterfaces/        # Sync protocol only (Linux)
-    SyncNoop/              # No-op sync client (Linux)
-    # Apple-only (optional packages)
-    SyncCloudKit/          # CloudKit impl behind SyncInterfaces (Apple)
-  CLIs/
-    hc-import/             # swift run hc-import <trello.json> ...
-    hc-backup/
-    hc-migrate/
-  App/                     # iOS app (SwiftUI), adapters, DI, UI tests (Apple)
-    PersistenceSwiftData/  # SwiftData adapter conforming to repos (Apple)
+  Package.swift               # SwiftPM manifest
+  project.yml                 # XcodeGen config (generates .xcodeproj)
+  Makefile                    # Golden commands
+  Packages/                   # Linux-compatible packages
+    Domain/                   # Pure value types, IDs, validators (Linux)
+      Sources/Domain/
+        Models.swift          # Board, Column, Card, ChecklistItem, etc.
+        Helpers.swift         # TagHelpers, ChecklistHelpers, IDFactory
+    UseCases/                 # Business logic (Linux)
+      Sources/UseCases/
+        Reorder/              # CardReorderService with normalization
+        Checklist/            # ChecklistOperations for lists
+        Lookup/               # FuzzyMatcher and EntityLookup
+    PersistenceInterfaces/    # Repository protocols (Linux)
+      Sources/PersistenceInterfaces/
+        BoardsRepository.swift
+        ListsRepository.swift
+        RecipesRepository.swift
+        PersistenceError.swift
+    PersistenceGRDB/          # SQLite/GRDB impl (Linux + Apple)
+      Sources/PersistenceGRDB/
+        GRDBBoardsRepository.swift
+        GRDBListsRepository.swift
+        GRDBRecipesRepository.swift
+        Migrations.swift
+        Records.swift
+    ImportExport/             # Trello import, backup/restore (Linux)
+      Sources/ImportExport/
+        Trello/               # TrelloModels, TrelloMapper, TrelloImporter
+        Backup/               # BackupExporter, BackupRestorer
+    SyncInterfaces/           # Sync protocol (Linux)
+      Sources/SyncInterfaces/
+        SyncClient.swift
+        SyncConflict.swift
+    SyncNoop/                 # No-op sync (Linux)
+    SyncCloudKit/             # CloudKit sync (Apple only)
+  CLIs/                       # Command-line tools (Linux)
+    hc-import/main.swift      # Import Trello boards
+    hc-backup/main.swift      # Backup/restore data
+    hc-migrate/main.swift     # Database migrations
+  App/                        # iOS app (Apple only)
+    HomeCookedApp.swift       # App entry point
     UI/
-    Intents/
-  Scripts/
-    preflight.sh
-  .xcode-version           # pin Xcode
-  .swift-version           # pin Swift toolchain
+      Boards/BoardsListView.swift
+      BoardDetail/BoardDetailView.swift, ColumnView.swift
+      CardDetail/CardDetailView.swift
+      Settings/SyncStatusView.swift
+      Components/DragDropHandler.swift
+    DI/                       # Dependency injection
+      AppDependencyContainer.swift
+      RepositoryProvider.swift
+    PersistenceSwiftData/     # SwiftData adapter (Apple)
+      Sources/PersistenceSwiftData/
+        SwiftDataBoardsRepository.swift
+        SwiftDataListsRepository.swift
+        SwiftDataModels.swift
+    Intents/                  # App Intents for Shortcuts
+      AddCardIntent.swift
+      AddListItemIntent.swift
+      IntentsProvider.swift
+  Tests/                      # Test suites
+    DomainTests/
+    UseCasesTests/
+    PersistenceGRDBTests/     # Contract tests (Linux)
+    PersistenceSwiftDataTests/# Contract tests (macOS)
+    ImportExportTests/
+    IntentsTests/
+    SyncCloudKitTests/
+    UITests/
+    Fixtures/                 # Test data
+      trello_minimal.json
+      trello_full.json
+  scripts/
+    preflight.sh              # Verification + auto-fix
+  .github/workflows/
+    ci.yml                    # Linux + macOS CI
+  .xcode-version              # Pin Xcode (16.1)
+  .swift-version              # Pin Swift (6.0)
   README.md
+  PLAN.md                     # Implementation tickets
   CHANGELOG.md
   DEVELOPMENT.md
 ```
 
-Key idea: Domain, UseCases, Import/Export, GRDB persistence, and CLIs are Linux-buildable. The iOS app wires the same protocols to SwiftData/CloudKit adapters.
+**Key Design Decisions**:
+
+1. **Linux-First**: Domain, UseCases, Import/Export, GRDB, and CLIs build on Linux
+2. **Repository Pattern**: All data access through protocol interfaces
+3. **Multiple Backends**: GRDB (Linux/macOS) and SwiftData (macOS) both implement same contracts
+4. **Contract Tests**: Same test suite verifies all repository implementations
+5. **Dependency Injection**: App uses RepositoryProvider to swap implementations
+6. **XcodeGen**: Xcode project generated from project.yml, not committed to repo
+7. **Actor-Based Services**: Thread-safe services using Swift actors (CardReorderService, ChecklistOperations, etc.)
 
 ⸻
 
@@ -54,11 +118,12 @@ Key idea: Domain, UseCases, Import/Export, GRDB persistence, and CLIs are Linux-
 
 ## Environment & toolchain
 
-- SwiftPM builds for Linux work.
-- Pin toolchains:
-  - `.swift-version`: e.g., 5.10 (or current stable; keep updated in DEVELOPMENT.md).
-  - `.xcode-version`: e.g., 16.x (macOS only).
-- Format/Lint: swiftformat + swiftlint with repo configs.
+- **Swift**: 6.0 (see `.swift-version`)
+- **Xcode**: 16.1 (macOS only, see `.xcode-version`)
+- **XcodeGen**: Used to generate Xcode project from `project.yml`
+- **GRDB**: 6.29.0+ (SQLite with custom build flags on Linux CI)
+- SwiftPM builds work on Linux and macOS
+- Format/Lint: swiftformat + swiftlint (optional, not in CI yet)
 - Make targets (golden commands):
   - `make preflight` → scripts/preflight.sh (auto-fix skeleton, verify toolchains)
   - `make test-linux` → swift build/test all Linux targets
@@ -260,153 +325,32 @@ public enum Reorder {
 
 ⸻
 
-## Tickets (ready for agents)
+## Current Implementation Status
 
-Each ticket lists Goal, Constraints, Files, Deliverables, Acceptance (with commands). Tackle in order unless stated.
+The HomeCooked project has completed all planned tickets. See [PLAN.md](./PLAN.md) for detailed ticket information and implementation history.
 
-### 0) Project preflight & app skeleton
+**Completed Features**:
+- ✅ Domain models with type-safe IDs and helpers
+- ✅ Repository pattern with GRDB and SwiftData implementations
+- ✅ Contract tests ensuring implementation consistency
+- ✅ Card reordering with midpoint algorithm and normalization
+- ✅ Trello importer with deduplication
+- ✅ Backup/restore with merge and overwrite modes
+- ✅ Personal lists with checklist operations
+- ✅ iOS UI with boards, columns, cards, and detail views
+- ✅ Drag & drop with haptics and accessibility
+- ✅ CloudKit private sync with LWW conflict resolution
+- ✅ CloudKit sharing per board
+- ✅ App Intents for Shortcuts integration (fuzzy name lookup)
+- ✅ CI/CD with fail-fast Linux and macOS stages
+- ✅ Comprehensive accessibility support
 
-**Goal**: Add scripts/preflight.sh and wire make preflight. Autogenerate iOS app skeleton if missing; verify toolchains.
-**Constraints**: Works on Linux & macOS; prints one-line summary; exits non-zero on failure.
-**Files**: Scripts/preflight.sh, Makefile, DEVELOPMENT.md, .swift-version, .xcode-version.
-**Deliverables**: Passing preflight on fresh clone and on a broken tree (after autofix).
-**Acceptance**:
-- `make preflight` succeeds on Linux (no iOS build).
-- On macOS, `make preflight && xcodebuild -list` succeeds.
-
-⸻
-
-### 1) Domain models & validators
-
-**Goal**: Implement Domain structs + helpers (ID factories, tag sanitizer, checklist utilities).
-**Constraints**: Pure Swift; no Foundation types in helpers beyond Date/UUID.
-**Files**: Packages/Domain/...
-**Deliverables**: Compiles + unit tests.
-**Acceptance**: `make test-linux` green; tests under DomainTests/*.
-
-⸻
-
-### 2) Repository interfaces + GRDB v1 (boards/columns/cards)
-
-**Goal**: Define repos + implement GRDB schema v1 with indices; CRUD and query helpers.
-**Constraints**: Foreign keys ON; migrations idempotent; use ISO8601 dates.
-**Files**: PersistenceInterfaces/*, PersistenceGRDB/*
-**Deliverables**: GRDB repo + migration v1 + contract tests.
-**Acceptance**:
-- `swift test --filter BoardsRepositoryContractTests` passes (Linux).
-- `hc-migrate --dry-run` prints applied migrations.
-
-⸻
-
-### 3) Reorder service (midpoint + idle normalization)
-
-**Goal**: Implement CardReorderService in UseCases; no persistence details.
-**Constraints**: Thread-safe; property tests around extremes (duplicate keys, large deltas).
-**Files**: UseCases/Reorder/*
-**Deliverables**: Unit + property tests.
-**Acceptance**: `swift test --filter ReorderTests` passes (Linux).
-
-⸻
-
-### 4) Trello importer + CLI (hc-import)
-
-**Goal**: Decode Trello JSON; map to Domain; write via repo; print summary.
-**Constraints**: Idempotent (dedupe by name+createdAt heuristic); tolerate variant exports.
-**Files**: ImportExport/Trello/*, CLIs/hc-import/*, Tests/Fixtures/trello_*.json
-**Deliverables**: CLI + unit tests with fixtures.
-**Acceptance**:
-- `swift run hc-import Tests/Fixtures/trello_minimal.json --db /tmp/hc.db` exits 0.
-- `swift test --filter TrelloImporterTests` passes.
-
-⸻
-
-### 5) Backup/export & restore + CLI (hc-backup)
-
-**Goal**: Versioned JSON export and merge/overwrite restore.
-**Constraints**: Stable schema; progress logging.
-**Files**: ImportExport/Backup/*, CLIs/hc-backup/*
-**Deliverables**: Round-trip tests.
-**Acceptance**: `swift test --filter BackupRoundTripTests` passes.
-
-⸻
-
-### 6) Lists (PersonalList) & checklist component (Linux logic)
-
-**Goal**: Checklist operations (toggle all, reorder, quantities/units) in UseCases; repo CRUD for lists.
-**Constraints**: Bulk actions confirm when >10 items (policy only; UI later).
-**Files**: UseCases/Checklist/*, PersistenceInterfaces/ListsRepository.swift, PersistenceGRDB/Lists/*
-**Deliverables**: Contract tests for Lists repo.
-**Acceptance**: `swift test --filter ListsRepositoryContractTests`.
-
-⸻
-
-### 7) iOS UI skeleton (Boards/Columns/Cards)
-
-**Goal**: SwiftUI skeleton screens; wire to repos via DI (use GRDB or SwiftData via feature flag).
-**Constraints**: Accessibility labels; drag/drop hooks; haptics on drop.
-**Files**: App/UI/*, App/DI/*
-**Deliverables**: Buildable app; smoke UI tests.
-**Acceptance**: On macOS: `make test-macos` green; snapshot tests recorded with RECORD_SNAPSHOTS=1.
-
-⸻
-
-### 8) SwiftData adapter (Apple-only)
-
-**Goal**: PersistenceSwiftData that conforms to repos, mapping Domain ↔ SwiftData models.
-**Constraints**: Prefer explicit deletes over .cascade; unidirectional relationships.
-**Files**: App/PersistenceSwiftData/*
-**Deliverables**: Contract tests run also against SwiftData (macOS).
-**Acceptance**: macOS test matrix runs contract suite for GRDB and SwiftData.
-
-⸻
-
-### 9) CloudKit private sync (optional)
-
-**Goal**: Implement SyncCloudKit behind SyncInterfaces; private DB only; LWW conflicts.
-**Constraints**: App works offline; status UI.
-**Files**: Packages/SyncCloudKit/*, App/UI/Settings/SyncStatusView.swift
-**Deliverables**: Manual harness + unit tests mapping statuses.
-**Acceptance**: macOS CI runs sync unit tests; manual doc SyncManualTests.md.
-
-⸻
-
-### 10) CloudKit sharing per Board (optional)
-
-**Goal**: Share a Board and children; revoke; badge participants count.
-**Constraints**: Board-scoped sharing only.
-**Files**: App/UI/BoardDetail/Share/*
-**Deliverables**: Integration tests (macOS) + snapshot of "Shared" pill.
-**Acceptance**: macOS UI tests pass.
-
-⸻
-
-### 11) App Intents (add list item / add card)
-
-**Goal**: "Add milk to Groceries"; "Add 'Pay strata' to 'Home' → 'To Do'".
-**Constraints**: Fuzzy name lookup from UseCases; return success phrases.
-**Files**: App/Intents/*
-**Deliverables**: Unit tests for lookup; intent performs action.
-**Acceptance**: macOS unit tests pass; Shortcuts shows intents.
-
-⸻
-
-### 12) CI hardening (fail-fast + artifacts)
-
-**Goal**: Add GitHub Actions (or equivalent) with Linux then macOS stages; artifact uploads; no continue-on-error.
-**Constraints**: One-line failure summary; cache DerivedData selectively.
-**Files**: .github/workflows/ci.yml
-**Deliverables**: Green CI on clean clone.
-**Acceptance**: CI passes; on failure, artifacts visible.
-
-⸻
-
-### 13) Accessibility pass (DnD + labels)
-
-**Goal**: VoiceOver announces column and position; actions accessible without drag.
-**Constraints**: Provide alternatives (Move Up/Down actions).
-**Files**: App/UI/...
-**Deliverables**: UI tests for accessibility identifiers.
-**Acceptance**: Snapshot + XCTests pass.
+**What's Working**:
+- Linux builds and tests for all core packages
+- macOS iOS app builds with XcodeGen
+- CLI tools: hc-import, hc-backup, hc-migrate
+- Contract tests running against both GRDB and SwiftData
+- GitHub Actions CI with artifact uploads
 
 ⸻
 
@@ -420,52 +364,114 @@ Each ticket lists Goal, Constraints, Files, Deliverables, Acceptance (with comma
 
 ⸻
 
-## Prompts for code agents
+## Working with This Codebase
 
-### System prompt (for code-gen agents)
+### For AI Agents and Developers
 
-You are a senior Swift engineer. Target Linux (SwiftPM) for most work and keep Apple-only code behind adapters. Produce small, tested PRs. Use the golden commands in each ticket to validate locally. When a failure repeats, run `make preflight --autofix` and rebase. No new dependencies unless the ticket says so. Keep public APIs documented. Warnings are errors.
+You are working with a mature Swift codebase following Linux-first architecture. The project is feature-complete for its initial scope. When making changes:
 
-### Task prompt template
+**Core Principles**:
+- Target Linux (SwiftPM) for business logic
+- Keep Apple-only code behind adapters
+- Produce small, tested changes
+- No new dependencies without explicit approval
+- Keep public APIs documented
+- Warnings are errors
 
-```
-Implement ticket: <TITLE>
+**Before You Start**:
+1. Run `make preflight` to verify environment
+2. Review [PLAN.md](./PLAN.md) to understand what's implemented
+3. Check [CHANGELOG.md](./CHANGELOG.md) for recent changes
+4. Read [DEVELOPMENT.md](./DEVELOPMENT.md) for toolchain setup
 
-Context:
-- See Agents.md ticket <#> for requirements and acceptance.
-- Most targets build on Linux via SwiftPM. Apple-only code lives under App/.
-- Repositories live under PersistenceInterfaces with GRDB and SwiftData adapters.
+**Making Changes**:
+1. Understand existing patterns in the codebase
+2. Write tests alongside your code (contract tests for repos, unit tests for logic)
+3. Use golden commands to validate:
+   - `make preflight` - verify environment and structure
+   - `make test-linux` - run Linux tests (fastest feedback)
+   - `make test-macos` - run iOS tests (macOS only)
+   - `make lint` - format and lint code
+4. Update CHANGELOG.md with your changes
+5. Include reproduction steps for bug fixes
 
-Deliver:
-- Code + tests under the listed files.
-- Update CHANGELOG.md.
-- Include failure reproduction steps if fixing a bug.
+**What's on Each Platform**:
 
-Validate with:
-- make preflight
-- make test-linux (or make test-macos for UI)
-- make lint
+✅ **Linux & macOS** (via SwiftPM):
+- Domain models and helpers
+- UseCases (reorder, checklist, fuzzy lookup)
+- Import/Export (Trello, backup/restore)
+- GRDB persistence and migrations
+- CLIs (hc-import, hc-backup, hc-migrate)
+- Contract tests for repositories
+- Unit and property tests
 
-Do not:
-- Change unrelated files.
-- Add dependencies.
-```
+🍎 **macOS Only**:
+- iOS app UI (SwiftUI)
+- SwiftData adapter
+- CloudKit sync
+- App Intents
+- UI/snapshot tests
+- Xcode project generation (via XcodeGen)
+
+**Loop Breaker**: If the same failure repeats 3 times, run `make preflight ARGS="--autofix"` then commit.
 
 ⸻
 
-## What agents can do on Linux (quick map)
+## Common Tasks
 
-- ✅ Domain, UseCases, Import/Export, GRDB persistence, migrations, CLIs, contract tests.
-- 🔶 CI authoring (Linux job), schema docs, fixtures.
-- ⛔ iOS UI, SwiftData, CloudKit (macOS only).
+### Adding a New Feature
+
+1. **Decide where it belongs**:
+   - Pure logic → UseCases (Linux-compatible)
+   - Data access → Repository protocol + implementations
+   - UI → App/UI (macOS only)
+
+2. **Follow established patterns**:
+   - Use repository protocols for data access
+   - Keep business logic in UseCases
+   - Use actors for thread-safe services
+   - Write contract tests for repositories
+
+3. **Test thoroughly**:
+   - Unit tests for logic
+   - Contract tests for repositories
+   - UI tests for user-facing changes
+
+4. **Update documentation**:
+   - CHANGELOG.md for all changes
+   - README.md if user-facing
+   - PLAN.md if adding major features
+
+### Fixing a Bug
+
+1. Write a failing test that reproduces the bug
+2. Fix the bug
+3. Verify the test passes
+4. Document the fix in CHANGELOG.md
+5. Include reproduction steps in PR/commit
+
+### Adding a New CLI Tool
+
+1. Create directory: `CLIs/new-tool/`
+2. Add `main.swift` with your implementation
+3. Update Package.swift to add executable target
+4. Add tests under Tests/
+5. Update Makefile if needed
+6. Document usage in README.md
 
 ⸻
 
-## Definition of Done (per ticket)
+## Definition of Done
 
-- Preflight passes locally.
-- Code compiles with warnings as errors.
-- Tests (unit/contract; UI where applicable) pass on required platform(s).
-- Lint/format pass.
-- Artifacts/screenshots attached for UI changes.
-- CHANGELOG.md updated.
+Before considering work complete:
+
+- ✅ Preflight passes locally (`make preflight`)
+- ✅ Code compiles with warnings as errors
+- ✅ Tests pass on target platform(s)
+  - `make test-linux` for core logic
+  - `make test-macos` for iOS features
+- ✅ Lint/format pass (`make lint`)
+- ✅ CHANGELOG.md updated
+- ✅ Screenshots attached for UI changes
+- ✅ Documentation updated if needed
