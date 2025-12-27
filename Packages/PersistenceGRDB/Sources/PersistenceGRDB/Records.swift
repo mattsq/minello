@@ -286,3 +286,71 @@ struct PersonalListRecord: Codable, FetchableRecord, PersistableRecord {
         )
     }
 }
+
+// MARK: - RecipeRecord
+
+/// GRDB record for Recipe
+struct RecipeRecord: Codable, FetchableRecord, PersistableRecord {
+    static let databaseTableName = "recipes"
+
+    var id: String
+    var title: String
+    var ingredients: String // JSON array of ChecklistItem
+    var method_markdown: String
+    var tags: String // JSON array
+    var created_at: String // ISO8601
+    var updated_at: String // ISO8601
+
+    /// Converts domain Recipe to RecipeRecord
+    init(from recipe: Recipe) throws {
+        self.id = recipe.id.rawValue.uuidString
+        self.title = recipe.title
+
+        let jsonEncoder = JSONEncoder()
+        let ingredientsData = try jsonEncoder.encode(recipe.ingredients)
+        self.ingredients = String(data: ingredientsData, encoding: .utf8)!
+
+        self.method_markdown = recipe.methodMarkdown
+
+        let tagsData = try jsonEncoder.encode(recipe.tags)
+        self.tags = String(data: tagsData, encoding: .utf8)!
+
+        self.created_at = ISO8601DateFormatter.iso8601.string(from: recipe.createdAt)
+        self.updated_at = ISO8601DateFormatter.iso8601.string(from: recipe.updatedAt)
+    }
+
+    /// Converts RecipeRecord to domain Recipe
+    func toDomain() throws -> Recipe {
+        guard let id = UUID(uuidString: self.id) else {
+            throw PersistenceError.invalidData("Invalid recipe ID: \(self.id)")
+        }
+
+        guard let ingredientsData = self.ingredients.data(using: .utf8) else {
+            throw PersistenceError.invalidData("Invalid ingredients JSON")
+        }
+        let ingredients = try JSONDecoder().decode([ChecklistItem].self, from: ingredientsData)
+
+        guard let tagsData = self.tags.data(using: .utf8) else {
+            throw PersistenceError.invalidData("Invalid tags JSON")
+        }
+        let tags = try JSONDecoder().decode([String].self, from: tagsData)
+
+        guard let createdAt = ISO8601DateFormatter.iso8601.date(from: self.created_at) else {
+            throw PersistenceError.invalidData("Invalid created_at date: \(self.created_at)")
+        }
+
+        guard let updatedAt = ISO8601DateFormatter.iso8601.date(from: self.updated_at) else {
+            throw PersistenceError.invalidData("Invalid updated_at date: \(self.updated_at)")
+        }
+
+        return Recipe(
+            id: RecipeID(rawValue: id),
+            title: self.title,
+            ingredients: ingredients,
+            methodMarkdown: self.method_markdown,
+            tags: tags,
+            createdAt: createdAt,
+            updatedAt: updatedAt
+        )
+    }
+}
