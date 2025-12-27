@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Recipe management backend (persistence layer):
+  - RecipeRecord in PersistenceGRDB for SQLite storage of recipes
+  - Database migration v3 adding recipes table with indices
+  - Full-text search support for recipe titles and method content
+  - GRDBRecipesRepository implementing RecipesRepository protocol
+  - CRUD operations: create, read, update, delete recipes
+  - Query operations: search by text, filter by tag (case-insensitive)
+  - RecipeModel in PersistenceSwiftData for iOS app storage
+  - SwiftDataRecipesRepository implementing RecipesRepository protocol
+  - Comprehensive contract tests for RecipesRepository (GRDB and SwiftData)
+  - Test coverage for complex ingredients, markdown methods, Unicode characters
+  - Recipes stored with ingredients (as ChecklistItem), markdown method, and tags
 - Domain package with core value types and models:
   - Type-safe ID wrappers: BoardID, ColumnID, CardID, ListID, RecipeID
   - Domain models: Board, Column, Card, ChecklistItem, PersonalList, Recipe

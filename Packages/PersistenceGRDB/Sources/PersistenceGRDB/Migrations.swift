@@ -136,6 +136,51 @@ public struct HomeCookedMigrator {
                 """)
         }
 
+        // Migration v3: Add recipes table
+        migrator.registerMigration("v3_recipes") { db in
+            // Create recipes table
+            try db.create(table: "recipes") { t in
+                t.column("id", .text).primaryKey()
+                t.column("title", .text).notNull()
+                t.column("ingredients", .text).notNull() // JSON array of ChecklistItem
+                t.column("method_markdown", .text).notNull()
+                t.column("tags", .text).notNull() // JSON array
+                t.column("created_at", .text).notNull() // ISO8601
+                t.column("updated_at", .text).notNull() // ISO8601
+            }
+
+            // Create index on recipes.created_at for sorting
+            try db.create(index: "idx_recipes_created_at", on: "recipes", columns: ["created_at"])
+
+            // Create full-text search table for recipes with porter tokenizer for stemming
+            try db.create(virtualTable: "recipes_fts", using: FTS5()) { t in
+                t.tokenizer = .porter()
+                t.column("title")
+                t.column("method_markdown")
+            }
+
+            // Trigger to keep FTS index in sync with recipes table
+            try db.execute(sql: """
+                CREATE TRIGGER recipes_fts_insert AFTER INSERT ON recipes BEGIN
+                    INSERT INTO recipes_fts(rowid, title, method_markdown)
+                    VALUES (new.rowid, new.title, new.method_markdown);
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER recipes_fts_update AFTER UPDATE ON recipes BEGIN
+                    UPDATE recipes_fts SET title = new.title, method_markdown = new.method_markdown
+                    WHERE rowid = new.rowid;
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER recipes_fts_delete AFTER DELETE ON recipes BEGIN
+                    DELETE FROM recipes_fts WHERE rowid = old.rowid;
+                END;
+                """)
+        }
+
         return migrator
     }
 }

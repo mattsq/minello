@@ -269,6 +269,65 @@ final class PersonalListModel {
     }
 }
 
+// MARK: - Recipe Model
+
+/// SwiftData model for Recipe
+@Model
+final class RecipeModel {
+    @Attribute(.unique) var id: String
+    var title: String
+    var ingredientsData: Data // Stores [ChecklistItem] as JSON
+    var methodMarkdown: String
+    var tagsData: Data // Stores [String] as JSON
+    var createdAt: Date
+    var updatedAt: Date
+
+    init(id: String, title: String, ingredientsData: Data, methodMarkdown: String, tagsData: Data, createdAt: Date, updatedAt: Date) {
+        self.id = id
+        self.title = title
+        self.ingredientsData = ingredientsData
+        self.methodMarkdown = methodMarkdown
+        self.tagsData = tagsData
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+
+    /// Creates a SwiftData model from a Domain Recipe
+    convenience init(from recipe: Recipe) throws {
+        let ingredientsData = try JSONEncoder().encode(recipe.ingredients)
+        let tagsData = try JSONEncoder().encode(recipe.tags)
+        self.init(
+            id: recipe.id.rawValue.uuidString,
+            title: recipe.title,
+            ingredientsData: ingredientsData,
+            methodMarkdown: recipe.methodMarkdown,
+            tagsData: tagsData,
+            createdAt: recipe.createdAt,
+            updatedAt: recipe.updatedAt
+        )
+    }
+
+    /// Converts this SwiftData model to a Domain Recipe
+    func toDomain() throws -> Recipe {
+        guard let uuid = UUID(uuidString: id) else {
+            throw ConversionError.invalidUUID(id)
+        }
+
+        let ingredients = try JSONDecoder().decode([ChecklistItem].self, from: ingredientsData)
+        let tags = try JSONDecoder().decode([String].self, from: tagsData)
+
+        return Recipe(
+            id: RecipeID(rawValue: uuid),
+            title: title,
+            ingredients: ingredients,
+            methodMarkdown: methodMarkdown,
+            tags: tags,
+            createdAt: createdAt,
+            updatedAt: updatedAt
+        )
+    }
+}
+
 // MARK: - Errors
 
 enum ConversionError: Error, LocalizedError {
