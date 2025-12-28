@@ -1,0 +1,22 @@
+# SwiftFormat Configuration for HomeCooked
+# Minimal configuration to avoid mass changes to existing codebase
+# https://github.com/nicklockwood/SwiftFormat
+
+# File options
+--exclude .build,.swiftpm,DerivedData,HomeCooked.xcodeproj
+
+# Basic format options only
+--indent 4
+--indentcase false
+--maxwidth 120
+--linebreaks lf
+--semicolons never
+
+# Swift version
+--swiftversion 6.0
+
+# Disable rules that would require mass changes
+--disable fileHeader
+--disable redundantSelf
+--disable sortImports
+--disable trailingCommas
