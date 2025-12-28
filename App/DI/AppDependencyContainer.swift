@@ -6,9 +6,9 @@ import SwiftUI
 import PersistenceInterfaces
 
 #if canImport(CloudKit)
-import SyncCloudKit
+    import SyncCloudKit
 #else
-import SyncNoop
+    import SyncNoop
 #endif
 
 /// Main dependency container for the app
@@ -21,22 +21,22 @@ final class AppDependencyContainer: ObservableObject {
     let repositoryProvider: RepositoryProvider
 
     #if canImport(CloudKit)
-    let syncClient: CloudKitSyncClient
+        let syncClient: CloudKitSyncClient
     #else
-    let syncClient: NoopSyncClient
+        let syncClient: NoopSyncClient
     #endif
 
     init(repositoryProvider: RepositoryProvider) {
         self.repositoryProvider = repositoryProvider
 
         #if canImport(CloudKit)
-        self.syncClient = CloudKitSyncClient(
-            boardsRepo: repositoryProvider.boardsRepository,
-            listsRepo: repositoryProvider.listsRepository,
-            recipesRepo: repositoryProvider.recipesRepository
-        )
+            self.syncClient = CloudKitSyncClient(
+                boardsRepo: repositoryProvider.boardsRepository,
+                listsRepo: repositoryProvider.listsRepository,
+                recipesRepo: repositoryProvider.recipesRepository
+            )
         #else
-        self.syncClient = NoopSyncClient()
+            self.syncClient = NoopSyncClient()
         #endif
     }
 

@@ -102,6 +102,6 @@ struct AddCardIntent: AppIntent {
     @MainActor
     private func getRepositoryProvider() async -> RepositoryProvider? {
         // Access the repository provider from the app's dependency container
-        return AppDependencyContainer.shared.repositoryProvider
+        AppDependencyContainer.shared.repositoryProvider
     }
 }
