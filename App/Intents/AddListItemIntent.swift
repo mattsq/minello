@@ -83,7 +83,7 @@ struct AddListItemIntent: AppIntent {
     private func getRepositoryProvider() async -> RepositoryProvider? {
         // Access the repository provider from the app's dependency container
         // This assumes AppDependencyContainer is set up as a singleton or accessible
-        return AppDependencyContainer.shared.repositoryProvider
+        AppDependencyContainer.shared.repositoryProvider
     }
 }
 
@@ -97,13 +97,13 @@ enum IntentError: Error, CustomLocalizedStringResourceConvertible {
     var localizedStringResource: LocalizedStringResource {
         switch self {
         case .repositoryNotAvailable:
-            return "Repository is not available"
-        case .listNotFound(let name):
-            return "Could not find a list matching '\(name)'"
-        case .boardNotFound(let name):
-            return "Could not find a board matching '\(name)'"
-        case .columnNotFound(let columnName, let boardName):
-            return "Could not find column '\(columnName)' in board '\(boardName)'"
+            "Repository is not available"
+        case let .listNotFound(name):
+            "Could not find a list matching '\(name)'"
+        case let .boardNotFound(name):
+            "Could not find a board matching '\(name)'"
+        case let .columnNotFound(columnName, boardName):
+            "Could not find column '\(columnName)' in board '\(boardName)'"
         }
     }
 }

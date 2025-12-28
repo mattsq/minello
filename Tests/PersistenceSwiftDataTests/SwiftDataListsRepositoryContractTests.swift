@@ -209,7 +209,7 @@ final class SwiftDataListsRepositoryContractTests: XCTestCase {
 
         let results = try await repository.searchLists(query: "shopping")
         XCTAssertEqual(results.count, 2)
-        let titles = Set(results.map { $0.title })
+        let titles = Set(results.map(\.title))
         XCTAssertTrue(titles.contains("Grocery Shopping"))
         XCTAssertTrue(titles.contains("Shopping for Clothes"))
     }
@@ -255,7 +255,7 @@ final class SwiftDataListsRepositoryContractTests: XCTestCase {
 
         let results = try await repository.findListsWithIncompleteItems()
         XCTAssertEqual(results.count, 2)
-        let titles = Set(results.map { $0.title })
+        let titles = Set(results.map(\.title))
         XCTAssertTrue(titles.contains("Incomplete List 1"))
         XCTAssertTrue(titles.contains("Incomplete List 2"))
         XCTAssertFalse(titles.contains("Complete List"))
