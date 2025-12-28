@@ -1,46 +1,22 @@
 # SwiftFormat Configuration for HomeCooked
+# Minimal configuration to avoid mass changes to existing codebase
 # https://github.com/nicklockwood/SwiftFormat
 
 # File options
 --exclude .build,.swiftpm,DerivedData,HomeCooked.xcodeproj
 
-# Format options
+# Basic format options only
 --indent 4
 --indentcase false
---trimwhitespace always
 --maxwidth 120
---wraparguments before-first
---wrapparameters before-first
---wrapcollections before-first
-
-# Organization
---importgrouping testable-bottom
-
-# Spacing
---ifdef no-indent
 --linebreaks lf
 --semicolons never
---commas always
-
-# Wrapping
---wrapreturntype preserve
---wrapconditions preserve
---wrapternary default
-
-# Self
---self remove
---selfrequired
-
-# Headers
---header "// {file}\n// HomeCooked"
-
-# Unused code
---stripunusedargs closure-only
-
-# Mark
---marktypes always
---markextensions always
---extensionacl on-extension
 
 # Swift version
 --swiftversion 6.0
+
+# Disable rules that would require mass changes
+--disable fileHeader
+--disable redundantSelf
+--disable sortImports
+--disable trailingCommas
