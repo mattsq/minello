@@ -158,7 +158,6 @@ make help          # Show all available commands
 make preflight     # Verify environment and structure
 make test-linux    # Run Linux tests
 make test-macos    # Run iOS tests (macOS only)
-make lint          # Run code formatting and linting
 ```
 
 ## Documentation
@@ -173,8 +172,7 @@ make lint          # Run code formatting and linting
 2. Create a feature branch
 3. Make your changes with tests
 4. Run `make test-linux` (or `make test-macos` for UI)
-5. Run `make lint` to format code
-6. Submit a pull request
+5. Submit a pull request
 
 ### Commit Conventions
 

@@ -137,7 +137,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `make preflight` - Run preflight checks
   - `make test-linux` - Build and test Linux targets
   - `make test-macos` - Build and test iOS app (macOS only)
-  - `make lint` - Run code formatting and linting
   - `make import-sample` - Import sample Trello data
   - `make backup-sample` - Create sample backup
   - `make clean` - Clean build artifacts
@@ -515,37 +514,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Tests for board-scoped column lookup
     - Tests for card creation with details and due dates
     - Tests for automatic sort key increment behavior
-- Code formatting and linting enforcement (Ticket #24):
-  - SwiftFormat configuration (.swiftformat):
-    - 4-space indentation with 120 character line width
-    - Sorted imports with testable imports at bottom
-    - Self removal where possible
-    - Mark types and extensions automatically
-    - File headers with project name
-    - Swift 6.0 language version support
-  - SwiftLint configuration (.swiftlint.yml):
-    - Missing documentation warnings for public APIs
-    - Sorted imports enforcement
-    - Custom rules: MARK comment format, no print statements
-    - Force cast/try as errors
-    - Force unwrapping as warnings
-    - Appropriate identifier name exceptions (id, db, x, y, etc.)
-    - Reasonable file/function/type length limits
-  - Makefile targets updated:
-    - `make lint` - Auto-fix formatting and lint issues (local development)
-    - `make lint-check` - Check only mode for CI (strict mode, no changes)
-  - GitHub Actions CI workflow updated:
-    - New first-stage "Code Style & Linting" job runs before all other jobs
-    - Installs swiftformat and swiftlint on macOS runner
-    - Runs both linters in strict check mode
-    - Fails fast with helpful error message directing developers to run `make lint`
-    - Linux and macOS build jobs now depend on successful lint job
-  - DEVELOPMENT.md updated with comprehensive linting documentation:
-    - Installation instructions for macOS (via Homebrew)
-    - Usage guide for both auto-fix and check-only modes
-    - CI enforcement workflow explanation
-    - Key rules and configuration details
-    - Excluded paths documentation
 - GitHub Actions CI workflow (Ticket #12):
   - Two-stage workflow: Linux then macOS (fail-fast approach)
   - Linux stage with Swift 5.10 container:
@@ -579,7 +547,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- N/A
+- GitHub Actions CI linting/formatting stage:
+  - Removed swiftformat and swiftlint CI enforcement
+  - Linting tools remain available via `make lint` for local development
+  - Updated PLAN.md, CLAUDE.md, README.md, and DEVELOPMENT.md to reflect that linting is optional and not enforced in CI
 
 ### Fixed
 
