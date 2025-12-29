@@ -595,34 +595,6 @@ The HomeCooked project has completed all core board management features:
 
 ---
 
-### 24) Add swiftlint & swiftformat to CI ⬜
-
-**Goal**: Enforce code style consistency in CI
-
-**Constraints**:
-- Add .swiftlint.yml configuration
-- Add .swiftformat configuration
-- Run in CI (fail on violations)
-- Document style rules in DEVELOPMENT.md
-
-**Files**:
-- `.swiftlint.yml` (new)
-- `.swiftformat` (new)
-- `.github/workflows/ci.yml` (add lint stage)
-- `Makefile` (enhance lint target)
-
-**Deliverables**:
-- Lint configurations
-- CI enforcement
-- Documentation
-
-**Acceptance**:
-- `make lint` passes locally
-- CI fails on style violations
-- All existing code passes lint
-
-**Status**: ⬜ Not Started
-
 ## Agent Guidance
 
 When working on new features:
@@ -637,7 +609,6 @@ When working on new features:
    - `make preflight` before starting work
    - `make test-linux` for core logic validation
    - `make test-macos` for iOS app validation
-   - `make lint` before committing
 
 3. **Maintain the Linux-first approach**:
    - 80-90% of code should build on Linux
