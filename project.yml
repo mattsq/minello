@@ -66,6 +66,8 @@ targets:
         product: SyncInterfaces
       - package: HomeCookedPackage
         product: SyncCloudKit
+      - package: HomeCookedPackage
+        product: SyncNoop
 
     settings:
       base:
