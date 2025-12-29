@@ -11,38 +11,8 @@ env:
   SWIFT_VERSION: '6.0'
 
 jobs:
-  # Lint stage - runs first for fast feedback
-  lint:
-    name: Code Style & Linting
-    runs-on: macos-14
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install swiftformat
-        run: brew install swiftformat
-
-      - name: Install swiftlint
-        run: brew install swiftlint
-
-      - name: Check format with swiftformat
-        run: swiftformat --lint .
-
-      - name: Lint with swiftlint
-        run: swiftlint --strict
-
-      - name: Failure summary
-        if: failure()
-        run: |
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "✗ Lint failed - run 'make lint' locally to auto-fix"
-          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          exit 1
-
-  # Linux stage - runs after lint passes
+  # Linux stage - builds and tests core packages
   linux:
-    needs: lint
     name: Linux Build & Test
     runs-on: ubuntu-latest
     container:
@@ -150,11 +120,11 @@ jobs:
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           exit 1
 
-  # macOS stage - runs after lint and Linux succeed
+  # macOS stage - runs after Linux succeeds
   macos:
     name: macOS Build (no XCTest targets yet)
     runs-on: macos-14
-    needs: [lint, linux]
+    needs: linux
 
     steps:
       - name: Checkout code

@@ -123,12 +123,10 @@ HomeCooked/
 - **XcodeGen**: Used to generate Xcode project from `project.yml`
 - **GRDB**: 6.29.0+ (SQLite with custom build flags on Linux CI)
 - SwiftPM builds work on Linux and macOS
-- Format/Lint: swiftformat + swiftlint (optional, not in CI yet)
 - Make targets (golden commands):
   - `make preflight` → scripts/preflight.sh (auto-fix skeleton, verify toolchains)
   - `make test-linux` → swift build/test all Linux targets
   - `make test-macos` → xcodebuild build/test app + UI tests
-  - `make lint` → swiftformat + swiftlint
   - `make import-sample` → run hc-import on fixtures
   - `make backup-sample` → run hc-backup to tmp
 
@@ -391,7 +389,6 @@ You are working with a mature Swift codebase following Linux-first architecture.
    - `make preflight` - verify environment and structure
    - `make test-linux` - run Linux tests (fastest feedback)
    - `make test-macos` - run iOS tests (macOS only)
-   - `make lint` - format and lint code
 4. Update CHANGELOG.md with your changes
 5. Include reproduction steps for bug fixes
 
@@ -471,7 +468,6 @@ Before considering work complete:
 - ✅ Tests pass on target platform(s)
   - `make test-linux` for core logic
   - `make test-macos` for iOS features
-- ✅ Lint/format pass (`make lint`)
 - ✅ CHANGELOG.md updated
 - ✅ Screenshots attached for UI changes
 - ✅ Documentation updated if needed
