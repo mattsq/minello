@@ -370,4 +370,17 @@ final class SearchRepositoryContractTests: XCTestCase {
         let recent = try await searchRepository.loadRecentSearches(limit: 10)
         XCTAssertEqual(recent.count, 0)
     }
+
+    func testSearchWhitespaceOnlyQuery() async throws {
+        // Searching with whitespace-only query should behave like empty query
+        let spacesResults = try await searchRepository.search(query: "   ", filters: nil)
+        XCTAssertEqual(spacesResults.count, 0)
+
+        let tabsResults = try await searchRepository.search(query: "\t\n", filters: nil)
+        XCTAssertEqual(tabsResults.count, 0)
+
+        // Whitespace-only queries should not be saved to recent searches
+        let recent = try await searchRepository.loadRecentSearches(limit: 10)
+        XCTAssertEqual(recent.count, 0)
+    }
 }

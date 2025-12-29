@@ -91,8 +91,14 @@ public final class GRDBListsRepository: ListsRepository {
     // MARK: - Query Operations
 
     public func searchLists(query: String) async throws -> [PersonalList] {
+        // FTS5 doesn't accept empty MATCH expressions, so return empty results
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedQuery.isEmpty else {
+            return []
+        }
+
         try await dbQueue.read { db in
-            let pattern = FTS5Pattern(matchingAllTokensIn: query)
+            let pattern = FTS5Pattern(matchingAllTokensIn: trimmedQuery)
             let sql = """
                 SELECT personal_lists.* FROM personal_lists
                 JOIN personal_lists_fts ON personal_lists.rowid = personal_lists_fts.rowid

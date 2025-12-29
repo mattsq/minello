@@ -72,8 +72,14 @@ public final class GRDBSearchRepository: SearchRepository {
     // MARK: - Entity-Specific Search
 
     public func searchBoards(query: String) async throws -> [Board] {
+        // FTS5 doesn't accept empty MATCH expressions, so return empty results
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedQuery.isEmpty else {
+            return []
+        }
+
         try await dbQueue.read { db in
-            let pattern = FTS5Pattern(matchingAllTokensIn: query)
+            let pattern = FTS5Pattern(matchingAllTokensIn: trimmedQuery)
             let sql = """
                 SELECT boards.* FROM boards
                 JOIN boards_fts ON boards.rowid = boards_fts.rowid
