@@ -183,6 +183,93 @@ xcodebuild -scheme HomeCooked \
   build
 ```
 
+### CloudKit Sync Setup
+
+The iOS app includes optional CloudKit sync for sharing boards across devices. Sync behavior differs between debug and release builds:
+
+**Debug Builds** (Simulator & Development):
+- CloudKit is **disabled** by default
+- Uses `NoopSyncClient` to avoid requiring entitlements
+- Allows development without an Apple Developer account
+- No iCloud configuration needed
+
+**Release Builds** (Production):
+- CloudKit is **enabled** if properly configured
+- Requires entitlements and Apple Developer account
+- Syncs data to iCloud private database
+- Supports board sharing
+
+#### CloudKit Configuration (Production)
+
+To enable CloudKit sync in release builds:
+
+1. **Configure Apple Developer Account**:
+   - Login to [Apple Developer Portal](https://developer.apple.com)
+   - Navigate to: Certificates, Identifiers & Profiles
+   - Create or select your App ID: `com.homecooked.app`
+   - Enable iCloud capability
+   - Create CloudKit container: `iCloud.com.homecooked.app`
+
+2. **Add Team ID to project.yml**:
+   ```yaml
+   settings:
+     base:
+       DEVELOPMENT_TEAM: "YOUR_TEAM_ID"  # Replace with your Team ID
+   ```
+
+3. **Verify Entitlements File**:
+   The project includes `App/HomeCooked.entitlements` with CloudKit capabilities:
+   ```xml
+   <key>com.apple.developer.icloud-container-identifiers</key>
+   <array>
+       <string>iCloud.com.homecooked.app</string>
+   </array>
+   ```
+
+4. **Regenerate Xcode Project**:
+   ```bash
+   xcodegen generate
+   ```
+
+5. **Sign in to iCloud**:
+   - On your test device or simulator, ensure you're signed in to iCloud
+   - Settings → [Your Name] → iCloud
+
+#### Testing CloudKit Sync
+
+**Without CloudKit** (Debug):
+```bash
+# Build and run - sync will be disabled
+make test-macos
+```
+
+**With CloudKit** (Release on Device):
+```bash
+# Build release configuration
+xcodebuild -scheme HomeCooked \
+  -configuration Release \
+  -destination 'platform=iOS,name=Your Device' \
+  build
+```
+
+#### Troubleshooting CloudKit
+
+**App crashes on launch**:
+- This typically happens when CloudKit is enabled without proper entitlements
+- Verify you're running a debug build (which disables CloudKit)
+- Check that `DEVELOPMENT_TEAM` is set in `project.yml` for release builds
+
+**Sync not working**:
+- Ensure iCloud is enabled in device settings
+- Verify the CloudKit container exists in Apple Developer Portal
+- Check that entitlements file references the correct container ID
+- Review console logs for CloudKit errors
+
+**Simulator limitations**:
+- CloudKit may not work reliably in the simulator even with entitlements
+- Test CloudKit sync on a real device for best results
+- Debug builds automatically disable CloudKit to avoid simulator issues
+
 ## Testing Strategy
 
 ### Contract Tests

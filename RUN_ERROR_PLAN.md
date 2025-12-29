@@ -232,11 +232,27 @@ public init(
 1. ✅ **Fix the crash** - Modify `AppDependencyContainer.swift` to use `NoopSyncClient` for DEBUG builds
    - File: `App/DI/AppDependencyContainer.swift`
    - Change: Conditionally compile CloudKit for release builds only
+   - **STATUS**: ✅ COMPLETED
+   - **Implementation**: Added `!DEBUG` condition to CloudKit initialization (lines 23, 32)
+   - **Result**: Debug builds now use NoopSyncClient, preventing simulator crashes
 
 ### Important (Do Soon)
-2. ⚠️ **Add entitlements** - Create `App/HomeCooked.entitlements` file
-3. ⚠️ **Update project.yml** - Reference entitlements file
-4. ⚠️ **Document CloudKit setup** - Add instructions to DEVELOPMENT.md
+2. ✅ **Add entitlements** - Create `App/HomeCooked.entitlements` file
+   - **STATUS**: ✅ COMPLETED
+   - **File**: `App/HomeCooked.entitlements`
+   - **Contents**: CloudKit container identifier `iCloud.com.homecooked.app`
+
+3. ✅ **Update project.yml** - Reference entitlements file
+   - **STATUS**: ✅ COMPLETED
+   - **Change**: Added `CODE_SIGN_ENTITLEMENTS: App/HomeCooked.entitlements` to project.yml (line 77)
+
+4. ✅ **Document CloudKit setup** - Add instructions to DEVELOPMENT.md
+   - **STATUS**: ✅ COMPLETED
+   - **Section**: Added "CloudKit Sync Setup" section with:
+     - Debug vs. Release build behavior
+     - Configuration instructions for Apple Developer Portal
+     - Testing guidelines
+     - Troubleshooting tips
 
 ### Nice to Have (Future Improvement)
 5. 💡 **Add sync toggle** - Let users enable/disable sync in Settings
@@ -315,6 +331,75 @@ This requires modifying the code to check for this environment variable (see Pha
 - ✅ CloudKit works in release builds on real devices (after entitlements added)
 - ✅ Clear logging when CloudKit is unavailable
 - ✅ No breaking changes to existing functionality
+
+## Implementation Summary
+
+**Date**: 2025-12-29
+**Status**: ✅ ALL CRITICAL AND IMPORTANT ITEMS COMPLETED
+
+### Changes Made
+
+#### 1. AppDependencyContainer.swift (`App/DI/AppDependencyContainer.swift`)
+- **Lines 23, 32**: Added `!DEBUG` condition to `#if canImport(CloudKit)` checks
+- **Lines 33-34**: Added explanatory comments about debug vs. release behavior
+- **Result**: CloudKit is now disabled in debug builds, preventing simulator crashes
+
+#### 2. HomeCooked.entitlements (`App/HomeCooked.entitlements`)
+- **New File**: Created entitlements file with CloudKit capabilities
+- **Contents**:
+  - `com.apple.developer.icloud-container-identifiers`: `iCloud.com.homecooked.app`
+  - `com.apple.developer.icloud-services`: `CloudKit`
+  - `com.apple.developer.ubiquity-kvstore-identifier`: App bundle ID
+- **Result**: Release builds can now access CloudKit when properly configured
+
+#### 3. project.yml
+- **Line 77**: Added `CODE_SIGN_ENTITLEMENTS: App/HomeCooked.entitlements`
+- **Result**: Xcode project will reference entitlements file when generated
+
+#### 4. DEVELOPMENT.md
+- **Lines 186-272**: Added comprehensive "CloudKit Sync Setup" section
+- **Contents**:
+  - Debug vs. Release build behavior explanation
+  - Step-by-step CloudKit configuration instructions
+  - Testing guidelines for both debug and release builds
+  - Troubleshooting section for common CloudKit issues
+- **Result**: Developers now have clear documentation for CloudKit setup
+
+### Testing Recommendations
+
+To verify the fix:
+
+1. **Build the app in debug mode**:
+   ```bash
+   make test-macos
+   ```
+   - Expected: App should launch without crashing
+   - Expected: NoopSyncClient should be used (no CloudKit)
+
+2. **Check build logs**:
+   - Debug builds should NOT initialize CloudKit
+   - Release builds WILL initialize CloudKit (if entitlements are configured)
+
+3. **Test on simulator**:
+   ```bash
+   xcrun simctl launch booted com.homecooked.app
+   ```
+   - Expected: App launches successfully
+   - Expected: No crash on AppDependencyContainer initialization
+
+### Next Steps (Optional Enhancements)
+
+The "Nice to Have" items remain for future consideration:
+- Add user-facing sync toggle in Settings UI
+- Implement better error handling with user feedback
+- Add CloudKit health check on app launch
+
+### Notes
+
+- The fix uses compile-time conditions rather than runtime checks because CloudKit crashes occur in framework initialization, before Swift error handling can catch them
+- This approach allows development to continue without Apple Developer account or entitlements
+- Release builds will require proper Apple Developer Portal configuration for CloudKit to work
+- The solution follows iOS development best practices for optional CloudKit integration
 
 ## References
 

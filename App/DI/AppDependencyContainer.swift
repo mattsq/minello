@@ -20,7 +20,7 @@ final class AppDependencyContainer: ObservableObject {
 
     let repositoryProvider: RepositoryProvider
 
-    #if canImport(CloudKit)
+    #if canImport(CloudKit) && !DEBUG
     let syncClient: CloudKitSyncClient
     #else
     let syncClient: NoopSyncClient
@@ -29,7 +29,9 @@ final class AppDependencyContainer: ObservableObject {
     init(repositoryProvider: RepositoryProvider) {
         self.repositoryProvider = repositoryProvider
 
-        #if canImport(CloudKit)
+        #if canImport(CloudKit) && !DEBUG
+        // CloudKit sync only in release builds to avoid simulator crashes
+        // Debug builds use NoopSyncClient to allow development without entitlements
         self.syncClient = CloudKitSyncClient(
             boardsRepo: repositoryProvider.boardsRepository,
             listsRepo: repositoryProvider.listsRepository,
