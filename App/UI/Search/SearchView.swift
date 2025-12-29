@@ -371,6 +371,7 @@ struct SearchView: View {
 }
 
 #Preview {
-    SearchView()
-        .environmentObject(AppDependencyContainer.preview)
+    let container = try! AppDependencyContainer.preview()
+    return SearchView()
+        .withDependencies(container)
 }
