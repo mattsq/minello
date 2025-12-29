@@ -1,7 +1,7 @@
 // App/UI/BoardDetail/Share/ShareViewModel.swift
 // View model for board sharing functionality
 
-#if canImport(CloudKit)
+#if canImport(CloudKit) && !DEBUG
 import CloudKit
 import Domain
 import Foundation

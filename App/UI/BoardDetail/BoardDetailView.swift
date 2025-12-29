@@ -50,7 +50,7 @@ struct BoardDetailView: View {
         .navigationTitle(board.title)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            #if canImport(CloudKit)
+            #if canImport(CloudKit) && !DEBUG
             ToolbarItem(placement: .topBarLeading) {
                 let viewModel = ShareViewModel(
                     syncClient: dependencies.syncClient,
