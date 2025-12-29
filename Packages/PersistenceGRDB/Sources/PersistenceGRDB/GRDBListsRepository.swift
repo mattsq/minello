@@ -97,7 +97,7 @@ public final class GRDBListsRepository: ListsRepository {
             return []
         }
 
-        try await dbQueue.read { db in
+        return try await dbQueue.read { db in
             let pattern = FTS5Pattern(matchingAllTokensIn: trimmedQuery)
             let sql = """
                 SELECT personal_lists.* FROM personal_lists

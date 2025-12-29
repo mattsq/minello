@@ -78,7 +78,7 @@ public final class GRDBSearchRepository: SearchRepository {
             return []
         }
 
-        try await dbQueue.read { db in
+        return try await dbQueue.read { db in
             let pattern = FTS5Pattern(matchingAllTokensIn: trimmedQuery)
             let sql = """
                 SELECT boards.* FROM boards
@@ -92,15 +92,15 @@ public final class GRDBSearchRepository: SearchRepository {
     }
 
     public func searchCards(query: String) async throws -> [Card] {
-        try await boardsRepo.searchCards(query: query)
+        return try await boardsRepo.searchCards(query: query)
     }
 
     public func searchLists(query: String) async throws -> [PersonalList] {
-        try await listsRepo.searchLists(query: query)
+        return try await listsRepo.searchLists(query: query)
     }
 
     public func searchRecipes(query: String) async throws -> [Recipe] {
-        try await recipesRepo.searchRecipes(query: query)
+        return try await recipesRepo.searchRecipes(query: query)
     }
 
     // MARK: - Tag Search

@@ -210,7 +210,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
             return []
         }
 
-        try await dbQueue.read { db in
+        return try await dbQueue.read { db in
             // Use prefix matching with wildcards to handle cases like "grocery" matching "groceries"
             // Split query into tokens and add wildcard to each for prefix matching
             // The porter tokenizer stems words, so "grocery*" matches "groceries", "grocer", etc.
