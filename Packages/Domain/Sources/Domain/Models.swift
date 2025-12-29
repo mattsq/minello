@@ -249,3 +249,51 @@ public struct Recipe: Codable, Equatable, Hashable, Sendable {
         self.updatedAt = updatedAt
     }
 }
+
+// MARK: - SearchResult
+
+/// Represents a search result from unified search across all entity types
+public enum SearchResult: Hashable, Sendable {
+    case board(Board)
+    case card(Card)
+    case list(PersonalList)
+    case recipe(Recipe)
+
+    /// The title of the search result
+    public var title: String {
+        switch self {
+        case .board(let board): return board.title
+        case .card(let card): return card.title
+        case .list(let list): return list.title
+        case .recipe(let recipe): return recipe.title
+        }
+    }
+
+    /// The entity type of the search result
+    public var entityType: EntityType {
+        switch self {
+        case .board: return .board
+        case .card: return .card
+        case .list: return .list
+        case .recipe: return .recipe
+        }
+    }
+
+    /// The creation date of the search result
+    public var createdAt: Date {
+        switch self {
+        case .board(let board): return board.createdAt
+        case .card(let card): return card.createdAt
+        case .list(let list): return list.createdAt
+        case .recipe(let recipe): return recipe.createdAt
+        }
+    }
+}
+
+/// Entity type for filtering search results
+public enum EntityType: String, Codable, CaseIterable, Sendable {
+    case board = "Board"
+    case card = "Card"
+    case list = "List"
+    case recipe = "Recipe"
+}

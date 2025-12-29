@@ -14,6 +14,7 @@ final class GRDBRepositoryProvider: RepositoryProvider {
     let boardsRepository: BoardsRepository
     let listsRepository: ListsRepository
     let recipesRepository: RecipesRepository
+    let searchRepository: SearchRepository
 
     init(databaseURL: URL) throws {
         // Create database queue
@@ -27,6 +28,12 @@ final class GRDBRepositoryProvider: RepositoryProvider {
         self.boardsRepository = GRDBBoardsRepository(dbQueue: dbQueue)
         self.listsRepository = GRDBListsRepository(dbQueue: dbQueue)
         self.recipesRepository = GRDBRecipesRepository(dbQueue: dbQueue)
+        self.searchRepository = GRDBSearchRepository(
+            dbQueue: dbQueue,
+            boardsRepo: boardsRepository,
+            listsRepo: listsRepository,
+            recipesRepo: recipesRepository
+        )
     }
 
     /// Create an in-memory database for previews and testing
@@ -45,5 +52,11 @@ final class GRDBRepositoryProvider: RepositoryProvider {
         self.boardsRepository = GRDBBoardsRepository(dbQueue: dbQueue)
         self.listsRepository = GRDBListsRepository(dbQueue: dbQueue)
         self.recipesRepository = GRDBRecipesRepository(dbQueue: dbQueue)
+        self.searchRepository = GRDBSearchRepository(
+            dbQueue: dbQueue,
+            boardsRepo: boardsRepository,
+            listsRepo: listsRepository,
+            recipesRepo: recipesRepository
+        )
     }
 }

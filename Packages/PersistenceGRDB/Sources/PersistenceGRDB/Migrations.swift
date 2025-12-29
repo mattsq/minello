@@ -181,6 +181,52 @@ public struct HomeCookedMigrator {
                 """)
         }
 
+        // Migration v4: Add boards FTS and recent searches tables for unified search
+        migrator.registerMigration("v4_unified_search") { db in
+            // Create recent_searches table for storing user's recent search queries
+            try db.create(table: "recent_searches") { t in
+                t.autoIncrementedPrimaryKey("id")
+                t.column("query", .text).notNull()
+                t.column("searched_at", .text).notNull() // ISO8601
+            }
+
+            // Create index on recent_searches.searched_at for sorting
+            try db.create(index: "idx_recent_searches_searched_at", on: "recent_searches", columns: ["searched_at"])
+
+            // Create full-text search table for boards with porter tokenizer for stemming
+            try db.create(virtualTable: "boards_fts", using: FTS5()) { t in
+                t.tokenizer = .porter()
+                t.column("title")
+            }
+
+            // Populate FTS table with existing boards
+            try db.execute(sql: """
+                INSERT INTO boards_fts(rowid, title)
+                SELECT rowid, title FROM boards;
+                """)
+
+            // Trigger to keep FTS index in sync with boards table
+            try db.execute(sql: """
+                CREATE TRIGGER boards_fts_insert AFTER INSERT ON boards BEGIN
+                    INSERT INTO boards_fts(rowid, title)
+                    VALUES (new.rowid, new.title);
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER boards_fts_update AFTER UPDATE ON boards BEGIN
+                    UPDATE boards_fts SET title = new.title
+                    WHERE rowid = new.rowid;
+                END;
+                """)
+
+            try db.execute(sql: """
+                CREATE TRIGGER boards_fts_delete AFTER DELETE ON boards BEGIN
+                    DELETE FROM boards_fts WHERE rowid = old.rowid;
+                END;
+                """)
+        }
+
         return migrator
     }
 }

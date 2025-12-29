@@ -9,6 +9,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Advanced Search & Filtering (Ticket #17):
+  - Domain models for search:
+    - SearchResult enum for unified search results across all entity types
+    - EntityType enum for filtering search by type (Board, Card, List, Recipe)
+  - SearchRepository protocol in PersistenceInterfaces:
+    - Unified search across boards, cards, lists, and recipes
+    - Entity-specific search methods for each type
+    - Tag-based search for cards and recipes
+    - Date range search for cards with due dates
+    - Recent searches management (save, load, clear)
+  - GRDBSearchRepository implementation:
+    - FTS5 full-text search across all entity types
+    - boards_fts virtual table for board title search
+    - Leverages existing FTS tables: cards_fts, personal_lists_fts, recipes_fts
+    - recent_searches table for storing user search history
+    - Search filtering by entity type
+    - Automatic deduplication of recent searches
+    - Limit recent searches to 50 most recent
+  - Database migration v4_unified_search:
+    - boards_fts table with porter tokenizer for stemming
+    - recent_searches table with searched_at timestamp
+    - Triggers to keep FTS indices in sync with data changes
+    - Backfilled existing boards into FTS table
+  - SearchView UI (iOS app):
+    - SwiftUI search interface with searchable modifier
+    - Real-time search as you type
+    - Filter chips for active entity type filters
+    - Recent searches display when search is empty
+    - Clear recent searches functionality
+    - Grouped results by entity type (Boards, Cards, Lists, Recipes)
+    - Navigation to detail views for all result types
+    - Filter sheet with entity type toggles
+    - Empty states for no results and errors
+    - Retry functionality for failed searches
+    - Color-coded icons for each entity type
+  - Integration with app navigation:
+    - Added Search tab to main TabView
+    - Search icon in tab bar
+    - Accessible search controls throughout
+  - Repository provider updates:
+    - RepositoryProvider protocol extended with searchRepository
+    - GRDBRepositoryProvider creates and exposes searchRepository
+    - AppDependencyContainer exposes searchRepository convenience accessor
+  - Comprehensive contract tests:
+    - SearchRepositoryContractTests covering all search operations
+    - Tests for unified search across multiple entity types
+    - Tests for entity-specific search (boards, cards, lists, recipes)
+    - Tests for filtered search by entity type
+    - Tests for tag-based search
+    - Tests for date range search
+    - Tests for recent searches (save, load, deduplicate, clear)
+    - Edge case tests (empty query, empty results)
+  - Accessibility support:
+    - VoiceOver labels for all search controls
+    - Accessible filter chips and removal buttons
+    - Result count announcements
+    - Entity type icons and labels
+  - SwiftUI previews for SearchView with sample data
 - Personal Lists UI (iOS app):
   - ListsView: Main view showing all personal lists with navigation
     - Add/delete list functionality with swipe-to-delete

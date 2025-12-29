@@ -66,7 +66,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
     public func updateBoard(_ board: Board) async throws {
         try await dbQueue.write { db in
             let record = try BoardRecord(from: board)
-            var updated = try record.updateAndFetch(db)
+            let updated = try record.updateAndFetch(db)
             if updated == nil {
                 throw PersistenceError.notFound("Board with ID \(board.id.rawValue.uuidString) not found")
             }
@@ -204,11 +204,17 @@ public final class GRDBBoardsRepository: BoardsRepository {
     // MARK: - Query Operations
 
     public func searchCards(query: String) async throws -> [Card] {
-        try await dbQueue.read { db in
+        // FTS5 doesn't accept empty MATCH expressions, so return empty results
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedQuery.isEmpty else {
+            return []
+        }
+
+        return try await dbQueue.read { db in
             // Use prefix matching with wildcards to handle cases like "grocery" matching "groceries"
             // Split query into tokens and add wildcard to each for prefix matching
             // The porter tokenizer stems words, so "grocery*" matches "groceries", "grocer", etc.
-            let tokens = query.split(separator: " ").map { String($0) + "*" }
+            let tokens = trimmedQuery.split(separator: " ").map { String($0) + "*" }
             let ftsQuery = tokens.joined(separator: " OR ")
 
             let sql = """

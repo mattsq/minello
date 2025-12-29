@@ -69,7 +69,7 @@ public final class GRDBRecipesRepository: RecipesRepository {
                 let record = try RecipeRecord(from: recipe)
                 try record.update(db)
             }
-        } catch let error as GRDB.RecordError {
+        } catch is GRDB.RecordError {
             // GRDB throws RecordError.recordNotFound when trying to update a non-existent record
             throw PersistenceError.notFound("Recipe with ID \(recipe.id.rawValue.uuidString) not found")
         } catch {
@@ -91,8 +91,14 @@ public final class GRDBRecipesRepository: RecipesRepository {
     // MARK: - Query Operations
 
     public func searchRecipes(query: String) async throws -> [Recipe] {
-        try await dbQueue.read { db in
-            let pattern = FTS5Pattern(matchingAllTokensIn: query)
+        // FTS5 doesn't accept empty MATCH expressions, so return empty results
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedQuery.isEmpty else {
+            return []
+        }
+
+        return try await dbQueue.read { db in
+            let pattern = FTS5Pattern(matchingAllTokensIn: trimmedQuery)
             let sql = """
                 SELECT recipes.* FROM recipes
                 JOIN recipes_fts ON recipes.rowid = recipes_fts.rowid
