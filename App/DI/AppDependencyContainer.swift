@@ -5,7 +5,7 @@ import Foundation
 import SwiftUI
 import PersistenceInterfaces
 
-#if canImport(CloudKit)
+#if canImport(CloudKit) && !DEBUG
 import SyncCloudKit
 #else
 import SyncNoop
