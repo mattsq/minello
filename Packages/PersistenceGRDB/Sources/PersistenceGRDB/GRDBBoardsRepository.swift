@@ -66,7 +66,7 @@ public final class GRDBBoardsRepository: BoardsRepository {
     public func updateBoard(_ board: Board) async throws {
         try await dbQueue.write { db in
             let record = try BoardRecord(from: board)
-            var updated = try record.updateAndFetch(db)
+            let updated = try record.updateAndFetch(db)
             if updated == nil {
                 throw PersistenceError.notFound("Board with ID \(board.id.rawValue.uuidString) not found")
             }

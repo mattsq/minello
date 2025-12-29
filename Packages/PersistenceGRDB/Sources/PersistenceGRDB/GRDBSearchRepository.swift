@@ -170,13 +170,3 @@ public final class GRDBSearchRepository: SearchRepository {
         }
     }
 }
-
-// MARK: - ISO8601 Date Formatter Extension
-
-private extension ISO8601DateFormatter {
-    static let iso8601: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        return formatter
-    }()
-}
