@@ -1,7 +1,7 @@
 // App/UI/BoardDetail/Share/ShareButton.swift
 // Button component for board sharing with "Shared" pill badge
 
-#if canImport(CloudKit)
+#if canImport(CloudKit) && !DEBUG
 import CloudKit
 import SwiftUI
 import Domain

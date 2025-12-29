@@ -69,7 +69,7 @@ public final class GRDBRecipesRepository: RecipesRepository {
                 let record = try RecipeRecord(from: recipe)
                 try record.update(db)
             }
-        } catch let error as GRDB.RecordError {
+        } catch _ as GRDB.RecordError {
             // GRDB throws RecordError.recordNotFound when trying to update a non-existent record
             throw PersistenceError.notFound("Recipe with ID \(recipe.id.rawValue.uuidString) not found")
         } catch {
