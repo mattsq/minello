@@ -21,6 +21,12 @@ struct ContentView: View {
                     Label("Recipes", systemImage: "book.closed")
                 }
                 .accessibilityLabel("Recipes tab")
+
+            SearchView()
+                .tabItem {
+                    Label("Search", systemImage: "magnifyingglass")
+                }
+                .accessibilityLabel("Search tab")
         }
     }
 }

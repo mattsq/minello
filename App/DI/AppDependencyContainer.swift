@@ -26,6 +26,12 @@ final class AppDependencyContainer: ObservableObject {
     let syncClient: NoopSyncClient
     #endif
 
+    // Expose repositories for convenience
+    var boardsRepository: BoardsRepository { repositoryProvider.boardsRepository }
+    var listsRepository: ListsRepository { repositoryProvider.listsRepository }
+    var recipesRepository: RecipesRepository { repositoryProvider.recipesRepository }
+    var searchRepository: SearchRepository { repositoryProvider.searchRepository }
+
     init(repositoryProvider: RepositoryProvider) {
         self.repositoryProvider = repositoryProvider
 

@@ -371,7 +371,7 @@ The HomeCooked project has completed all core board management features:
 
 ---
 
-### 17) Advanced Search & Filtering ⬜
+### 17) Advanced Search & Filtering ✅
 
 **Goal**: Full-text search across all entities (boards, cards, lists, recipes)
 
@@ -383,27 +383,31 @@ The HomeCooked project has completed all core board management features:
 - Tap result to navigate to detail view
 
 **Files**:
-- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/Migrations.swift` (add FTS tables)
+- `Packages/Domain/Sources/Domain/Models.swift` (add SearchResult and EntityType)
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/Migrations.swift` (add boards_fts and recent_searches)
 - `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/SearchRepository.swift` (new)
 - `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBSearchRepository.swift` (new)
 - `App/UI/Search/SearchView.swift` (new)
-- `App/UI/Search/SearchResultsView.swift` (new)
-- `Tests/PersistenceGRDBTests/SearchRepositoryTests.swift` (new)
+- `App/DI/RepositoryProvider.swift` (add searchRepository)
+- `App/DI/GRDBRepositoryProvider.swift` (create searchRepository instance)
+- `App/DI/AppDependencyContainer.swift` (expose searchRepository)
+- `App/UI/ContentView.swift` (add Search tab)
+- `Tests/PersistenceGRDBTests/SearchRepositoryContractTests.swift` (new)
 
 **Deliverables**:
-- FTS5 virtual tables in GRDB
-- SearchRepository protocol and implementation
-- Search UI with filters
-- Recent searches
-- Result navigation
+- FTS5 virtual tables in GRDB (boards_fts, leveraging existing FTS for cards/lists/recipes) ✅
+- SearchRepository protocol and implementation ✅
+- Search UI with filters ✅
+- Recent searches management ✅
+- Result navigation to all entity types ✅
 
 **Acceptance**:
-- `swift test --filter SearchRepositoryTests` passes
-- Search returns results across entity types
-- Filters work correctly
-- VoiceOver announces result count
+- `swift test --filter SearchRepositoryContractTests` passes (verified in CI)
+- Search returns results across entity types ✅
+- Filters work correctly ✅
+- VoiceOver announces result count ✅
 
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 
 ---
 
