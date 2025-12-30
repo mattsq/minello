@@ -11,9 +11,9 @@ import XCTest
 /// Integration tests for CloudKit board sharing
 final class BoardSharingTests: XCTestCase {
     var syncClient: CloudKitSyncClient!
-    var mockBoardsRepo: MockBoardsRepository!
-    var mockListsRepo: MockListsRepository!
-    var mockRecipesRepo: MockRecipesRepository!
+    fileprivate var mockBoardsRepo: MockBoardsRepository!
+    fileprivate var mockListsRepo: MockListsRepository!
+    fileprivate var mockRecipesRepo: MockRecipesRepository!
     var testBoard: Board!
 
     override func setUp() async throws {
@@ -95,7 +95,7 @@ final class BoardSharingTests: XCTestCase {
 
 // MARK: - Mock Repositories
 
-private actor MockBoardsRepository: BoardsRepository {
+fileprivate actor MockBoardsRepository: BoardsRepository {
     private var boards: [BoardID: Board] = [:]
     private var columns: [ColumnID: Column] = [:]
     private var cards: [CardID: Card] = [:]
@@ -108,8 +108,11 @@ private actor MockBoardsRepository: BoardsRepository {
         Array(boards.values)
     }
 
-    func loadBoard(_ id: BoardID) async throws -> Board? {
-        boards[id]
+    func loadBoard(_ id: BoardID) async throws -> Board {
+        guard let board = boards[id] else {
+            throw PersistenceError.notFound("Board not found")
+        }
+        return board
     }
 
     func updateBoard(_ board: Board) async throws {
@@ -126,6 +129,17 @@ private actor MockBoardsRepository: BoardsRepository {
 
     func loadColumns(for boardID: BoardID) async throws -> [Column] {
         columns.values.filter { $0.board == boardID }
+    }
+
+    func loadColumn(_ id: ColumnID) async throws -> Column {
+        guard let column = columns[id] else {
+            throw PersistenceError.notFound("Column not found")
+        }
+        return column
+    }
+
+    func updateColumn(_ column: Column) async throws {
+        columns[column.id] = column
     }
 
     func saveColumns(_ cols: [Column]) async throws {
@@ -146,6 +160,17 @@ private actor MockBoardsRepository: BoardsRepository {
         cards.values.filter { $0.column == columnID }
     }
 
+    func loadCard(_ id: CardID) async throws -> Card {
+        guard let card = cards[id] else {
+            throw PersistenceError.notFound("Card not found")
+        }
+        return card
+    }
+
+    func updateCard(_ card: Card) async throws {
+        cards[card.id] = card
+    }
+
     func saveCards(_ crds: [Card]) async throws {
         for card in crds {
             cards[card.id] = card
@@ -155,9 +180,21 @@ private actor MockBoardsRepository: BoardsRepository {
     func deleteCard(_ id: CardID) async throws {
         cards.removeValue(forKey: id)
     }
+
+    func searchCards(query: String) async throws -> [Card] {
+        []
+    }
+
+    func findCards(byTag tag: String) async throws -> [Card] {
+        []
+    }
+
+    func findCards(dueBetween from: Date, and to: Date) async throws -> [Card] {
+        []
+    }
 }
 
-private actor MockListsRepository: ListsRepository {
+fileprivate actor MockListsRepository: ListsRepository {
     private var lists: [ListID: PersonalList] = [:]
 
     func createList(_ list: PersonalList) async throws {
@@ -168,8 +205,11 @@ private actor MockListsRepository: ListsRepository {
         Array(lists.values)
     }
 
-    func loadList(_ id: ListID) async throws -> PersonalList? {
-        lists[id]
+    func loadList(_ id: ListID) async throws -> PersonalList {
+        guard let list = lists[id] else {
+            throw PersistenceError.notFound("List not found")
+        }
+        return list
     }
 
     func updateList(_ list: PersonalList) async throws {
@@ -179,9 +219,17 @@ private actor MockListsRepository: ListsRepository {
     func deleteList(_ id: ListID) async throws {
         lists.removeValue(forKey: id)
     }
+
+    func searchLists(query: String) async throws -> [PersonalList] {
+        []
+    }
+
+    func findListsWithIncompleteItems() async throws -> [PersonalList] {
+        []
+    }
 }
 
-private actor MockRecipesRepository: RecipesRepository {
+fileprivate actor MockRecipesRepository: RecipesRepository {
     private var recipes: [RecipeID: Recipe] = [:]
 
     func createRecipe(_ recipe: Recipe) async throws {
@@ -192,8 +240,11 @@ private actor MockRecipesRepository: RecipesRepository {
         Array(recipes.values)
     }
 
-    func loadRecipe(_ id: RecipeID) async throws -> Recipe? {
-        recipes[id]
+    func loadRecipe(_ id: RecipeID) async throws -> Recipe {
+        guard let recipe = recipes[id] else {
+            throw PersistenceError.notFound("Recipe not found")
+        }
+        return recipe
     }
 
     func updateRecipe(_ recipe: Recipe) async throws {
@@ -202,6 +253,14 @@ private actor MockRecipesRepository: RecipesRepository {
 
     func deleteRecipe(_ id: RecipeID) async throws {
         recipes.removeValue(forKey: id)
+    }
+
+    func searchRecipes(query: String) async throws -> [Recipe] {
+        []
+    }
+
+    func findRecipesByTag(_ tag: String) async throws -> [Recipe] {
+        []
     }
 }
 #endif

@@ -163,6 +163,7 @@ enum CloudKitRecordMapper {
         let recordID = CKRecord.ID(recordName: list.id.rawValue.uuidString, zoneID: zoneID)
         let record = CKRecord(recordType: listRecordType, recordID: recordID)
 
+        record["cardID"] = list.cardID.rawValue.uuidString as CKRecordValue
         record["title"] = list.title as CKRecordValue
         record["createdAt"] = list.createdAt as CKRecordValue
         record["updatedAt"] = list.updatedAt as CKRecordValue
@@ -187,6 +188,17 @@ enum CloudKitRecordMapper {
 
         let id = ListID(rawValue: UUID(uuidString: record.recordID.recordName)!)
 
+        // Card-centric design: lists must belong to a card
+        // For alpha: use dummy CardID if not present (migration path)
+        let cardID: CardID
+        if let cardIDString = record["cardID"] as? String,
+           let cardUUID = UUID(uuidString: cardIDString) {
+            cardID = CardID(rawValue: cardUUID)
+        } else {
+            // Alpha migration: create dummy cardID for old records
+            cardID = CardID()
+        }
+
         var items: [ChecklistItem] = []
         if let itemsString = record["items"] as? String,
            let itemsData = itemsString.data(using: .utf8)
@@ -196,6 +208,7 @@ enum CloudKitRecordMapper {
 
         return PersonalList(
             id: id,
+            cardID: cardID,
             title: title,
             items: items,
             createdAt: createdAt,
@@ -209,6 +222,7 @@ enum CloudKitRecordMapper {
         let recordID = CKRecord.ID(recordName: recipe.id.rawValue.uuidString, zoneID: zoneID)
         let record = CKRecord(recordType: recipeRecordType, recordID: recordID)
 
+        record["cardID"] = recipe.cardID.rawValue.uuidString as CKRecordValue
         record["title"] = recipe.title as CKRecordValue
         record["methodMarkdown"] = recipe.methodMarkdown as CKRecordValue
         record["tags"] = recipe.tags as CKRecordValue
@@ -237,6 +251,17 @@ enum CloudKitRecordMapper {
         let id = RecipeID(rawValue: UUID(uuidString: record.recordID.recordName)!)
         let tags = record["tags"] as? [String] ?? []
 
+        // Card-centric design: recipes must belong to a card
+        // For alpha: use dummy CardID if not present (migration path)
+        let cardID: CardID
+        if let cardIDString = record["cardID"] as? String,
+           let cardUUID = UUID(uuidString: cardIDString) {
+            cardID = CardID(rawValue: cardUUID)
+        } else {
+            // Alpha migration: create dummy cardID for old records
+            cardID = CardID()
+        }
+
         var ingredients: [ChecklistItem] = []
         if let ingredientsString = record["ingredients"] as? String,
            let ingredientsData = ingredientsString.data(using: .utf8)
@@ -246,6 +271,7 @@ enum CloudKitRecordMapper {
 
         return Recipe(
             id: id,
+            cardID: cardID,
             title: title,
             ingredients: ingredients,
             methodMarkdown: methodMarkdown,

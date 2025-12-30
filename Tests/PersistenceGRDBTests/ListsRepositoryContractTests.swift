@@ -51,8 +51,8 @@ final class ListsRepositoryContractTests: XCTestCase {
     }
 
     func testLoadAllLists() async throws {
-        let list1 = PersonalList(title: "Groceries")
-        let list2 = PersonalList(title: "Packing List")
+        let list1 = PersonalList(cardID: CardID(), title: "Groceries")
+        let list2 = PersonalList(cardID: CardID(), title: "Packing List")
 
         try await repository.createList(list1)
         try await repository.createList(list2)
@@ -81,7 +81,7 @@ final class ListsRepositoryContractTests: XCTestCase {
     }
 
     func testDeleteList() async throws {
-        let list = PersonalList(title: "To Delete")
+        let list = PersonalList(cardID: CardID(), title: "To Delete")
         try await repository.createList(list)
 
         try await repository.deleteList(list.id)
@@ -114,7 +114,7 @@ final class ListsRepositoryContractTests: XCTestCase {
     }
 
     func testListWithEmptyItems() async throws {
-        let list = PersonalList(title: "Empty List", items: [])
+        let list = PersonalList(cardID: CardID(), title: "Empty List", items: [])
         try await repository.createList(list)
 
         let loaded = try await repository.loadList(list.id)
@@ -175,13 +175,13 @@ final class ListsRepositoryContractTests: XCTestCase {
 
     func testListsAreSortedByCreationDate() async throws {
         // Create lists with slight delays to ensure different creation times
-        let list1 = PersonalList(title: "First List")
+        let list1 = PersonalList(cardID: CardID(), title: "First List")
         try await repository.createList(list1)
 
         // Small delay to ensure different timestamps
         try await Task.sleep(nanoseconds: 10_000_000) // 10ms
 
-        let list2 = PersonalList(title: "Second List")
+        let list2 = PersonalList(cardID: CardID(), title: "Second List")
         try await repository.createList(list2)
 
         let lists = try await repository.loadLists()
@@ -194,9 +194,9 @@ final class ListsRepositoryContractTests: XCTestCase {
     // MARK: - Query Tests
 
     func testSearchLists() async throws {
-        let list1 = PersonalList(title: "Grocery Shopping")
-        let list2 = PersonalList(title: "Packing for Trip")
-        let list3 = PersonalList(title: "Shopping for Clothes")
+        let list1 = PersonalList(cardID: CardID(), title: "Grocery Shopping")
+        let list2 = PersonalList(cardID: CardID(), title: "Packing for Trip")
+        let list3 = PersonalList(cardID: CardID(), title: "Shopping for Clothes")
 
         try await repository.createList(list1)
         try await repository.createList(list2)
@@ -210,7 +210,7 @@ final class ListsRepositoryContractTests: XCTestCase {
     }
 
     func testSearchListsNoMatches() async throws {
-        let list = PersonalList(title: "Grocery List")
+        let list = PersonalList(cardID: CardID(), title: "Grocery List")
         try await repository.createList(list)
 
         let results = try await repository.searchLists(query: "vacation")
@@ -241,7 +241,7 @@ final class ListsRepositoryContractTests: XCTestCase {
             ]
         )
 
-        let emptyList = PersonalList(title: "Empty List", items: [])
+        let emptyList = PersonalList(cardID: CardID(), title: "Empty List", items: [])
 
         try await repository.createList(completeList)
         try await repository.createList(incompleteList1)
@@ -261,6 +261,7 @@ final class ListsRepositoryContractTests: XCTestCase {
         let originalID = ListID()
         var list = PersonalList(
             id: originalID,
+            cardID: CardID(),
             title: "Original",
             items: [ChecklistItem(text: "Item 1")]
         )
@@ -275,7 +276,7 @@ final class ListsRepositoryContractTests: XCTestCase {
     }
 
     func testUpdateNonexistentListThrows() async throws {
-        let list = PersonalList(title: "Nonexistent")
+        let list = PersonalList(cardID: CardID(), title: "Nonexistent")
 
         do {
             try await repository.updateList(list)

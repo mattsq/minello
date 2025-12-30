@@ -62,8 +62,8 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testLoadAllRecipes() async throws {
-        let recipe1 = Recipe(title: "Pasta", methodMarkdown: "Cook pasta")
-        let recipe2 = Recipe(title: "Salad", methodMarkdown: "Mix vegetables")
+        let recipe1 = Recipe(cardID: CardID(), title: "Pasta", methodMarkdown: "Cook pasta")
+        let recipe2 = Recipe(cardID: CardID(), title: "Salad", methodMarkdown: "Mix vegetables")
 
         try await repository.createRecipe(recipe1)
         try await repository.createRecipe(recipe2)
@@ -99,7 +99,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testDeleteRecipe() async throws {
-        let recipe = Recipe(title: "To Delete", methodMarkdown: "Delete me")
+        let recipe = Recipe(cardID: CardID(), title: "To Delete", methodMarkdown: "Delete me")
         try await repository.createRecipe(recipe)
 
         try await repository.deleteRecipe(recipe.id)
@@ -132,7 +132,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testRecipeWithEmptyIngredients() async throws {
-        let recipe = Recipe(title: "Simple Recipe", ingredients: [], methodMarkdown: "Just cook it")
+        let recipe = Recipe(cardID: CardID(), title: "Simple Recipe", ingredients: [], methodMarkdown: "Just cook it")
         try await repository.createRecipe(recipe)
 
         let loaded = try await repository.loadRecipe(recipe.id)
@@ -222,13 +222,13 @@ final class RecipesRepositoryContractTests: XCTestCase {
 
     func testRecipesAreSortedByCreationDate() async throws {
         // Create recipes with slight delays to ensure different creation times
-        let recipe1 = Recipe(title: "First Recipe", methodMarkdown: "Method 1")
+        let recipe1 = Recipe(cardID: CardID(), title: "First Recipe", methodMarkdown: "Method 1")
         try await repository.createRecipe(recipe1)
 
         // Small delay to ensure different timestamps
         try await Task.sleep(nanoseconds: 10_000_000) // 10ms
 
-        let recipe2 = Recipe(title: "Second Recipe", methodMarkdown: "Method 2")
+        let recipe2 = Recipe(cardID: CardID(), title: "Second Recipe", methodMarkdown: "Method 2")
         try await repository.createRecipe(recipe2)
 
         let recipes = try await repository.loadRecipes()
@@ -241,9 +241,9 @@ final class RecipesRepositoryContractTests: XCTestCase {
     // MARK: - Query Tests
 
     func testSearchRecipesByTitle() async throws {
-        let recipe1 = Recipe(title: "Chocolate Cake", methodMarkdown: "Bake cake")
-        let recipe2 = Recipe(title: "Vanilla Cake", methodMarkdown: "Bake vanilla")
-        let recipe3 = Recipe(title: "Chocolate Chip Cookies", methodMarkdown: "Bake cookies")
+        let recipe1 = Recipe(cardID: CardID(), title: "Chocolate Cake", methodMarkdown: "Bake cake")
+        let recipe2 = Recipe(cardID: CardID(), title: "Vanilla Cake", methodMarkdown: "Bake vanilla")
+        let recipe3 = Recipe(cardID: CardID(), title: "Chocolate Chip Cookies", methodMarkdown: "Bake cookies")
 
         try await repository.createRecipe(recipe1)
         try await repository.createRecipe(recipe2)
@@ -257,9 +257,9 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testSearchRecipesByMethod() async throws {
-        let recipe1 = Recipe(title: "Recipe 1", methodMarkdown: "Use a food processor to blend")
-        let recipe2 = Recipe(title: "Recipe 2", methodMarkdown: "Mix by hand")
-        let recipe3 = Recipe(title: "Recipe 3", methodMarkdown: "Process in food processor")
+        let recipe1 = Recipe(cardID: CardID(), title: "Recipe 1", methodMarkdown: "Use a food processor to blend")
+        let recipe2 = Recipe(cardID: CardID(), title: "Recipe 2", methodMarkdown: "Mix by hand")
+        let recipe3 = Recipe(cardID: CardID(), title: "Recipe 3", methodMarkdown: "Process in food processor")
 
         try await repository.createRecipe(recipe1)
         try await repository.createRecipe(recipe2)
@@ -273,7 +273,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testSearchRecipesNoMatches() async throws {
-        let recipe = Recipe(title: "Pasta", methodMarkdown: "Boil water")
+        let recipe = Recipe(cardID: CardID(), title: "Pasta", methodMarkdown: "Boil water")
         try await repository.createRecipe(recipe)
 
         let results = try await repository.searchRecipes(query: "pizza")
@@ -281,9 +281,9 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testFindRecipesByTag() async throws {
-        let recipe1 = Recipe(title: "Pasta", methodMarkdown: "Cook", tags: ["Italian", "Quick"])
-        let recipe2 = Recipe(title: "Risotto", methodMarkdown: "Stir", tags: ["Italian", "Slow"])
-        let recipe3 = Recipe(title: "Tacos", methodMarkdown: "Grill", tags: ["Mexican", "Quick"])
+        let recipe1 = Recipe(cardID: CardID(), title: "Pasta", methodMarkdown: "Cook", tags: ["Italian", "Quick"])
+        let recipe2 = Recipe(cardID: CardID(), title: "Risotto", methodMarkdown: "Stir", tags: ["Italian", "Slow"])
+        let recipe3 = Recipe(cardID: CardID(), title: "Tacos", methodMarkdown: "Grill", tags: ["Mexican", "Quick"])
 
         try await repository.createRecipe(recipe1)
         try await repository.createRecipe(recipe2)
@@ -303,7 +303,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testFindRecipesByTagCaseInsensitive() async throws {
-        let recipe = Recipe(title: "Pasta", methodMarkdown: "Cook", tags: ["Italian"])
+        let recipe = Recipe(cardID: CardID(), title: "Pasta", methodMarkdown: "Cook", tags: ["Italian"])
         try await repository.createRecipe(recipe)
 
         let resultsLower = try await repository.findRecipesByTag("italian")
@@ -317,7 +317,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testFindRecipesByTagNoMatches() async throws {
-        let recipe = Recipe(title: "Pasta", methodMarkdown: "Cook", tags: ["Italian"])
+        let recipe = Recipe(cardID: CardID(), title: "Pasta", methodMarkdown: "Cook", tags: ["Italian"])
         try await repository.createRecipe(recipe)
 
         let results = try await repository.findRecipesByTag("French")
@@ -325,7 +325,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testRecipeWithNoTags() async throws {
-        let recipe = Recipe(title: "Simple Recipe", methodMarkdown: "Cook", tags: [])
+        let recipe = Recipe(cardID: CardID(), title: "Simple Recipe", methodMarkdown: "Cook", tags: [])
         try await repository.createRecipe(recipe)
 
         let loaded = try await repository.loadRecipe(recipe.id)
@@ -353,7 +353,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
     }
 
     func testUpdateNonexistentRecipeThrows() async throws {
-        let recipe = Recipe(title: "Nonexistent", methodMarkdown: "Method")
+        let recipe = Recipe(cardID: CardID(), title: "Nonexistent", methodMarkdown: "Method")
 
         do {
             try await repository.updateRecipe(recipe)

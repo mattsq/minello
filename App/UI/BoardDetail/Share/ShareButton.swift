@@ -180,7 +180,7 @@ private class MockListsRepository: @unchecked Sendable, ListsRepository {
     func createList(_ list: PersonalList) async throws {}
     func loadLists() async throws -> [PersonalList] { [] }
     func loadList(_ id: ListID) async throws -> PersonalList {
-        PersonalList(id: id, title: "Mock List", items: [], createdAt: Date(), updatedAt: Date())
+        PersonalList(id: id, cardID: CardID(), title: "Mock List", items: [], createdAt: Date(), updatedAt: Date())
     }
     func updateList(_ list: PersonalList) async throws {}
     func deleteList(_ id: ListID) async throws {}
@@ -192,7 +192,7 @@ private class MockRecipesRepository: @unchecked Sendable, RecipesRepository {
     func createRecipe(_ recipe: Recipe) async throws {}
     func loadRecipes() async throws -> [Recipe] { [] }
     func loadRecipe(_ id: RecipeID) async throws -> Recipe {
-        Recipe(id: id, title: "Mock Recipe", ingredients: [], methodMarkdown: "", tags: [], createdAt: Date(), updatedAt: Date())
+        Recipe(id: id, cardID: CardID(), title: "Mock Recipe", ingredients: [], methodMarkdown: "", tags: [], createdAt: Date(), updatedAt: Date())
     }
     func updateRecipe(_ recipe: Recipe) async throws {}
     func deleteRecipe(_ id: RecipeID) async throws {}

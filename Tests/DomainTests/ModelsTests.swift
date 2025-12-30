@@ -237,7 +237,7 @@ final class ModelsTests: XCTestCase {
     // MARK: - PersonalList Tests
 
     func testPersonalListCreation() {
-        let list = PersonalList(title: "Groceries")
+        let list = PersonalList(cardID: CardID(), title: "Groceries")
 
         XCTAssertEqual(list.title, "Groceries")
         XCTAssertTrue(list.items.isEmpty)
@@ -246,7 +246,7 @@ final class ModelsTests: XCTestCase {
     func testPersonalListWithItems() {
         let item1 = ChecklistItem(text: "Milk", quantity: 2, unit: "liters")
         let item2 = ChecklistItem(text: "Bread")
-        let list = PersonalList(title: "Groceries", items: [item1, item2])
+        let list = PersonalList(cardID: CardID(), title: "Groceries", items: [item1, item2])
 
         XCTAssertEqual(list.items.count, 2)
         XCTAssertEqual(list.items[0].text, "Milk")
@@ -256,7 +256,7 @@ final class ModelsTests: XCTestCase {
         print("=== DEBUG: testPersonalListCodable START ===")
 
         print("Creating PersonalList...")
-        let list = PersonalList(title: "Groceries")
+        let list = PersonalList(cardID: CardID(), title: "Groceries")
         print("Created list with title: \(list.title)")
         print("List ID: \(list.id.rawValue.uuidString)")
 
@@ -292,6 +292,7 @@ final class ModelsTests: XCTestCase {
 
     func testRecipeCreation() {
         let recipe = Recipe(
+            cardID: CardID(),
             title: "Pasta Carbonara",
             methodMarkdown: "# Steps\n1. Boil water"
         )
@@ -306,6 +307,7 @@ final class ModelsTests: XCTestCase {
         let ingredient1 = ChecklistItem(text: "Pasta", quantity: 400, unit: "g")
         let ingredient2 = ChecklistItem(text: "Eggs", quantity: 4, unit: "whole")
         let recipe = Recipe(
+            cardID: CardID(),
             title: "Pasta Carbonara",
             ingredients: [ingredient1, ingredient2],
             tags: ["italian", "pasta"]
@@ -317,6 +319,7 @@ final class ModelsTests: XCTestCase {
 
     func testRecipeCodable() throws {
         let recipe = Recipe(
+            cardID: CardID(),
             title: "Pasta",
             methodMarkdown: "Cook it",
             tags: ["italian"]
@@ -331,5 +334,132 @@ final class ModelsTests: XCTestCase {
         XCTAssertEqual(recipe.title, decoded.title)
         XCTAssertEqual(recipe.methodMarkdown, decoded.methodMarkdown)
         XCTAssertEqual(recipe.tags, decoded.tags)
+    }
+
+    // MARK: - Card-Centric Association Tests
+
+    func testCardWithNoAttachments() {
+        let columnID = ColumnID()
+        let card = Card(column: columnID, title: "Plain Card")
+
+        XCTAssertNil(card.recipeID)
+        XCTAssertNil(card.listID)
+    }
+
+    func testCardWithRecipeOnly() {
+        let columnID = ColumnID()
+        let recipeID = RecipeID()
+        let card = Card(
+            column: columnID,
+            title: "Card with Recipe",
+            recipeID: recipeID
+        )
+
+        XCTAssertEqual(card.recipeID, recipeID)
+        XCTAssertNil(card.listID)
+    }
+
+    func testCardWithListOnly() {
+        let columnID = ColumnID()
+        let listID = ListID()
+        let card = Card(
+            column: columnID,
+            title: "Card with List",
+            listID: listID
+        )
+
+        XCTAssertNil(card.recipeID)
+        XCTAssertEqual(card.listID, listID)
+    }
+
+    func testCardWithBothRecipeAndList() {
+        let columnID = ColumnID()
+        let recipeID = RecipeID()
+        let listID = ListID()
+        let card = Card(
+            column: columnID,
+            title: "Card with Both",
+            recipeID: recipeID,
+            listID: listID
+        )
+
+        XCTAssertEqual(card.recipeID, recipeID)
+        XCTAssertEqual(card.listID, listID)
+    }
+
+    func testCardAssociationsCodable() throws {
+        let columnID = ColumnID()
+        let recipeID = RecipeID()
+        let listID = ListID()
+        let card = Card(
+            column: columnID,
+            title: "Card",
+            recipeID: recipeID,
+            listID: listID
+        )
+
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(card)
+
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(Card.self, from: data)
+
+        XCTAssertEqual(decoded.recipeID, recipeID)
+        XCTAssertEqual(decoded.listID, listID)
+    }
+
+    func testRecipeRequiresCardID() {
+        let cardID = CardID()
+        let recipe = Recipe(
+            cardID: cardID,
+            title: "Pasta"
+        )
+
+        XCTAssertEqual(recipe.cardID, cardID)
+    }
+
+    func testRecipeCodableWithCardID() throws {
+        let cardID = CardID()
+        let recipe = Recipe(
+            cardID: cardID,
+            title: "Pasta",
+            methodMarkdown: "Cook it"
+        )
+
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(recipe)
+
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(Recipe.self, from: data)
+
+        XCTAssertEqual(decoded.cardID, cardID)
+        XCTAssertEqual(decoded.title, recipe.title)
+    }
+
+    func testPersonalListRequiresCardID() {
+        let cardID = CardID()
+        let list = PersonalList(
+            cardID: cardID,
+            title: "Groceries"
+        )
+
+        XCTAssertEqual(list.cardID, cardID)
+    }
+
+    func testPersonalListCodableWithCardID() throws {
+        let cardID = CardID()
+        let list = PersonalList(
+            cardID: cardID,
+            title: "Groceries"
+        )
+
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(list)
+
+        let decoder = JSONDecoder()
+        let decoded = try decoder.decode(PersonalList.self, from: data)
+
+        XCTAssertEqual(decoded.cardID, cardID)
+        XCTAssertEqual(decoded.title, list.title)
     }
 }

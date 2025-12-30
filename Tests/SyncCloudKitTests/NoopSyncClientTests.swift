@@ -39,8 +39,8 @@ final class NoopSyncClientTests: XCTestCase {
 
     func testUploadOperationsDoNotThrow() async throws {
         let board = Board(id: BoardID(), title: "Test Board")
-        let list = PersonalList(id: ListID(), title: "Test List")
-        let recipe = Recipe(id: RecipeID(), title: "Test Recipe")
+        let list = PersonalList(id: ListID(), cardID: CardID(), title: "Test List")
+        let recipe = Recipe(id: RecipeID(), cardID: CardID(), title: "Test Recipe")
 
         try await client.uploadBoard(board)
         try await client.uploadList(list)

@@ -181,9 +181,9 @@ final class EntityLookupTests: XCTestCase {
 
     func testFindListsExactMatch() {
         let lists = [
-            PersonalList(title: "Groceries"),
-            PersonalList(title: "Packing"),
-            PersonalList(title: "Shopping")
+            PersonalList(cardID: CardID(), title: "Groceries"),
+            PersonalList(cardID: CardID(), title: "Packing"),
+            PersonalList(cardID: CardID(), title: "Shopping")
         ]
 
         let results = EntityLookup.findLists(query: "Groceries", in: lists)
@@ -195,8 +195,8 @@ final class EntityLookupTests: XCTestCase {
 
     func testFindListsFuzzyMatch() {
         let lists = [
-            PersonalList(title: "Groceries"),
-            PersonalList(title: "Shopping")
+            PersonalList(cardID: CardID(), title: "Groceries"),
+            PersonalList(cardID: CardID(), title: "Shopping")
         ]
 
         let results = EntityLookup.findLists(query: "groc", in: lists)
@@ -207,8 +207,8 @@ final class EntityLookupTests: XCTestCase {
 
     func testFindBestList() {
         let lists = [
-            PersonalList(title: "Groceries"),
-            PersonalList(title: "Packing")
+            PersonalList(cardID: CardID(), title: "Groceries"),
+            PersonalList(cardID: CardID(), title: "Packing")
         ]
 
         let best = EntityLookup.findBestList(query: "Groceries", in: lists)
@@ -219,8 +219,8 @@ final class EntityLookupTests: XCTestCase {
 
     func testFindBestListNoMatch() {
         let lists = [
-            PersonalList(title: "Groceries"),
-            PersonalList(title: "Packing")
+            PersonalList(cardID: CardID(), title: "Groceries"),
+            PersonalList(cardID: CardID(), title: "Packing")
         ]
 
         let best = EntityLookup.findBestList(query: "xyz", in: lists)
@@ -230,7 +230,7 @@ final class EntityLookupTests: XCTestCase {
 
     func testFindListsCaseInsensitive() {
         let lists = [
-            PersonalList(title: "Groceries")
+            PersonalList(cardID: CardID(), title: "Groceries")
         ]
 
         let results = EntityLookup.findLists(query: "groceries", in: lists)
@@ -256,8 +256,8 @@ final class EntityLookupTests: XCTestCase {
 
     func testFindListsWithLowThreshold() {
         let lists = [
-            PersonalList(title: "Groceries"),
-            PersonalList(title: "Shopping")
+            PersonalList(cardID: CardID(), title: "Groceries"),
+            PersonalList(cardID: CardID(), title: "Shopping")
         ]
 
         // Use low threshold - more permissive matching
