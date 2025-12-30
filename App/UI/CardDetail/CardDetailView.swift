@@ -127,7 +127,7 @@ struct CardDetailView: View {
                     showingRecipeEditor = true
                 },
                 onDetach: {
-                    Task { await detachRecipe() }
+                    Task { @MainActor in await detachRecipe() }
                 },
                 onAttach: {
                     showingAttachRecipe = true
@@ -141,13 +141,13 @@ struct CardDetailView: View {
                     showingListEditor = true
                 },
                 onDetach: {
-                    Task { await detachList() }
+                    Task { @MainActor in await detachList() }
                 },
                 onAttach: {
                     showingAttachList = true
                 },
                 onToggleItem: { index in
-                    Task { await toggleListItem(at: index) }
+                    Task { @MainActor in await toggleListItem(at: index) }
                 }
             )
 
@@ -198,29 +198,37 @@ struct CardDetailView: View {
         .sheet(isPresented: $showingRecipeEditor) {
             if let recipe = attachedRecipe {
                 RecipeEditorView(mode: .edit(recipe)) { updatedRecipe in
-                    Task { await updateRecipe(updatedRecipe) }
-                    showingRecipeEditor = false
+                    Task { @MainActor in
+                        await updateRecipe(updatedRecipe)
+                        showingRecipeEditor = false
+                    }
                 }
             }
         }
         .sheet(isPresented: $showingListEditor) {
             if let list = attachedList {
                 ListEditorView(mode: .edit(list)) { updatedList in
-                    Task { await updateList(updatedList) }
-                    showingListEditor = false
+                    Task { @MainActor in
+                        await updateList(updatedList)
+                        showingListEditor = false
+                    }
                 }
             }
         }
         .sheet(isPresented: $showingAttachRecipe) {
             RecipeEditorView(mode: .create(cardID: editedCard.id)) { newRecipe in
-                Task { await attachNewRecipe(newRecipe) }
-                showingAttachRecipe = false
+                Task { @MainActor in
+                    await attachNewRecipe(newRecipe)
+                    showingAttachRecipe = false
+                }
             }
         }
         .sheet(isPresented: $showingAttachList) {
             ListEditorView(mode: .create(cardID: editedCard.id)) { newList in
-                Task { await attachNewList(newList) }
-                showingAttachList = false
+                Task { @MainActor in
+                    await attachNewList(newList)
+                    showingAttachList = false
+                }
             }
         }
         .task {
