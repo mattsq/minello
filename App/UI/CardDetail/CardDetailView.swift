@@ -17,6 +17,16 @@ struct CardDetailView: View {
     @State private var showingAddItem = false
     @State private var newItemText = ""
 
+    // Recipe and List state
+    @State private var attachedRecipe: Recipe?
+    @State private var attachedList: PersonalList?
+    @State private var isLoadingRecipe = false
+    @State private var isLoadingList = false
+    @State private var showingRecipeEditor = false
+    @State private var showingListEditor = false
+    @State private var showingAttachRecipe = false
+    @State private var showingAttachList = false
+
     init(card: Card) {
         self.card = card
         self._editedCard = State(initialValue: card)
@@ -110,6 +120,37 @@ struct CardDetailView: View {
                 Text("Checklist")
             }
 
+            // Recipe section (card-centric)
+            RecipeSectionView(
+                recipe: attachedRecipe,
+                onEdit: {
+                    showingRecipeEditor = true
+                },
+                onDetach: {
+                    Task { await detachRecipe() }
+                },
+                onAttach: {
+                    showingAttachRecipe = true
+                }
+            )
+
+            // List section (card-centric)
+            ListSectionView(
+                list: attachedList,
+                onEdit: {
+                    showingListEditor = true
+                },
+                onDetach: {
+                    Task { await detachList() }
+                },
+                onAttach: {
+                    showingAttachList = true
+                },
+                onToggleItem: { index in
+                    Task { await toggleListItem(at: index) }
+                }
+            )
+
             // Metadata
             Section("Information") {
                 LabeledContent("Created", value: editedCard.createdAt, format: .dateTime)
@@ -153,6 +194,37 @@ struct CardDetailView: View {
             if let error = errorMessage {
                 Text(error)
             }
+        }
+        .sheet(isPresented: $showingRecipeEditor) {
+            if let recipe = attachedRecipe {
+                RecipeEditorView(mode: .edit(recipe)) { updatedRecipe in
+                    Task { await updateRecipe(updatedRecipe) }
+                    showingRecipeEditor = false
+                }
+            }
+        }
+        .sheet(isPresented: $showingListEditor) {
+            if let list = attachedList {
+                ListEditorView(mode: .edit(list)) { updatedList in
+                    Task { await updateList(updatedList) }
+                    showingListEditor = false
+                }
+            }
+        }
+        .sheet(isPresented: $showingAttachRecipe) {
+            RecipeEditorView(mode: .create(cardID: editedCard.id)) { newRecipe in
+                Task { await attachNewRecipe(newRecipe) }
+                showingAttachRecipe = false
+            }
+        }
+        .sheet(isPresented: $showingAttachList) {
+            ListEditorView(mode: .create(cardID: editedCard.id)) { newList in
+                Task { await attachNewList(newList) }
+                showingAttachList = false
+            }
+        }
+        .task {
+            await loadRecipeAndList()
         }
     }
 
@@ -237,6 +309,123 @@ struct CardDetailView: View {
 
         if !isEditing {
             Task { await saveCard() }
+        }
+    }
+
+    // MARK: - Recipe and List Actions
+
+    private func loadRecipeAndList() async {
+        // Load recipe if card has one
+        if let recipeID = editedCard.recipeID {
+            isLoadingRecipe = true
+            do {
+                attachedRecipe = try await dependencies.repositoryProvider.recipesRepository.loadRecipe(recipeID)
+            } catch {
+                errorMessage = "Failed to load recipe: \(error.localizedDescription)"
+            }
+            isLoadingRecipe = false
+        }
+
+        // Load list if card has one
+        if let listID = editedCard.listID {
+            isLoadingList = true
+            do {
+                attachedList = try await dependencies.repositoryProvider.listsRepository.loadList(listID)
+            } catch {
+                errorMessage = "Failed to load list: \(error.localizedDescription)"
+            }
+            isLoadingList = false
+        }
+    }
+
+    private func attachNewRecipe(_ recipe: Recipe) async {
+        do {
+            try await dependencies.repositoryProvider.recipesRepository.createRecipe(recipe)
+            // Update card to reference the recipe
+            editedCard.recipeID = recipe.id
+            editedCard.updatedAt = Date()
+            try await dependencies.repositoryProvider.boardsRepository.updateCard(editedCard)
+            attachedRecipe = recipe
+        } catch {
+            errorMessage = "Failed to attach recipe: \(error.localizedDescription)"
+        }
+    }
+
+    private func attachNewList(_ list: PersonalList) async {
+        do {
+            try await dependencies.repositoryProvider.listsRepository.createList(list)
+            // Update card to reference the list
+            editedCard.listID = list.id
+            editedCard.updatedAt = Date()
+            try await dependencies.repositoryProvider.boardsRepository.updateCard(editedCard)
+            attachedList = list
+        } catch {
+            errorMessage = "Failed to attach list: \(error.localizedDescription)"
+        }
+    }
+
+    private func updateRecipe(_ recipe: Recipe) async {
+        do {
+            try await dependencies.repositoryProvider.recipesRepository.updateRecipe(recipe)
+            attachedRecipe = recipe
+        } catch {
+            errorMessage = "Failed to update recipe: \(error.localizedDescription)"
+        }
+    }
+
+    private func updateList(_ list: PersonalList) async {
+        do {
+            try await dependencies.repositoryProvider.listsRepository.updateList(list)
+            attachedList = list
+        } catch {
+            errorMessage = "Failed to update list: \(error.localizedDescription)"
+        }
+    }
+
+    private func detachRecipe() async {
+        guard let recipeID = editedCard.recipeID else { return }
+
+        do {
+            // Remove recipe reference from card
+            editedCard.recipeID = nil
+            editedCard.updatedAt = Date()
+            try await dependencies.repositoryProvider.boardsRepository.updateCard(editedCard)
+            // Delete the recipe
+            try await dependencies.repositoryProvider.recipesRepository.deleteRecipe(recipeID)
+            attachedRecipe = nil
+        } catch {
+            errorMessage = "Failed to detach recipe: \(error.localizedDescription)"
+        }
+    }
+
+    private func detachList() async {
+        guard let listID = editedCard.listID else { return }
+
+        do {
+            // Remove list reference from card
+            editedCard.listID = nil
+            editedCard.updatedAt = Date()
+            try await dependencies.repositoryProvider.boardsRepository.updateCard(editedCard)
+            // Delete the list
+            try await dependencies.repositoryProvider.listsRepository.deleteList(listID)
+            attachedList = nil
+        } catch {
+            errorMessage = "Failed to detach list: \(error.localizedDescription)"
+        }
+    }
+
+    private func toggleListItem(at index: Int) async {
+        guard var list = attachedList else { return }
+        guard index < list.items.count else { return }
+
+        list.items[index].isDone.toggle()
+        list.updatedAt = Date()
+
+        do {
+            try await dependencies.repositoryProvider.listsRepository.updateList(list)
+            attachedList = list
+        } catch {
+            errorMessage = "Failed to update list: \(error.localizedDescription)"
         }
     }
 }
