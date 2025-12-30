@@ -4,6 +4,18 @@
 
 **⚠️ Alpha Status**: This project is in active redesign. Database schemas may change without migration.
 
+**🚨 CRITICAL: NO DATABASE MIGRATIONS 🚨**
+**DO NOT CREATE, MODIFY, OR SUGGEST DATABASE MIGRATIONS UNDER ANY CIRCUMSTANCES.**
+The app is in alpha and the schema is still evolving. Creating migrations now will cause data loss and migration conflicts. Users can recreate their databases during alpha.
+
+**IF YOU ARE ASKED TO ADD A FIELD OR CHANGE THE SCHEMA:**
+1. Update the Domain models ONLY
+2. Update the Records in PersistenceGRDB ONLY
+3. Update the SwiftData models ONLY
+4. DO NOT touch Migrations.swift
+5. DO NOT create new migration files
+6. DO NOT add migration logic anywhere
+
 **Card-Centric Architecture**: Core hierarchy is Board → Column → Card. Recipes and PersonalLists are optional attributes that can be attached to cards (not standalone entities). A card can have 0, 1, or both a recipe and a list attached.
 
 Principle: 80–90% of the code builds/tests on Linux via SwiftPM; the iOS app is a thin shell (SwiftUI) with Apple-only adapters (SwiftData/CloudKit).
@@ -112,6 +124,7 @@ HomeCooked/
 
 ## Ground rules
 
+- **🚨 NO DATABASE MIGRATIONS**: Absolutely forbidden during alpha. DO NOT create, modify, or suggest migrations. Schema changes = update models only, never touch Migrations.swift.
 - **Privacy**: no secrets, provisioning profiles, or personal data in repo or logs.
 - **Deps**: no new third-party deps without an explicit ticket.
 - **Warnings as errors**. Keep public APIs documented.
@@ -186,7 +199,7 @@ No continue-on-error. First failure wins, with a concise summary at tail of logs
 - **Contract tests** against repository protocols (run on Linux & macOS). Same suite runs against:
   - PersistenceGRDB (Linux/macOS)
   - PersistenceSwiftData (macOS)
-- **Fixtures for migrations**: keep a frozen V0 store (SQLite or JSON) in Tests/Fixtures/Persistence/V0/. Migration tests must load V0 and verify transformed data (e.g., sortKey initialization).
+- **🚨 Migration fixtures/tests: FORBIDDEN during alpha.** (Future: keep a frozen V0 store in Tests/Fixtures/Persistence/V0/.)
 - **Property tests** for reorder/normalization (edge cases, concurrency).
 - **UI snapshot tests** (macOS only) for primary screens; record mode behind RECORD_SNAPSHOTS=1.
 
@@ -415,7 +428,7 @@ The HomeCooked project has completed all planned tickets. See [PLAN.md](./PLAN.m
 - Error handling: typed errors in repo interfaces; avoid fatalError.
 - Logging: lightweight, redacted; no PII in logs or test artifacts.
 - Normalization: run after idle; never block UI thread.
-- Migrations: each adds indices; never drop columns in place—use shadow tables if needed.
+- **🚨 Migrations: FORBIDDEN during alpha.** (Future: each adds indices; never drop columns in place—use shadow tables if needed.)
 
 ⸻
 
@@ -426,6 +439,7 @@ The HomeCooked project has completed all planned tickets. See [PLAN.md](./PLAN.m
 You are working with a mature Swift codebase following Linux-first architecture. The project is feature-complete for its initial scope. When making changes:
 
 **Core Principles**:
+- **🚨 NEVER CREATE DATABASE MIGRATIONS** - The app is in alpha, schema is evolving, migrations are forbidden
 - Target Linux (SwiftPM) for business logic
 - Keep Apple-only code behind adapters
 - Produce small, tested changes
@@ -474,6 +488,24 @@ You are working with a mature Swift codebase following Linux-first architecture.
 
 ## Common Tasks
 
+### 🚨 Changing the Database Schema (FORBIDDEN IN ALPHA)
+
+**DO NOT CREATE MIGRATIONS.** If you need to add/modify/remove a field:
+
+1. **Update Domain models** (Packages/Domain/Sources/Domain/Models.swift)
+   - Add/modify/remove the field in the struct
+2. **Update GRDB Records** (Packages/PersistenceGRDB/Sources/PersistenceGRDB/Records.swift)
+   - Update the Record type to match
+   - Update the mapping to/from Domain models
+3. **Update SwiftData models** (App/PersistenceSwiftData/Sources/PersistenceSwiftData/SwiftDataModels.swift)
+   - Update the SwiftData model to match
+   - Update the mapping to/from Domain models
+4. **Update tests** as needed
+5. **DO NOT TOUCH** Migrations.swift
+6. **DO NOT CREATE** migration logic anywhere
+
+Users in alpha will delete and recreate their databases. Migrations will be added post-alpha.
+
 ### Adding a New Feature
 
 1. **Decide where it belongs**:
@@ -520,6 +552,7 @@ You are working with a mature Swift codebase following Linux-first architecture.
 
 Before considering work complete:
 
+- ✅ **NO database migrations created** (absolutely forbidden in alpha)
 - ✅ Preflight passes locally (`make preflight`)
 - ✅ Code compiles with warnings as errors
 - ✅ Tests pass on target platform(s)
