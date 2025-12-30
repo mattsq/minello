@@ -267,41 +267,8 @@ private struct TagChip: View {
 
 // MARK: - Previews
 
-#Preview("With Recipes") {
+#Preview {
     let container = try! AppDependencyContainer.preview()
-
-    // Add sample recipes
-    Task { @MainActor in
-        let repo = container.repositoryProvider.recipesRepository
-        try? await repo.createRecipe(Recipe(
-            title: "Spaghetti Carbonara",
-            ingredients: [
-                ChecklistItem(text: "Spaghetti", quantity: 400, unit: "g"),
-                ChecklistItem(text: "Eggs", quantity: 4),
-                ChecklistItem(text: "Parmesan", quantity: 100, unit: "g"),
-                ChecklistItem(text: "Bacon", quantity: 200, unit: "g")
-            ],
-            methodMarkdown: "1. Boil pasta\n2. Fry bacon\n3. Mix eggs and cheese\n4. Combine",
-            tags: ["Italian", "Pasta", "Quick"]
-        ))
-        try? await repo.createRecipe(Recipe(
-            title: "Chicken Tikka Masala",
-            ingredients: [
-                ChecklistItem(text: "Chicken breast", quantity: 500, unit: "g"),
-                ChecklistItem(text: "Yogurt", quantity: 200, unit: "ml"),
-                ChecklistItem(text: "Tomato sauce", quantity: 400, unit: "ml")
-            ],
-            methodMarkdown: "1. Marinate chicken\n2. Grill chicken\n3. Make sauce\n4. Combine",
-            tags: ["Indian", "Curry", "Spicy"]
-        ))
-    }
-
-    return RecipesListView()
-        .withDependencies(container)
-}
-
-#Preview("Empty State") {
-    let container = try! AppDependencyContainer.preview()
-    return RecipesListView()
+    RecipesListView()
         .withDependencies(container)
 }

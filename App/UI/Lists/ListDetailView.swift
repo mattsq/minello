@@ -425,7 +425,7 @@ private struct ShareSheet: UIViewControllerRepresentable {
 // MARK: - Previews
 
 #Preview {
-    let list = PersonalList(
+    let list = PersonalList(cardID: CardID(), 
         title: "Groceries",
         items: [
             ChecklistItem(text: "Milk", isDone: false, quantity: 2, unit: "L"),
@@ -437,7 +437,7 @@ private struct ShareSheet: UIViewControllerRepresentable {
         ]
     )
 
-    return NavigationStack {
+    NavigationStack {
         ListDetailView(
             list: list,
             onUpdate: { _ in },

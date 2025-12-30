@@ -36,8 +36,8 @@ final class AddListItemIntentTests: XCTestCase {
 
     func testFindListExactMatch() async throws {
         // Create test lists
-        let groceries = PersonalList(title: "Groceries")
-        let packing = PersonalList(title: "Packing")
+        let groceries = PersonalList(cardID: CardID(), title: "Groceries")
+        let packing = PersonalList(cardID: CardID(), title: "Packing")
 
         try await listsRepo.createList(groceries)
         try await listsRepo.createList(packing)
@@ -52,7 +52,7 @@ final class AddListItemIntentTests: XCTestCase {
 
     func testFindListFuzzyMatch() async throws {
         // Create test list
-        let groceries = PersonalList(title: "Groceries")
+        let groceries = PersonalList(cardID: CardID(), title: "Groceries")
         try await listsRepo.createList(groceries)
 
         // Test fuzzy match
@@ -65,7 +65,7 @@ final class AddListItemIntentTests: XCTestCase {
 
     func testFindListCaseInsensitive() async throws {
         // Create test list
-        let groceries = PersonalList(title: "Groceries")
+        let groceries = PersonalList(cardID: CardID(), title: "Groceries")
         try await listsRepo.createList(groceries)
 
         // Test case-insensitive match
@@ -78,7 +78,7 @@ final class AddListItemIntentTests: XCTestCase {
 
     func testFindListNotFound() async throws {
         // Create test list
-        let groceries = PersonalList(title: "Groceries")
+        let groceries = PersonalList(cardID: CardID(), title: "Groceries")
         try await listsRepo.createList(groceries)
 
         // Test no match
@@ -92,7 +92,7 @@ final class AddListItemIntentTests: XCTestCase {
 
     func testAddItemToList() async throws {
         // Create test list
-        var groceries = PersonalList(title: "Groceries", items: [])
+        var groceries = PersonalList(cardID: CardID(), title: "Groceries", items: [])
         try await listsRepo.createList(groceries)
 
         // Simulate adding an item
@@ -111,7 +111,7 @@ final class AddListItemIntentTests: XCTestCase {
 
     func testAddItemWithQuantityAndUnit() async throws {
         // Create test list
-        var groceries = PersonalList(title: "Groceries", items: [])
+        var groceries = PersonalList(cardID: CardID(), title: "Groceries", items: [])
         try await listsRepo.createList(groceries)
 
         // Add item with quantity and unit
@@ -136,7 +136,7 @@ final class AddListItemIntentTests: XCTestCase {
 
     func testAddMultipleItems() async throws {
         // Create test list
-        var groceries = PersonalList(title: "Groceries", items: [])
+        var groceries = PersonalList(cardID: CardID(), title: "Groceries", items: [])
         try await listsRepo.createList(groceries)
 
         // Add multiple items

@@ -121,6 +121,7 @@ final class ConflictResolverTests: XCTestCase {
 
         let localList = PersonalList(
             id: ListID(),
+            cardID: CardID(),
             title: "Local List",
             items: [ChecklistItem(text: "Local item")],
             updatedAt: earlier
@@ -128,6 +129,7 @@ final class ConflictResolverTests: XCTestCase {
 
         let remoteList = PersonalList(
             id: localList.id,
+            cardID: localList.cardID,
             title: "Remote List",
             items: [ChecklistItem(text: "Remote item")],
             updatedAt: now
@@ -148,6 +150,7 @@ final class ConflictResolverTests: XCTestCase {
 
         let localRecipe = Recipe(
             id: RecipeID(),
+            cardID: CardID(),
             title: "Local Recipe",
             methodMarkdown: "Local method",
             updatedAt: now
@@ -155,6 +158,7 @@ final class ConflictResolverTests: XCTestCase {
 
         let remoteRecipe = Recipe(
             id: localRecipe.id,
+            cardID: localRecipe.cardID,
             title: "Remote Recipe",
             methodMarkdown: "Remote method",
             updatedAt: earlier

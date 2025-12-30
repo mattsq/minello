@@ -297,7 +297,7 @@ private struct AddToListSheet: View {
 #Preview {
     let container = try! AppDependencyContainer.preview()
 
-    let recipe = Recipe(
+    let recipe = Recipe(cardID: CardID(), 
         title: "Spaghetti Carbonara",
         ingredients: [
             ChecklistItem(text: "Spaghetti", isDone: false, quantity: 400, unit: "g"),
@@ -320,7 +320,7 @@ private struct AddToListSheet: View {
         tags: ["Italian", "Pasta", "Quick"]
     )
 
-    return NavigationStack {
+    NavigationStack {
         RecipeDetailView(
             recipe: recipe,
             onUpdate: { _ in },

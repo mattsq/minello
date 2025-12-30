@@ -181,6 +181,39 @@ public struct HomeCookedMigrator {
                 """)
         }
 
+        // Migration v4: Add card associations (card-centric design)
+        migrator.registerMigration("v4_card_associations") { db in
+            // Add card_id to recipes table (required - recipe must belong to a card)
+            try db.alter(table: "recipes") { t in
+                t.add(column: "card_id", .text)
+                    .notNull()
+                    .defaults(to: "")  // Temporary default for migration
+            }
+
+            // Add card_id to personal_lists table (required - list must belong to a card)
+            try db.alter(table: "personal_lists") { t in
+                t.add(column: "card_id", .text)
+                    .notNull()
+                    .defaults(to: "")  // Temporary default for migration
+            }
+
+            // Add recipe_id to cards table (optional - card can have an attached recipe)
+            try db.alter(table: "cards") { t in
+                t.add(column: "recipe_id", .text)  // Nullable
+            }
+
+            // Add list_id to cards table (optional - card can have an attached list)
+            try db.alter(table: "cards") { t in
+                t.add(column: "list_id", .text)  // Nullable
+            }
+
+            // Create indices on foreign key columns for performance
+            try db.create(index: "idx_recipes_card_id", on: "recipes", columns: ["card_id"])
+            try db.create(index: "idx_lists_card_id", on: "personal_lists", columns: ["card_id"])
+            try db.create(index: "idx_cards_recipe_id", on: "cards", columns: ["recipe_id"])
+            try db.create(index: "idx_cards_list_id", on: "cards", columns: ["list_id"])
+        }
+
         return migrator
     }
 }

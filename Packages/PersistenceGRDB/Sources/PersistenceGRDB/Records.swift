@@ -160,6 +160,8 @@ struct CardRecord: Codable, FetchableRecord, PersistableRecord {
     var tags: String // JSON array
     var checklist: String // JSON array of ChecklistItem
     var sort_key: Double
+    var recipe_id: String? // Card-centric: optional attached recipe
+    var list_id: String? // Card-centric: optional attached list
     var created_at: String // ISO8601
     var updated_at: String // ISO8601
 
@@ -179,6 +181,8 @@ struct CardRecord: Codable, FetchableRecord, PersistableRecord {
         self.checklist = String(data: checklistData, encoding: .utf8)!
 
         self.sort_key = card.sortKey
+        self.recipe_id = card.recipeID?.rawValue.uuidString
+        self.list_id = card.listID?.rawValue.uuidString
         self.created_at = ISO8601DateFormatter.iso8601.string(from: card.createdAt)
         self.updated_at = ISO8601DateFormatter.iso8601.string(from: card.updatedAt)
     }
@@ -210,6 +214,21 @@ struct CardRecord: Codable, FetchableRecord, PersistableRecord {
         }
         let checklist = try JSONDecoder().decode([ChecklistItem].self, from: checklistData)
 
+        // Parse optional recipe_id and list_id (card-centric design)
+        let recipeID: RecipeID? = try self.recipe_id.map { recipeIDString in
+            guard let uuid = UUID(uuidString: recipeIDString) else {
+                throw PersistenceError.invalidData("Invalid recipe ID: \(recipeIDString)")
+            }
+            return RecipeID(rawValue: uuid)
+        }
+
+        let listID: ListID? = try self.list_id.map { listIDString in
+            guard let uuid = UUID(uuidString: listIDString) else {
+                throw PersistenceError.invalidData("Invalid list ID: \(listIDString)")
+            }
+            return ListID(rawValue: uuid)
+        }
+
         guard let createdAt = ISO8601DateFormatter.iso8601.date(from: self.created_at) else {
             throw PersistenceError.invalidData("Invalid created_at date: \(self.created_at)")
         }
@@ -227,6 +246,8 @@ struct CardRecord: Codable, FetchableRecord, PersistableRecord {
             tags: tags,
             checklist: checklist,
             sortKey: self.sort_key,
+            recipeID: recipeID,
+            listID: listID,
             createdAt: createdAt,
             updatedAt: updatedAt
         )
@@ -240,6 +261,7 @@ struct PersonalListRecord: Codable, FetchableRecord, PersistableRecord {
     static let databaseTableName = "personal_lists"
 
     var id: String
+    var card_id: String? // Optional for alpha migration
     var title: String
     var items: String // JSON array of ChecklistItem
     var created_at: String // ISO8601
@@ -248,6 +270,7 @@ struct PersonalListRecord: Codable, FetchableRecord, PersistableRecord {
     /// Converts domain PersonalList to PersonalListRecord
     init(from list: PersonalList) throws {
         self.id = list.id.rawValue.uuidString
+        self.card_id = list.cardID.rawValue.uuidString
         self.title = list.title
 
         let jsonEncoder = JSONEncoder()
@@ -262,6 +285,16 @@ struct PersonalListRecord: Codable, FetchableRecord, PersistableRecord {
     func toDomain() throws -> PersonalList {
         guard let id = UUID(uuidString: self.id) else {
             throw PersistenceError.invalidData("Invalid list ID: \(self.id)")
+        }
+
+        // Card-centric design: lists must belong to a card
+        // For alpha: use dummy CardID if not present (migration path)
+        let cardID: CardID
+        if let cardIDString = self.card_id, let cardUUID = UUID(uuidString: cardIDString) {
+            cardID = CardID(rawValue: cardUUID)
+        } else {
+            // Alpha migration: create dummy cardID for old records
+            cardID = CardID()
         }
 
         guard let itemsData = self.items.data(using: .utf8) else {
@@ -279,6 +312,7 @@ struct PersonalListRecord: Codable, FetchableRecord, PersistableRecord {
 
         return PersonalList(
             id: ListID(rawValue: id),
+            cardID: cardID,
             title: self.title,
             items: items,
             createdAt: createdAt,
@@ -294,6 +328,7 @@ struct RecipeRecord: Codable, FetchableRecord, PersistableRecord {
     static let databaseTableName = "recipes"
 
     var id: String
+    var card_id: String? // Optional for alpha migration
     var title: String
     var ingredients: String // JSON array of ChecklistItem
     var method_markdown: String
@@ -304,6 +339,7 @@ struct RecipeRecord: Codable, FetchableRecord, PersistableRecord {
     /// Converts domain Recipe to RecipeRecord
     init(from recipe: Recipe) throws {
         self.id = recipe.id.rawValue.uuidString
+        self.card_id = recipe.cardID.rawValue.uuidString
         self.title = recipe.title
 
         let jsonEncoder = JSONEncoder()
@@ -323,6 +359,16 @@ struct RecipeRecord: Codable, FetchableRecord, PersistableRecord {
     func toDomain() throws -> Recipe {
         guard let id = UUID(uuidString: self.id) else {
             throw PersistenceError.invalidData("Invalid recipe ID: \(self.id)")
+        }
+
+        // Card-centric design: recipes must belong to a card
+        // For alpha: use dummy CardID if not present (migration path)
+        let cardID: CardID
+        if let cardIDString = self.card_id, let cardUUID = UUID(uuidString: cardIDString) {
+            cardID = CardID(rawValue: cardUUID)
+        } else {
+            // Alpha migration: create dummy cardID for old records
+            cardID = CardID()
         }
 
         guard let ingredientsData = self.ingredients.data(using: .utf8) else {
@@ -345,6 +391,7 @@ struct RecipeRecord: Codable, FetchableRecord, PersistableRecord {
 
         return Recipe(
             id: RecipeID(rawValue: id),
+            cardID: cardID,
             title: self.title,
             ingredients: ingredients,
             methodMarkdown: self.method_markdown,
