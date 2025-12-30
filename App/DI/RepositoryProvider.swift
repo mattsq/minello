@@ -16,4 +16,7 @@ protocol RepositoryProvider {
 
     /// The recipes repository instance
     var recipesRepository: RecipesRepository { get }
+
+    /// The search repository instance
+    var searchRepository: SearchRepository { get }
 }

@@ -9,6 +9,78 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Card-centric search and filtering (Ticket 12):
+  - SearchRepository protocol for card search operations:
+    - `searchCardsByText(_:)` - Search by title or details with case-insensitive matching
+    - `findCardsWithRecipe(boardID:)` - Find cards with recipes attached, optionally scoped to a board
+    - `findCardsWithList(boardID:)` - Find cards with lists attached, optionally scoped to a board
+    - `findCardsByTag(_:boardID:)` - Find cards by tag using SQLite JSON queries
+    - `findCardsByDueDate(from:to:boardID:)` - Find cards by due date range
+    - `searchCards(filter:)` - Advanced search with multiple filter criteria combined
+  - CardFilter struct with comprehensive filtering options:
+    - Text search in title and details
+    - Has recipe filter (true/false/any)
+    - Has list filter (true/false/any)
+    - Tag filter
+    - Due date range filter
+    - Board ID scoping
+  - CardSearchResult struct providing full context:
+    - Card data
+    - Parent column information
+    - Parent board information
+    - hasRecipe and hasList flags for quick access
+  - GRDBSearchRepository implementation:
+    - Efficient SQL queries with JOINs for context retrieval
+    - SQLite JSON extension for tag searching
+    - Case-insensitive text search with LIKE queries
+    - Proper handling of NULL values for optional filters
+    - Supports combining multiple filters with AND logic
+  - Comprehensive test suite (SearchRepositoryTests.swift):
+    - 18 tests covering all search operations
+    - Text search tests (title, details, case-insensitive)
+    - Recipe/list filtering tests with board scoping
+    - Tag filtering tests using JSON queries
+    - Due date range filtering tests
+    - Advanced search with multiple filters combined
+    - Full context retrieval verification
+    - Empty result and error handling tests
+  - CardSearchView UI (iOS app):
+    - Search tab in main navigation (second tab after Boards)
+    - Real-time search with 300ms debounce for performance
+    - Filter sheet with segmented pickers:
+      - Recipe filter: Any / Has Recipe / No Recipe
+      - List filter: Any / Has List / No List
+      - Tag picker populated from all available tags
+    - Search results list with CardSearchResultRow:
+      - Card title with recipe/list badges
+      - Board → Column breadcrumb navigation for context
+      - Card details preview (2-line limit)
+      - Tag chips with horizontal scrolling
+    - CardResultDetailView for result navigation:
+      - Full card details with context breadcrumb
+      - Visual indicators for attached recipes/lists
+      - Proper formatting and accessibility
+    - Empty states:
+      - Initial state with search instructions
+      - No results state when search yields nothing
+      - Error state with retry action
+    - Accessibility features:
+      - VoiceOver labels for all interactive elements
+      - Accessible filter controls
+      - Result context announcements
+      - Badge announcements (has recipe, has list)
+    - Visual polish:
+      - Active filter indicator in toolbar (filled icon)
+      - Clear all filters button
+      - Loading states with progress indicators
+      - Tag chips with color-coded styling
+  - Dependency injection updates:
+    - Added SearchRepository to RepositoryProvider protocol
+    - GRDBRepositoryProvider now provides SearchRepository instance
+    - Available throughout the app via dependency injection
+
+
+
 - Markdown export functionality (ImportExport package):
   - MarkdownExporter: Export boards, columns, and cards to Markdown format
     - Exports individual boards or all boards at once
