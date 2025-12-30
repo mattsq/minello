@@ -104,4 +104,14 @@ public final class SwiftDataListsRepository: @unchecked Sendable, ListsRepositor
 
         return try filtered.map { try $0.toDomain() }
     }
+
+    // MARK: - Card-Centric Query Operations
+
+    public func loadForCard(_ cardID: CardID) async throws -> PersonalList? {
+        let cardIDString = cardID.rawValue.uuidString
+        let predicate = #Predicate<PersonalListModel> { $0.cardID == cardIDString }
+        let descriptor = FetchDescriptor<PersonalListModel>(predicate: predicate)
+        let model = try modelContext.fetch(descriptor).first
+        return try model?.toDomain()
+    }
 }

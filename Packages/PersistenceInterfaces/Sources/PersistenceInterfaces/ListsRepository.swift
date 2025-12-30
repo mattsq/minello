@@ -46,4 +46,12 @@ public protocol ListsRepository: Sendable {
     /// - Returns: Array of lists that have at least one incomplete item
     /// - Throws: `PersistenceError` if search fails
     func findListsWithIncompleteItems() async throws -> [PersonalList]
+
+    // MARK: - Card-Centric Query Operations
+
+    /// Loads the list attached to a specific card
+    /// - Parameter cardID: The card ID
+    /// - Returns: The list if one is attached to the card, nil otherwise
+    /// - Throws: `PersistenceError` if loading fails
+    func loadForCard(_ cardID: CardID) async throws -> PersonalList?
 }
