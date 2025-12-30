@@ -157,12 +157,14 @@ final class CardModel {
     var tagsData: Data // Stores [String] as JSON
     var checklistData: Data // Stores [ChecklistItem] as JSON
     var sortKey: Double
+    var recipeID: String? // Card-centric: optional attached recipe
+    var listID: String? // Card-centric: optional attached list
     var createdAt: Date
     var updatedAt: Date
 
     var column: ColumnModel?
 
-    init(id: String, columnID: String, title: String, details: String, due: Date?, tagsData: Data, checklistData: Data, sortKey: Double, createdAt: Date, updatedAt: Date) {
+    init(id: String, columnID: String, title: String, details: String, due: Date?, tagsData: Data, checklistData: Data, sortKey: Double, recipeID: String?, listID: String?, createdAt: Date, updatedAt: Date) {
         self.id = id
         self.columnID = columnID
         self.title = title
@@ -171,6 +173,8 @@ final class CardModel {
         self.tagsData = tagsData
         self.checklistData = checklistData
         self.sortKey = sortKey
+        self.recipeID = recipeID
+        self.listID = listID
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -188,6 +192,8 @@ final class CardModel {
             tagsData: tagsData,
             checklistData: checklistData,
             sortKey: card.sortKey,
+            recipeID: card.recipeID?.rawValue.uuidString,
+            listID: card.listID?.rawValue.uuidString,
             createdAt: card.createdAt,
             updatedAt: card.updatedAt
         )
@@ -205,6 +211,21 @@ final class CardModel {
         let tags = try JSONDecoder().decode([String].self, from: tagsData)
         let checklist = try JSONDecoder().decode([ChecklistItem].self, from: checklistData)
 
+        // Parse optional recipeID and listID (card-centric design)
+        let recipeIDParsed: RecipeID? = try recipeID.map { recipeIDString in
+            guard let uuid = UUID(uuidString: recipeIDString) else {
+                throw ConversionError.invalidUUID(recipeIDString)
+            }
+            return RecipeID(rawValue: uuid)
+        }
+
+        let listIDParsed: ListID? = try listID.map { listIDString in
+            guard let uuid = UUID(uuidString: listIDString) else {
+                throw ConversionError.invalidUUID(listIDString)
+            }
+            return ListID(rawValue: uuid)
+        }
+
         return Card(
             id: CardID(rawValue: uuid),
             column: ColumnID(rawValue: columnUUID),
@@ -214,6 +235,8 @@ final class CardModel {
             tags: tags,
             checklist: checklist,
             sortKey: sortKey,
+            recipeID: recipeIDParsed,
+            listID: listIDParsed,
             createdAt: createdAt,
             updatedAt: updatedAt
         )
@@ -226,13 +249,15 @@ final class CardModel {
 @Model
 final class PersonalListModel {
     @Attribute(.unique) var id: String
+    var cardID: String? // Card-centric: list must belong to a card (optional for alpha migration)
     var title: String
     var itemsData: Data // Stores [ChecklistItem] as JSON
     var createdAt: Date
     var updatedAt: Date
 
-    init(id: String, title: String, itemsData: Data, createdAt: Date, updatedAt: Date) {
+    init(id: String, cardID: String?, title: String, itemsData: Data, createdAt: Date, updatedAt: Date) {
         self.id = id
+        self.cardID = cardID
         self.title = title
         self.itemsData = itemsData
         self.createdAt = createdAt
@@ -244,6 +269,7 @@ final class PersonalListModel {
         let itemsData = try JSONEncoder().encode(list.items)
         self.init(
             id: list.id.rawValue.uuidString,
+            cardID: list.cardID.rawValue.uuidString,
             title: list.title,
             itemsData: itemsData,
             createdAt: list.createdAt,
@@ -259,12 +285,19 @@ final class PersonalListModel {
 
         let items = try JSONDecoder().decode([ChecklistItem].self, from: itemsData)
 
-        // Alpha migration: use dummy CardID if not present
-        let cardID = CardID()
+        // Card-centric design: lists must belong to a card
+        // For alpha: use dummy CardID if not present (migration path)
+        let cardIDParsed: CardID
+        if let cardIDString = self.cardID, let cardUUID = UUID(uuidString: cardIDString) {
+            cardIDParsed = CardID(rawValue: cardUUID)
+        } else {
+            // Alpha migration: create dummy cardID for old records
+            cardIDParsed = CardID()
+        }
 
         return PersonalList(
             id: ListID(rawValue: uuid),
-            cardID: cardID,
+            cardID: cardIDParsed,
             title: title,
             items: items,
             createdAt: createdAt,
@@ -279,6 +312,7 @@ final class PersonalListModel {
 @Model
 final class RecipeModel {
     @Attribute(.unique) var id: String
+    var cardID: String? // Card-centric: recipe must belong to a card (optional for alpha migration)
     var title: String
     var ingredientsData: Data // Stores [ChecklistItem] as JSON
     var methodMarkdown: String
@@ -286,8 +320,9 @@ final class RecipeModel {
     var createdAt: Date
     var updatedAt: Date
 
-    init(id: String, title: String, ingredientsData: Data, methodMarkdown: String, tagsData: Data, createdAt: Date, updatedAt: Date) {
+    init(id: String, cardID: String?, title: String, ingredientsData: Data, methodMarkdown: String, tagsData: Data, createdAt: Date, updatedAt: Date) {
         self.id = id
+        self.cardID = cardID
         self.title = title
         self.ingredientsData = ingredientsData
         self.methodMarkdown = methodMarkdown
@@ -302,6 +337,7 @@ final class RecipeModel {
         let tagsData = try JSONEncoder().encode(recipe.tags)
         self.init(
             id: recipe.id.rawValue.uuidString,
+            cardID: recipe.cardID.rawValue.uuidString,
             title: recipe.title,
             ingredientsData: ingredientsData,
             methodMarkdown: recipe.methodMarkdown,
@@ -320,12 +356,19 @@ final class RecipeModel {
         let ingredients = try JSONDecoder().decode([ChecklistItem].self, from: ingredientsData)
         let tags = try JSONDecoder().decode([String].self, from: tagsData)
 
-        // Alpha migration: use dummy CardID if not present
-        let cardID = CardID()
+        // Card-centric design: recipes must belong to a card
+        // For alpha: use dummy CardID if not present (migration path)
+        let cardIDParsed: CardID
+        if let cardIDString = self.cardID, let cardUUID = UUID(uuidString: cardIDString) {
+            cardIDParsed = CardID(rawValue: cardUUID)
+        } else {
+            // Alpha migration: create dummy cardID for old records
+            cardIDParsed = CardID()
+        }
 
         return Recipe(
             id: RecipeID(rawValue: uuid),
-            cardID: cardID,
+            cardID: cardIDParsed,
             title: title,
             ingredients: ingredients,
             methodMarkdown: methodMarkdown,
