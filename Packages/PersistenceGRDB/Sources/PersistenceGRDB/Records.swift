@@ -160,6 +160,8 @@ struct CardRecord: Codable, FetchableRecord, PersistableRecord {
     var tags: String // JSON array
     var checklist: String // JSON array of ChecklistItem
     var sort_key: Double
+    var recipe_id: String? // Card-centric: optional attached recipe
+    var list_id: String? // Card-centric: optional attached list
     var created_at: String // ISO8601
     var updated_at: String // ISO8601
 
@@ -179,6 +181,8 @@ struct CardRecord: Codable, FetchableRecord, PersistableRecord {
         self.checklist = String(data: checklistData, encoding: .utf8)!
 
         self.sort_key = card.sortKey
+        self.recipe_id = card.recipeID?.rawValue.uuidString
+        self.list_id = card.listID?.rawValue.uuidString
         self.created_at = ISO8601DateFormatter.iso8601.string(from: card.createdAt)
         self.updated_at = ISO8601DateFormatter.iso8601.string(from: card.updatedAt)
     }
@@ -210,6 +214,21 @@ struct CardRecord: Codable, FetchableRecord, PersistableRecord {
         }
         let checklist = try JSONDecoder().decode([ChecklistItem].self, from: checklistData)
 
+        // Parse optional recipe_id and list_id (card-centric design)
+        let recipeID: RecipeID? = try self.recipe_id.map { recipeIDString in
+            guard let uuid = UUID(uuidString: recipeIDString) else {
+                throw PersistenceError.invalidData("Invalid recipe ID: \(recipeIDString)")
+            }
+            return RecipeID(rawValue: uuid)
+        }
+
+        let listID: ListID? = try self.list_id.map { listIDString in
+            guard let uuid = UUID(uuidString: listIDString) else {
+                throw PersistenceError.invalidData("Invalid list ID: \(listIDString)")
+            }
+            return ListID(rawValue: uuid)
+        }
+
         guard let createdAt = ISO8601DateFormatter.iso8601.date(from: self.created_at) else {
             throw PersistenceError.invalidData("Invalid created_at date: \(self.created_at)")
         }
@@ -227,6 +246,8 @@ struct CardRecord: Codable, FetchableRecord, PersistableRecord {
             tags: tags,
             checklist: checklist,
             sortKey: self.sort_key,
+            recipeID: recipeID,
+            listID: listID,
             createdAt: createdAt,
             updatedAt: updatedAt
         )
