@@ -569,4 +569,22 @@ private actor MockBoardsRepository: BoardsRepository {
             return due >= from && due <= to
         }
     }
+
+    func loadCardWithRecipe(_ cardID: CardID) async throws -> (Card, Recipe?) {
+        let card = try await loadCard(cardID)
+        return (card, nil)
+    }
+
+    func loadCardWithList(_ cardID: CardID) async throws -> (Card, PersonalList?) {
+        let card = try await loadCard(cardID)
+        return (card, nil)
+    }
+
+    func findCardsWithRecipes(boardID: BoardID?) async throws -> [Card] {
+        return []
+    }
+
+    func findCardsWithLists(boardID: BoardID?) async throws -> [Card] {
+        return []
+    }
 }
