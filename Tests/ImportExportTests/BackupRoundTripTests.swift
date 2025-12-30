@@ -143,6 +143,30 @@ final class InMemoryBoardsRepository: BoardsRepository {
             return due >= from && due <= to
         }
     }
+
+    // MARK: - Card-Centric Query Operations
+
+    func loadCardWithRecipe(_ cardID: CardID) async throws -> (Card, Recipe?) {
+        let card = try await loadCard(cardID)
+        // In-memory repository doesn't store recipes, so always return nil
+        return (card, nil)
+    }
+
+    func loadCardWithList(_ cardID: CardID) async throws -> (Card, PersonalList?) {
+        let card = try await loadCard(cardID)
+        // In-memory repository doesn't store lists, so always return nil
+        return (card, nil)
+    }
+
+    func findCardsWithRecipes(boardID: BoardID?) async throws -> [Card] {
+        // In-memory repository doesn't store recipes, so return empty array
+        return []
+    }
+
+    func findCardsWithLists(boardID: BoardID?) async throws -> [Card] {
+        // In-memory repository doesn't store lists, so return empty array
+        return []
+    }
 }
 
 // MARK: - Tests

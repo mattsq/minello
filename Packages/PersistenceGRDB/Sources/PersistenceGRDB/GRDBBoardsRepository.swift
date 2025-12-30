@@ -246,4 +246,100 @@ public final class GRDBBoardsRepository: BoardsRepository {
             return try records.map { try $0.toDomain() }
         }
     }
+
+    // MARK: - Card-Centric Query Operations
+
+    public func loadCardWithRecipe(_ cardID: CardID) async throws -> (Card, Recipe?) {
+        try await dbQueue.read { db in
+            let cardIDString = cardID.rawValue.uuidString
+            guard let cardRecord = try CardRecord.fetchOne(db, key: cardIDString) else {
+                throw PersistenceError.notFound("Card with ID \(cardIDString) not found")
+            }
+            let card = try cardRecord.toDomain()
+
+            // Load recipe if card has one attached
+            let recipe: Recipe?
+            if let recipeIDString = cardRecord.recipe_id,
+               let recipeRecord = try RecipeRecord.fetchOne(db, key: recipeIDString) {
+                recipe = try recipeRecord.toDomain()
+            } else {
+                recipe = nil
+            }
+
+            return (card, recipe)
+        }
+    }
+
+    public func loadCardWithList(_ cardID: CardID) async throws -> (Card, PersonalList?) {
+        try await dbQueue.read { db in
+            let cardIDString = cardID.rawValue.uuidString
+            guard let cardRecord = try CardRecord.fetchOne(db, key: cardIDString) else {
+                throw PersistenceError.notFound("Card with ID \(cardIDString) not found")
+            }
+            let card = try cardRecord.toDomain()
+
+            // Load list if card has one attached
+            let list: PersonalList?
+            if let listIDString = cardRecord.list_id,
+               let listRecord = try PersonalListRecord.fetchOne(db, key: listIDString) {
+                list = try listRecord.toDomain()
+            } else {
+                list = nil
+            }
+
+            return (card, list)
+        }
+    }
+
+    public func findCardsWithRecipes(boardID: BoardID?) async throws -> [Card] {
+        try await dbQueue.read { db in
+            // If boardID is provided, filter by board
+            if let boardID = boardID {
+                let boardIDString = boardID.rawValue.uuidString
+                // Join with columns table to filter by board
+                let sql = """
+                    SELECT cards.* FROM cards
+                    JOIN columns ON cards.column_id = columns.id
+                    WHERE cards.recipe_id IS NOT NULL
+                    AND columns.board_id = ?
+                    ORDER BY cards.sort_key ASC
+                    """
+                let records = try CardRecord.fetchAll(db, sql: sql, arguments: [boardIDString])
+                return try records.map { try $0.toDomain() }
+            } else {
+                // No board filter, return all cards with recipes
+                let records = try CardRecord
+                    .filter(GRDB.Column("recipe_id") != nil)
+                    .order(GRDB.Column("sort_key").asc)
+                    .fetchAll(db)
+                return try records.map { try $0.toDomain() }
+            }
+        }
+    }
+
+    public func findCardsWithLists(boardID: BoardID?) async throws -> [Card] {
+        try await dbQueue.read { db in
+            // If boardID is provided, filter by board
+            if let boardID = boardID {
+                let boardIDString = boardID.rawValue.uuidString
+                // Join with columns table to filter by board
+                let sql = """
+                    SELECT cards.* FROM cards
+                    JOIN columns ON cards.column_id = columns.id
+                    WHERE cards.list_id IS NOT NULL
+                    AND columns.board_id = ?
+                    ORDER BY cards.sort_key ASC
+                    """
+                let records = try CardRecord.fetchAll(db, sql: sql, arguments: [boardIDString])
+                return try records.map { try $0.toDomain() }
+            } else {
+                // No board filter, return all cards with lists
+                let records = try CardRecord
+                    .filter(GRDB.Column("list_id") != nil)
+                    .order(GRDB.Column("sort_key").asc)
+                    .fetchAll(db)
+                return try records.map { try $0.toDomain() }
+            }
+        }
+    }
 }

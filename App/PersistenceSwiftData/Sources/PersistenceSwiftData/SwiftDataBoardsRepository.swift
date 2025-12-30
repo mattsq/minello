@@ -290,4 +290,108 @@ public final class SwiftDataBoardsRepository: @unchecked Sendable, BoardsReposit
 
         return try filtered.map { try $0.toDomain() }
     }
+
+    // MARK: - Card-Centric Query Operations
+
+    public func loadCardWithRecipe(_ cardID: CardID) async throws -> (Card, Recipe?) {
+        let cardIDString = cardID.rawValue.uuidString
+        let cardPredicate = #Predicate<CardModel> { $0.id == cardIDString }
+        let cardDescriptor = FetchDescriptor<CardModel>(predicate: cardPredicate)
+        guard let cardModel = try modelContext.fetch(cardDescriptor).first else {
+            throw PersistenceError.notFound("Card with ID \(cardIDString) not found")
+        }
+        let card = try cardModel.toDomain()
+
+        // Load recipe if card has one attached
+        let recipe: Recipe?
+        if let recipeIDString = cardModel.recipeID {
+            let recipePredicate = #Predicate<RecipeModel> { $0.id == recipeIDString }
+            let recipeDescriptor = FetchDescriptor<RecipeModel>(predicate: recipePredicate)
+            if let recipeModel = try modelContext.fetch(recipeDescriptor).first {
+                recipe = try recipeModel.toDomain()
+            } else {
+                recipe = nil
+            }
+        } else {
+            recipe = nil
+        }
+
+        return (card, recipe)
+    }
+
+    public func loadCardWithList(_ cardID: CardID) async throws -> (Card, PersonalList?) {
+        let cardIDString = cardID.rawValue.uuidString
+        let cardPredicate = #Predicate<CardModel> { $0.id == cardIDString }
+        let cardDescriptor = FetchDescriptor<CardModel>(predicate: cardPredicate)
+        guard let cardModel = try modelContext.fetch(cardDescriptor).first else {
+            throw PersistenceError.notFound("Card with ID \(cardIDString) not found")
+        }
+        let card = try cardModel.toDomain()
+
+        // Load list if card has one attached
+        let list: PersonalList?
+        if let listIDString = cardModel.listID {
+            let listPredicate = #Predicate<PersonalListModel> { $0.id == listIDString }
+            let listDescriptor = FetchDescriptor<PersonalListModel>(predicate: listPredicate)
+            if let listModel = try modelContext.fetch(listDescriptor).first {
+                list = try listModel.toDomain()
+            } else {
+                list = nil
+            }
+        } else {
+            list = nil
+        }
+
+        return (card, list)
+    }
+
+    public func findCardsWithRecipes(boardID: BoardID?) async throws -> [Card] {
+        // First get all cards with recipes
+        let cardDescriptor = FetchDescriptor<CardModel>(
+            sortBy: [SortDescriptor(\.sortKey, order: .forward)]
+        )
+        let allCardModels = try modelContext.fetch(cardDescriptor)
+        let cardsWithRecipes = allCardModels.filter { $0.recipeID != nil }
+
+        // If boardID is provided, filter by board
+        if let boardID = boardID {
+            let boardIDString = boardID.rawValue.uuidString
+            // Get all columns for this board
+            let columnPredicate = #Predicate<ColumnModel> { $0.boardID == boardIDString }
+            let columnDescriptor = FetchDescriptor<ColumnModel>(predicate: columnPredicate)
+            let boardColumns = try modelContext.fetch(columnDescriptor)
+            let boardColumnIDs = Set(boardColumns.map { $0.id })
+
+            // Filter cards that belong to columns in this board
+            let filtered = cardsWithRecipes.filter { boardColumnIDs.contains($0.columnID) }
+            return try filtered.map { try $0.toDomain() }
+        } else {
+            return try cardsWithRecipes.map { try $0.toDomain() }
+        }
+    }
+
+    public func findCardsWithLists(boardID: BoardID?) async throws -> [Card] {
+        // First get all cards with lists
+        let cardDescriptor = FetchDescriptor<CardModel>(
+            sortBy: [SortDescriptor(\.sortKey, order: .forward)]
+        )
+        let allCardModels = try modelContext.fetch(cardDescriptor)
+        let cardsWithLists = allCardModels.filter { $0.listID != nil }
+
+        // If boardID is provided, filter by board
+        if let boardID = boardID {
+            let boardIDString = boardID.rawValue.uuidString
+            // Get all columns for this board
+            let columnPredicate = #Predicate<ColumnModel> { $0.boardID == boardIDString }
+            let columnDescriptor = FetchDescriptor<ColumnModel>(predicate: columnPredicate)
+            let boardColumns = try modelContext.fetch(columnDescriptor)
+            let boardColumnIDs = Set(boardColumns.map { $0.id })
+
+            // Filter cards that belong to columns in this board
+            let filtered = cardsWithLists.filter { boardColumnIDs.contains($0.columnID) }
+            return try filtered.map { try $0.toDomain() }
+        } else {
+            return try cardsWithLists.map { try $0.toDomain() }
+        }
+    }
 }

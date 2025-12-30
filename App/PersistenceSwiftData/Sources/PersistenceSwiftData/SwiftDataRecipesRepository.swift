@@ -108,4 +108,14 @@ public final class SwiftDataRecipesRepository: @unchecked Sendable, RecipesRepos
 
         return try filtered.map { try $0.toDomain() }
     }
+
+    // MARK: - Card-Centric Query Operations
+
+    public func loadForCard(_ cardID: CardID) async throws -> Recipe? {
+        let cardIDString = cardID.rawValue.uuidString
+        let predicate = #Predicate<RecipeModel> { $0.cardID == cardIDString }
+        let descriptor = FetchDescriptor<RecipeModel>(predicate: predicate)
+        let model = try modelContext.fetch(descriptor).first
+        return try model?.toDomain()
+    }
 }

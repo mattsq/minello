@@ -539,7 +539,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- N/A
+- SwiftData models updated for card-centric architecture:
+  - CardModel: Added optional `recipeID` and `listID` fields to support card-recipe/list associations
+  - RecipeModel: Added `cardID` field (optional for alpha migration) - recipes must belong to a card
+  - PersonalListModel: Added `cardID` field (optional for alpha migration) - lists must belong to a card
+  - All models include backward compatibility with fallback to dummy CardID for alpha migration
+  - Models now match card-centric design in Domain models and GRDB Records
 
 ### Deprecated
 

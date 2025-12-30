@@ -119,4 +119,16 @@ public final class GRDBRecipesRepository: RecipesRepository {
             }
         }
     }
+
+    // MARK: - Card-Centric Query Operations
+
+    public func loadForCard(_ cardID: CardID) async throws -> Recipe? {
+        try await dbQueue.read { db in
+            let cardIDString = cardID.rawValue.uuidString
+            let record = try RecipeRecord
+                .filter(Column("card_id") == cardIDString)
+                .fetchOne(db)
+            return try record?.toDomain()
+        }
+    }
 }

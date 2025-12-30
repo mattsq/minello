@@ -123,4 +123,30 @@ public protocol BoardsRepository: Sendable {
     /// - Returns: Array of cards with due dates in the range
     /// - Throws: `PersistenceError` if search fails
     func findCards(dueBetween from: Date, and to: Date) async throws -> [Card]
+
+    // MARK: - Card-Centric Query Operations
+
+    /// Loads a card with its attached recipe (if any)
+    /// - Parameter cardID: The card ID
+    /// - Returns: Tuple of the card and its optional recipe
+    /// - Throws: `PersistenceError` if loading fails
+    func loadCardWithRecipe(_ cardID: CardID) async throws -> (Card, Recipe?)
+
+    /// Loads a card with its attached list (if any)
+    /// - Parameter cardID: The card ID
+    /// - Returns: Tuple of the card and its optional list
+    /// - Throws: `PersistenceError` if loading fails
+    func loadCardWithList(_ cardID: CardID) async throws -> (Card, PersonalList?)
+
+    /// Finds all cards that have recipes attached
+    /// - Parameter boardID: Optional board ID to filter by board
+    /// - Returns: Array of cards with recipes attached
+    /// - Throws: `PersistenceError` if search fails
+    func findCardsWithRecipes(boardID: BoardID?) async throws -> [Card]
+
+    /// Finds all cards that have lists attached
+    /// - Parameter boardID: Optional board ID to filter by board
+    /// - Returns: Array of cards with lists attached
+    /// - Throws: `PersistenceError` if search fails
+    func findCardsWithLists(boardID: BoardID?) async throws -> [Card]
 }

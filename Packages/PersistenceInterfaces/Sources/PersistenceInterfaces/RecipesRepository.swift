@@ -47,4 +47,12 @@ public protocol RecipesRepository: Sendable {
     /// - Returns: Array of recipes with the specified tag
     /// - Throws: `PersistenceError` if search fails
     func findRecipesByTag(_ tag: String) async throws -> [Recipe]
+
+    // MARK: - Card-Centric Query Operations
+
+    /// Loads the recipe attached to a specific card
+    /// - Parameter cardID: The card ID
+    /// - Returns: The recipe if one is attached to the card, nil otherwise
+    /// - Throws: `PersistenceError` if loading fails
+    func loadForCard(_ cardID: CardID) async throws -> Recipe?
 }

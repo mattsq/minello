@@ -119,4 +119,16 @@ public final class GRDBListsRepository: ListsRepository {
             }
         }
     }
+
+    // MARK: - Card-Centric Query Operations
+
+    public func loadForCard(_ cardID: CardID) async throws -> PersonalList? {
+        try await dbQueue.read { db in
+            let cardIDString = cardID.rawValue.uuidString
+            let record = try PersonalListRecord
+                .filter(Column("card_id") == cardIDString)
+                .fetchOne(db)
+            return try record?.toDomain()
+        }
+    }
 }
