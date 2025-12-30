@@ -2,15 +2,29 @@
 
 This document tracks implementation tickets for the HomeCooked project. Each ticket lists Goal, Constraints, Files, Deliverables, and Acceptance criteria with commands.
 
+## ⚠️ Architecture Redesign in Progress
+
+**Card-Centric Design**: The app is being redesigned around a card-centric model where:
+- **Boards → Columns → Cards** are the primary navigation hierarchy
+- **Recipes** and **Lists** are optional attributes that can be attached to cards
+- A card can have 0, 1, or both a recipe and a list attached
+- No standalone recipes or lists - everything lives on a board in a card
+- UI has single entry point: Boards (no separate Recipes/Lists tabs)
+
+This is an **alpha** project - schemas will change without migration.
+
+---
+
 ## Ticket Status Legend
 
 - ✅ Complete
+- 🔄 Needs Revision (for card-centric redesign)
 - 🚧 In Progress
 - ⬜ Not Started
 
 ---
 
-## Tickets
+## Phase 1: Core Infrastructure (Completed, Needs Card-Centric Revision)
 
 ### 0) Project preflight & app skeleton ✅
 
@@ -30,37 +44,64 @@ This document tracks implementation tickets for the HomeCooked project. Each tic
 
 ---
 
-### 1) Domain models & validators ✅
+### 1) Domain models & validators 🔄
 
 **Goal**: Implement Domain structs + helpers (ID factories, tag sanitizer, checklist utilities).
 
-**Constraints**: Pure Swift; no Foundation types in helpers beyond Date/UUID.
+**Current Status**: ✅ Models exist but need revision for card-centric design
 
-**Files**: Packages/Domain/...
+**Required Changes for Card-Centric Design**:
+- Add `Card.recipeID: RecipeID?` (optional reference)
+- Add `Card.listID: PersonalListID?` (optional reference)
+- Add `Recipe.cardID: CardID` (required - recipe must belong to a card)
+- Add `PersonalList.cardID: CardID` (required - list must belong to a card)
+- A card can have both a recipe and a list attached
 
-**Deliverables**: Compiles + unit tests.
+**Files**:
+- `Packages/Domain/Sources/Domain/Models.swift`
+- `Tests/DomainTests/*`
 
-**Acceptance**: `make test-linux` green; tests under DomainTests/*.
+**Deliverables**: Updated models with card associations
 
-**Status**: ✅ Complete
+**Acceptance**:
+- `make test-linux` green
+- Tests verify card can have 0, 1, or both recipe/list attached
+
+**Status**: 🔄 Needs revision for card-centric model
 
 ---
 
-### 2) Repository interfaces + GRDB v1 (boards/columns/cards) ✅
+### 2) Repository interfaces + GRDB v1 🔄
 
-**Goal**: Define repos + implement GRDB schema v1 with indices; CRUD and query helpers.
+**Goal**: Define repos + implement GRDB schema with card associations
 
-**Constraints**: Foreign keys ON; migrations idempotent; use ISO8601 dates.
+**Current Status**: ✅ Repositories exist but need card-centric constraints
 
-**Files**: PersistenceInterfaces/*, PersistenceGRDB/*
+**Required Changes**:
+- Update `RecipesRepository` to enforce `cardID` on create
+- Update `ListsRepository` to enforce `cardID` on create
+- Add `BoardsRepository.loadCardWithRecipe(cardID)` helper
+- Add `BoardsRepository.loadCardWithList(cardID)` helper
+- Add `BoardsRepository.findCardsWithRecipes(boardID?)` for filtering
+- Add `BoardsRepository.findCardsWithLists(boardID?)` for filtering
+- Update migrations to add foreign keys: `recipes.card_id`, `personal_lists.card_id`
 
-**Deliverables**: GRDB repo + migration v1 + contract tests.
+**Files**:
+- `Packages/PersistenceInterfaces/.../*.swift`
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/*`
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/Migrations.swift`
+
+**Deliverables**:
+- Updated repository protocols
+- GRDB implementation with card associations
+- Migration adding card_id foreign keys
 
 **Acceptance**:
-- `swift test --filter BoardsRepositoryContractTests` passes (Linux).
-- `hc-migrate --dry-run` prints applied migrations.
+- `swift test --filter BoardsRepositoryContractTests` passes (Linux)
+- `hc-migrate --dry-run` shows card association migrations
+- Cannot create recipe/list without cardID
 
-**Status**: ✅ Complete
+**Status**: 🔄 Needs revision for card associations
 
 ---
 
@@ -70,95 +111,177 @@ This document tracks implementation tickets for the HomeCooked project. Each tic
 
 **Constraints**: Thread-safe; property tests around extremes (duplicate keys, large deltas).
 
-**Files**: UseCases/Reorder/*
+**Files**: `UseCases/Reorder/*`
 
 **Deliverables**: Unit + property tests.
 
 **Acceptance**: `swift test --filter ReorderTests` passes (Linux).
 
-**Status**: ✅ Complete
+**Status**: ✅ Complete (no changes needed)
 
 ---
 
-### 4) Trello importer + CLI (hc-import) ✅
+### 4) Trello importer + CLI (hc-import) 🔄
 
-**Goal**: Decode Trello JSON; map to Domain; write via repo; print summary.
+**Goal**: Decode Trello JSON; map to Domain; write via repo; attach recipes to cards
 
-**Constraints**: Idempotent (dedupe by name+createdAt heuristic); tolerate variant exports.
+**Current Status**: ✅ Basic importer exists
 
-**Files**: ImportExport/Trello/*, CLIs/hc-import/*, Tests/Fixtures/trello_*.json
+**Required Changes for Card-Centric Design**:
+- When importing Trello cards, create Card entities
+- If Trello card has description with recipe-like content, create Recipe and attach to card
+- If Trello card has checklist, create PersonalList and attach to card
+- Single import interface (not separate recipe/list imports)
+- Maintain idempotency (dedupe by name+createdAt heuristic)
 
-**Deliverables**: CLI + unit tests with fixtures.
+**Files**:
+- `ImportExport/Trello/*`
+- `CLIs/hc-import/*`
+- `Tests/Fixtures/trello_*.json`
+
+**Deliverables**:
+- CLI imports cards with attached recipes/lists
+- Unit tests with fixtures
 
 **Acceptance**:
-- `swift run hc-import Tests/Fixtures/trello_minimal.json --db /tmp/hc.db` exits 0.
-- `swift test --filter TrelloImporterTests` passes.
+- `swift run hc-import Tests/Fixtures/trello_minimal.json --db /tmp/hc.db` exits 0
+- Imported cards have recipes/lists attached as appropriate
+- `swift test --filter TrelloImporterTests` passes
 
-**Status**: ✅ Complete
-
----
-
-### 5) Backup/export & restore + CLI (hc-backup) ✅
-
-**Goal**: Versioned JSON export and merge/overwrite restore.
-
-**Constraints**: Stable schema; progress logging.
-
-**Files**: ImportExport/Backup/*, CLIs/hc-backup/*
-
-**Deliverables**: Round-trip tests.
-
-**Acceptance**: `swift test --filter BackupRoundTripTests` passes.
-
-**Status**: ✅ Complete
+**Status**: 🔄 Needs revision to attach recipes/lists to cards
 
 ---
 
-### 6) Lists (PersonalList) & checklist component (Linux logic) ✅
+### 5) Backup/export & restore + CLI (hc-backup) 🔄
 
-**Goal**: Checklist operations (toggle all, reorder, quantities/units) in UseCases; repo CRUD for lists.
+**Goal**: Versioned JSON export and merge/overwrite restore with card associations
 
-**Constraints**: Bulk actions confirm when >10 items (policy only; UI later).
+**Current Status**: ✅ Basic backup exists
 
-**Files**: UseCases/Checklist/*, PersistenceInterfaces/ListsRepository.swift, PersistenceGRDB/Lists/*
+**Required Changes**:
+- Export format includes cards with their attached recipe/list IDs
+- Restore maintains card→recipe/list associations
+- Merge mode preserves associations
 
-**Deliverables**: Contract tests for Lists repo.
+**Files**:
+- `ImportExport/Backup/*`
+- `CLIs/hc-backup/*`
 
-**Acceptance**: `swift test --filter ListsRepositoryContractTests`.
+**Deliverables**: Round-trip tests with card associations
 
-**Status**: ✅ Complete
+**Acceptance**:
+- `swift test --filter BackupRoundTripTests` passes
+- Cards maintain recipe/list associations after restore
 
----
-
-### 7) iOS UI skeleton (Boards/Columns/Cards) ✅
-
-**Goal**: SwiftUI skeleton screens; wire to repos via DI (use GRDB or SwiftData via feature flag).
-
-**Constraints**: Accessibility labels; drag/drop hooks; haptics on drop.
-
-**Files**: App/UI/*, App/DI/*
-
-**Deliverables**: Buildable app; smoke UI tests.
-
-**Acceptance**: On macOS: `make test-macos` green; snapshot tests recorded with RECORD_SNAPSHOTS=1.
-
-**Status**: ✅ Complete
+**Status**: 🔄 Needs revision for card associations
 
 ---
 
-### 8) SwiftData adapter (Apple-only) ✅
+### 6) Lists (PersonalList) & checklist component 🔄
 
-**Goal**: PersistenceSwiftData that conforms to repos, mapping Domain ↔ SwiftData models.
+**Goal**: Checklist operations always associated with a card
 
-**Constraints**: Prefer explicit deletes over .cascade; unidirectional relationships.
+**Current Status**: ✅ PersonalList exists but needs card association
 
-**Files**: App/PersistenceSwiftData/*
+**Required Changes**:
+- Enforce `cardID` required on PersonalList creation
+- Update `ListsRepository.create` to require cardID parameter
+- Checklist operations remain the same (toggle, reorder, quantities)
+- Remove any standalone list creation paths
 
-**Deliverables**: Contract tests run also against SwiftData (macOS).
+**Files**:
+- `UseCases/Checklist/*`
+- `PersistenceInterfaces/ListsRepository.swift`
+- `PersistenceGRDB/Lists/*`
 
-**Acceptance**: macOS test matrix runs contract suite for GRDB and SwiftData.
+**Deliverables**:
+- PersonalList always belongs to a card
+- Contract tests verify card association requirement
 
-**Status**: ✅ Complete
+**Acceptance**:
+- `swift test --filter ListsRepositoryContractTests`
+- Cannot create list without cardID
+- Checklist operations work on card-attached lists
+
+**Status**: 🔄 Needs revision for mandatory card association
+
+---
+
+## Phase 2: iOS UI (Card-Centric Redesign Required)
+
+### 7) iOS UI - Card-Centric Navigation 🔄
+
+**Goal**: SwiftUI screens with boards as sole entry point; cards have optional recipe/list sections
+
+**Current Status**: ✅ UI exists but needs card-centric redesign
+
+**Required Changes**:
+- **Remove**: Standalone RecipesListView and ListsView as main navigation tabs
+- **Keep**: BoardsListView as single entry point
+- **Update**: CardDetailView to show:
+  - Card details (title, description, tags, due date)
+  - Optional "Recipe" section (expandable) if card has recipe attached
+  - Optional "List" section (expandable) if card has list attached
+  - Actions: "Attach Recipe", "Attach List", "Detach Recipe", "Detach List"
+- **Add**: Card action menu with "Add Recipe", "Add List" options
+- **Navigation**: Boards → BoardDetail (columns) → CardDetail (with recipe/list)
+
+**Files**:
+- `App/UI/Boards/BoardsListView.swift` (keep, make primary)
+- `App/UI/BoardDetail/BoardDetailView.swift` (keep)
+- `App/UI/CardDetail/CardDetailView.swift` (update to show recipe/list sections)
+- `App/UI/Recipes/RecipesListView.swift` (remove or repurpose for embedded use)
+- `App/UI/Lists/ListsView.swift` (remove or repurpose for embedded use)
+- `App/UI/Components/RecipeSectionView.swift` (new - embedded in card)
+- `App/UI/Components/ListSectionView.swift` (new - embedded in card)
+- `App/DI/*`
+
+**Deliverables**:
+- Single navigation entry: Boards
+- CardDetailView shows optional recipe/list sections
+- Accessible drag/drop with haptics
+- Smoke UI tests
+
+**Acceptance**:
+- On macOS: `make test-macos` green
+- No standalone recipe/list navigation tabs
+- CardDetail shows recipe section when card has recipe
+- CardDetail shows list section when card has list
+- Snapshot tests pass
+
+**Status**: 🔄 Major redesign required for card-centric UI
+
+---
+
+### 8) SwiftData adapter (Apple-only) 🔄
+
+**Goal**: PersistenceSwiftData with card associations for recipes/lists
+
+**Current Status**: ✅ SwiftData adapter exists
+
+**Required Changes**:
+- Add `RecipeModel.cardID` relationship
+- Add `PersonalListModel.cardID` relationship
+- Add `CardModel.recipeID` and `CardModel.listID` optional relationships
+- Update contract tests to verify associations
+- Enforce foreign key constraints
+
+**Files**:
+- `App/PersistenceSwiftData/Sources/PersistenceSwiftData/SwiftDataModels.swift`
+- `App/PersistenceSwiftData/Sources/PersistenceSwiftData/SwiftDataRecipesRepository.swift`
+- `App/PersistenceSwiftData/Sources/PersistenceSwiftData/SwiftDataListsRepository.swift`
+- `Tests/PersistenceSwiftDataTests/*`
+
+**Deliverables**:
+- SwiftData models with card associations
+- Contract tests verify associations
+- Repository implementations enforce cardID requirement
+
+**Acceptance**:
+- macOS test matrix runs contract suite for GRDB and SwiftData
+- All tests verify card associations
+
+**Status**: 🔄 Needs revision for card associations
 
 ---
 
@@ -168,13 +291,20 @@ This document tracks implementation tickets for the HomeCooked project. Each tic
 
 **Constraints**: App works offline; status UI.
 
-**Files**: Packages/SyncCloudKit/*, App/UI/Settings/SyncStatusView.swift
+**Note**: CloudKit will sync cards with their recipe/list associations. Sync logic should handle:
+- Card changes trigger recipe/list sync if attached
+- Recipe/list changes sync their parent card
+- Conflict resolution preserves associations
+
+**Files**:
+- `Packages/SyncCloudKit/*`
+- `App/UI/Settings/SyncStatusView.swift`
 
 **Deliverables**: Manual harness + unit tests mapping statuses.
 
 **Acceptance**: macOS CI runs sync unit tests; manual doc SyncManualTests.md.
 
-**Status**: ✅ Complete
+**Status**: ✅ Complete (may need minor updates for card associations)
 
 ---
 
@@ -184,39 +314,111 @@ This document tracks implementation tickets for the HomeCooked project. Each tic
 
 **Constraints**: Board-scoped sharing only.
 
-**Files**: App/UI/BoardDetail/Share/*
+**Note**: Sharing a board shares all cards and their attached recipes/lists.
+
+**Files**: `App/UI/BoardDetail/Share/*`
 
 **Deliverables**: Integration tests (macOS) + snapshot of "Shared" pill.
 
 **Acceptance**: macOS UI tests pass.
 
-**Status**: ✅ Complete
+**Status**: ✅ Complete (works with card associations)
 
 ---
 
-### 11) App Intents (add list item / add card) ✅
+## Phase 3: Shortcuts & Search (Card-Centric)
 
-**Goal**: "Add milk to Groceries"; "Add 'Pay strata' to 'Home' → 'To Do'".
+### 11) App Intents (add list item / add card with recipe) 🔄
 
-**Constraints**: Fuzzy name lookup from UseCases; return success phrases.
+**Goal**: Intents require board+card context; create card if needed
 
-**Files**: App/Intents/*
+**Current Status**: ✅ Intents exist
 
-**Deliverables**: Unit tests for lookup; intent performs action.
+**Required Changes**:
+- **"Add List Item" Intent**:
+  - Parameters: boardName, cardName, itemText
+  - Fuzzy match board and card
+  - If card not found, create new card on board
+  - Create PersonalList attached to card if card doesn't have one
+  - Add item to card's list
 
-**Acceptance**: macOS unit tests pass; Shortcuts shows intents.
+- **"Add Recipe to Card" Intent** (new):
+  - Parameters: boardName, cardName, recipeName, ingredients
+  - Fuzzy match board and card
+  - Create card if needed
+  - Attach Recipe to card
 
-**Status**: ✅ Complete
+- **"Add Card" Intent** (existing, keep):
+  - Parameters: boardName, columnName, cardTitle
+  - Works as before
+
+**Files**:
+- `App/Intents/AddListItemIntent.swift` (update)
+- `App/Intents/AddRecipeIntent.swift` (new)
+- `App/Intents/AddCardIntent.swift` (keep)
+- `App/Intents/IntentsProvider.swift`
+- `UseCases/Lookup/*` (update for card-centric search)
+
+**Deliverables**:
+- Updated intents requiring board+card
+- Fuzzy lookup for cards
+- Intents create card if not found
+
+**Acceptance**:
+- macOS unit tests pass
+- Shortcuts shows intents with correct parameters
+- "Add milk to Shopping card on Home board" works
+- "Add recipe to Dinner card on Meal Planning board" works
+
+**Status**: 🔄 Needs revision for card-centric model
 
 ---
 
-### 12) CI hardening (fail-fast + artifacts) ✅
+### 12) Search & Filtering (Card-Centric) ⬜
+
+**Goal**: Search cards by attributes (has recipe, has list, tags, text)
+
+**Constraints**:
+- Search is card-centric: find cards, not standalone recipes/lists
+- Filter cards by:
+  - Has recipe attached
+  - Has list attached
+  - By tag
+  - By text (title, details)
+  - By due date
+- Results show cards with badges indicating recipe/list presence
+- Tap result navigates to CardDetailView
+
+**Files**:
+- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/SearchRepository.swift` (new)
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBSearchRepository.swift` (new)
+- `App/UI/Search/CardSearchView.swift` (new)
+- `App/UI/Search/CardSearchResultsView.swift` (new)
+- `Tests/PersistenceGRDBTests/SearchRepositoryTests.swift` (new)
+
+**Deliverables**:
+- Search UI finds cards
+- Filter by "has recipe" / "has list"
+- Results show card context (board → column → card)
+- Navigation to CardDetailView
+
+**Acceptance**:
+- `swift test --filter SearchRepositoryTests` passes
+- Search finds cards with recipes attached
+- Filter "has list" returns only cards with lists
+- VoiceOver announces result attributes
+
+**Status**: ⬜ Not Started
+
+---
+
+### 13) CI hardening (fail-fast + artifacts) ✅
 
 **Goal**: Add GitHub Actions (or equivalent) with Linux then macOS stages; artifact uploads; no continue-on-error.
 
 **Constraints**: One-line failure summary; cache DerivedData selectively.
 
-**Files**: .github/workflows/ci.yml
+**Files**: `.github/workflows/ci.yml`
 
 **Deliverables**: Green CI on clean clone.
 
@@ -226,215 +428,150 @@ This document tracks implementation tickets for the HomeCooked project. Each tic
 
 ---
 
-### 13) Accessibility pass (DnD + labels) ✅
+### 14) Accessibility pass (DnD + labels) ✅
 
 **Goal**: VoiceOver announces column and position; actions accessible without drag.
 
 **Constraints**: Provide alternatives (Move Up/Down actions).
 
-**Files**: App/UI/...
+**Files**: `App/UI/...`
 
 **Deliverables**: UI tests for accessibility identifiers.
 
 **Acceptance**: Snapshot + XCTests pass.
 
-**Status**: ✅ Complete (accessibility labels implemented throughout UI)
+**Status**: ✅ Complete
 
 ---
 
-## Summary - Core Features Complete
+## Phase 4: Advanced Features (Card-Centric)
 
-The HomeCooked project has completed all core board management features:
+### 15) Recipe Management within Cards ⬜
 
-- ✅ Domain models and validators with comprehensive helpers
-- ✅ GRDB persistence for boards/columns/cards with migrations and contract tests
-- ✅ SwiftData adapter for iOS (with contract tests)
-- ✅ CardReorderService with property-based tests
-- ✅ Trello importer with fixtures and tests
-- ✅ Backup/restore with round-trip tests
-- ✅ Personal lists backend (GRDB + SwiftData, no UI yet)
-- ✅ iOS UI with boards, columns, cards, and detail views
-- ✅ Drag & drop with haptics and accessibility
-- ✅ CloudKit private sync with conflict resolution
-- ✅ CloudKit sharing per board
-- ✅ App Intents for Shortcuts integration
-- ✅ CI/CD with fail-fast Linux and macOS jobs
-- ✅ Comprehensive accessibility support
-
-**Recently Completed**:
-- ✅ Recipes: Full implementation with GRDB/SwiftData backends and complete iOS UI
-
----
-
-## Phase 2: Missing Features & Enhancements
-
-### 14) Recipe Management (Complete Implementation) ✅
-
-**Goal**: Implement complete recipe support (persistence + UI)
+**Goal**: Rich recipe editing within card detail view
 
 **Constraints**:
-- Follow existing patterns (GRDB + SwiftData repos, contract tests)
+- Recipe editor embedded in CardDetailView
 - Markdown rendering for method
-- Tag-based search and filtering
-- Export recipe to shopping list (copy ingredients to PersonalList)
+- Ingredients as ChecklistItems (quantity, unit, item)
+- Tags for recipe categorization
+- "Export to Shopping List" creates new card with list on same/different board
+- Photo attachment for recipe (optional)
 
 **Files**:
-- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBRecipesRepository.swift` (replace TODOs)
-- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/Migrations.swift` (add recipes table)
-- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/Records.swift` (add RecipeRecord)
-- `App/PersistenceSwiftData/Sources/PersistenceSwiftData/SwiftDataModels.swift` (add RecipeModel)
-- `App/PersistenceSwiftData/Sources/PersistenceSwiftData/SwiftDataRecipesRepository.swift` (new)
-- `App/UI/Recipes/RecipesListView.swift` (new)
-- `App/UI/Recipes/RecipeDetailView.swift` (new)
-- `App/UI/Recipes/RecipeEditorView.swift` (new)
-- `Tests/PersistenceGRDBTests/RecipesRepositoryContractTests.swift` (new)
-- `Tests/PersistenceSwiftDataTests/SwiftDataRecipesRepositoryContractTests.swift` (new)
+- `App/UI/CardDetail/RecipeEditorView.swift` (new, embedded)
+- `App/UI/CardDetail/RecipeMethodView.swift` (new, markdown renderer)
+- `App/UI/Components/RecipeActionsMenu.swift` (new)
+- `UseCases/Recipes/RecipeExporter.swift` (new - export to list)
 
 **Deliverables**:
-- GRDB implementation with schema migration
-- SwiftData implementation with contract tests
-- UI for browsing, viewing, editing, and creating recipes
-- "Add to Shopping List" action
-- Tag filtering and search
+- Recipe editor within card
+- Markdown method rendering
+- Export ingredients to shopping list card
+- Photo attachment (optional)
 
 **Acceptance**:
-- `swift test --filter RecipesRepositoryContractTests` passes (Linux)
-- macOS UI tests for recipe CRUD operations
-- Recipes appear in main navigation alongside Boards and Lists
+- Create recipe within card
+- Edit recipe ingredients and method
+- Export creates new card with PersonalList
+- Photos appear in recipe view
 
-**Status**: ✅ Complete
+**Status**: ⬜ Not Started
 
 ---
 
-### 15) Personal Lists UI ✅
+### 16) Bulk Card Operations ⬜
 
-**Goal**: Build iOS UI for PersonalList (grocery lists, packing lists, etc.)
+**Goal**: Select multiple cards and apply bulk actions
 
 **Constraints**:
-- Follow board/card UI patterns
-- Swipe actions for quick delete/reorder
-- Bulk add/remove via text paste (one item per line)
-- Share list via standard iOS share sheet
-- Accessible without drag/drop (Move Up/Down actions)
+- Multi-select mode in BoardDetailView
+- Actions: Move to column, Add tag, Delete, Archive
+- Accessible without drag/drop
+- Confirm before destructive actions
+- Show count of selected cards
 
 **Files**:
-- `App/UI/Lists/ListsView.swift` (completed)
-- `App/UI/Lists/ListDetailView.swift` (completed)
-- `App/UI/Lists/ListEditorView.swift` (completed)
-- `Tests/UITests/ListsUITests.swift` (completed)
+- `App/UI/BoardDetail/CardSelectionMode.swift` (new)
+- `App/UI/BoardDetail/BulkActionsBar.swift` (new)
+- `UseCases/Cards/BulkCardOperations.swift` (new)
 
 **Deliverables**:
-- Lists browser (like BoardsListView) ✅
-- Detail view with checklist items ✅
-- Add/edit/delete items ✅
-- Bulk import from text ✅
-- Share integration ✅
+- Multi-select UI
+- Bulk move to column
+- Bulk tag addition
+- Bulk delete with confirmation
 
 **Acceptance**:
-- macOS UI tests pass ✅
-- VoiceOver announces list items correctly ✅
-- Bulk paste creates multiple items ✅
+- Select multiple cards and move to column
+- Bulk add tag to 10+ cards
+- VoiceOver announces selection count
+- Confirmation appears before bulk delete
 
-**Status**: ✅ Complete
+**Status**: ⬜ Not Started
 
 ---
 
-### 16) iOS Widgets (Home Screen & Lock Screen) ⬜
+### 17) Card Templates ⬜
 
-**Goal**: Add iOS widgets for quick access to lists and upcoming cards
+**Goal**: Save cards as templates with pre-filled recipe/list/checklist
 
 **Constraints**:
-- Small widget: Shows one list with top 3 items
+- Save card as template (structure only, no timestamps)
+- Template library in board menu
+- Create card from template
+- Templates can include recipe skeleton or list template
+- Export/import templates via JSON
+
+**Files**:
+- `Packages/Domain/Sources/Domain/CardTemplate.swift` (new)
+- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/TemplatesRepository.swift` (new)
+- `App/UI/Templates/CardTemplatesView.swift` (new)
+- `UseCases/Templates/TemplateInstantiator.swift` (new)
+
+**Deliverables**:
+- Save card as template
+- Template library
+- Create from template
+- Templates include recipe/list structure
+
+**Acceptance**:
+- Save card with recipe as template
+- Creating from template creates independent card
+- Template includes pre-filled checklist items
+
+**Status**: ⬜ Not Started
+
+---
+
+### 18) iOS Widgets (Card-Based) ⬜
+
+**Goal**: Widgets show cards with due dates and list progress
+
+**Constraints**:
+- Small widget: Shows one card with list progress (5/10 items done)
 - Medium widget: Shows 2-3 upcoming cards (by due date)
-- Lock screen widget: Count of unchecked items in selected list
-- Tap to open app to relevant screen
-- Use WidgetKit with AppIntents for configuration
+- Lock screen widget: Count of cards due today
+- Tap widget opens card detail view
+- Configuration selects board/column to show
 
 **Files**:
-- `App/Widgets/ListWidget.swift` (new)
+- `App/Widgets/CardListWidget.swift` (new)
 - `App/Widgets/UpcomingCardsWidget.swift` (new)
 - `App/Widgets/LockScreenWidget.swift` (new)
 - `App/Intents/ConfigureWidgetIntent.swift` (new)
 
 **Deliverables**:
-- Widget extension target
-- Three widget types (list, cards, lock screen)
+- Widget showing card with list progress
+- Upcoming cards widget (by due date)
+- Lock screen widget (cards due today count)
 - Configuration via App Intents
-- Timeline updates
 
 **Acceptance**:
-- Widgets appear in widget gallery
-- Widgets update when data changes
-- Tap opens correct app screen
-
-**Status**: ⬜ Not Started
-
----
-
-### 17) Advanced Search & Filtering ⬜
-
-**Goal**: Full-text search across all entities (boards, cards, lists, recipes)
-
-**Constraints**:
-- GRDB FTS5 for efficient full-text search
-- Search UI with filters (entity type, tags, date range)
-- Recent searches stored locally
-- Results grouped by entity type
-- Tap result to navigate to detail view
-
-**Files**:
-- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/Migrations.swift` (add FTS tables)
-- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/SearchRepository.swift` (new)
-- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBSearchRepository.swift` (new)
-- `App/UI/Search/SearchView.swift` (new)
-- `App/UI/Search/SearchResultsView.swift` (new)
-- `Tests/PersistenceGRDBTests/SearchRepositoryTests.swift` (new)
-
-**Deliverables**:
-- FTS5 virtual tables in GRDB
-- SearchRepository protocol and implementation
-- Search UI with filters
-- Recent searches
-- Result navigation
-
-**Acceptance**:
-- `swift test --filter SearchRepositoryTests` passes
-- Search returns results across entity types
-- Filters work correctly
-- VoiceOver announces result count
-
-**Status**: ⬜ Not Started
-
----
-
-### 18) Themes & Customization ⬜
-
-**Goal**: Dark mode support and custom board color schemes
-
-**Constraints**:
-- System dark mode toggle (follow iOS setting)
-- Per-board color themes (8-10 preset palettes)
-- Color persistence in Board model
-- All UI respects theme colors
-- Accessibility contrast ratios maintained
-
-**Files**:
-- `Packages/Domain/Sources/Domain/Models.swift` (add Board.colorTheme)
-- `App/UI/Theme/ThemeProvider.swift` (new)
-- `App/UI/Theme/ColorPalettes.swift` (new)
-- `App/UI/BoardDetail/BoardThemePickerView.swift` (new)
-- Migration for Board.colorTheme column
-
-**Deliverables**:
-- Dark mode support throughout app
-- Board color theme picker
-- Theme persistence
-- Accessible color combinations
-
-**Acceptance**:
-- App follows system dark mode
-- Board themes persist across launches
-- All text remains readable with themes
+- Widgets appear in gallery
+- Widget shows "Shopping: 5/10 items done"
+- Tap opens CardDetailView
+- Lock screen shows "3 cards due today"
 
 **Status**: ⬜ Not Started
 
@@ -442,180 +579,216 @@ The HomeCooked project has completed all core board management features:
 
 ### 19) Export Formats (PDF, Markdown) ⬜
 
-**Goal**: Export boards and recipes to PDF and Markdown
+**Goal**: Export boards and cards to PDF and Markdown
 
 **Constraints**:
-- PDF: Single board with all cards grouped by column
+- PDF: Board with all cards, grouped by column
+- Cards with recipes show recipe content in export
+- Cards with lists show checklist items
 - Markdown: Board structure with card details
-- Recipe PDF: Formatted with ingredients and method
 - Export via iOS share sheet
-- Linux-compatible export logic in ImportExport package
+- Linux-compatible export logic
 
 **Files**:
 - `Packages/ImportExport/Sources/ImportExport/Export/PDFExporter.swift` (new)
 - `Packages/ImportExport/Sources/ImportExport/Export/MarkdownExporter.swift` (new)
 - `App/UI/BoardDetail/ExportMenuView.swift` (new)
-- `Tests/ImportExportTests/ExportTests.swift` (new)
 
 **Deliverables**:
-- PDF export for boards and recipes
-- Markdown export for boards
-- Share sheet integration
-- Unit tests for export formats
+- PDF export for boards
+- Markdown export
+- Recipe content included in exports
+- List items included in exports
 
 **Acceptance**:
 - `swift test --filter ExportTests` passes (Linux)
-- Exported PDFs are readable and well-formatted
-- Markdown preserves structure
+- Exported PDF shows card with recipe formatted nicely
+- Markdown preserves card→recipe/list structure
 
 **Status**: ⬜ Not Started
 
 ---
 
-### 20) Templates (Boards & Cards) ⬜
+### 20) Themes & Customization ⬜
 
-**Goal**: Save and reuse board/card templates for common workflows
+**Goal**: Dark mode and per-board color themes
 
 **Constraints**:
-- Save board as template (structure only, no data)
-- Card templates with default checklist/tags
-- Template library in UI
-- Templates stored in database
-- Export/import templates via JSON
+- System dark mode toggle
+- Per-board color themes (8-10 palettes)
+- Color persistence in Board model
+- All UI respects themes
+- Accessibility contrast maintained
 
 **Files**:
-- `Packages/Domain/Sources/Domain/Template.swift` (new)
-- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/TemplatesRepository.swift` (new)
-- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBTemplatesRepository.swift` (new)
-- `App/UI/Templates/TemplatesView.swift` (new)
-- Migration for templates table
+- `Packages/Domain/Sources/Domain/Models.swift` (add Board.colorTheme)
+- `App/UI/Theme/ThemeProvider.swift` (new)
+- `App/UI/Theme/ColorPalettes.swift` (new)
 
 **Deliverables**:
-- Template domain model
-- Repository implementation
-- Template browser UI
-- Create board from template
-- Import/export templates
+- Dark mode support
+- Board color theme picker
+- Theme persistence
+- Accessible colors
 
 **Acceptance**:
-- Save board as template preserves structure
-- Creating from template creates independent copy
-- Templates work offline
+- App follows system dark mode
+- Board themes persist
+- All text readable with themes
 
 **Status**: ⬜ Not Started
 
 ---
 
-## Phase 3: Refactoring & Technical Improvements
+## Phase 5: Performance & Polish
 
-### 21) Reduce Code Duplication in Repositories ⬜
+### 21) Performance Optimization ⬜
 
-**Goal**: Extract common patterns from GRDB and SwiftData repositories
+**Goal**: Profile and optimize hot paths (reorder, search, card loading with recipes/lists)
 
 **Constraints**:
-- Create shared utilities for ID/UUID conversion
-- Shared JSON encoding/decoding for arrays
-- Protocol extensions for common queries
-- Maintain 100% test coverage
+- Benchmark card loading with attached recipes/lists
+- Optimize queries: load card with recipe in single query
+- Reduce allocations in reorder
+- Profile CloudKit sync with associations
+- Document performance baselines
 
 **Files**:
-- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/RepositoryHelpers.swift` (new)
-- Refactor: `GRDBBoardsRepository.swift`, `SwiftDataBoardsRepository.swift`, etc.
+- `Tests/PerformanceTests/*` (new)
+- Optimize: `Migrations.swift` (indices on card_id foreign keys)
+- Optimize: `GRDBBoardsRepository.swift` (JOIN queries for card+recipe/list)
 
 **Deliverables**:
-- Extracted helper utilities
-- Reduced duplication
-- All tests still pass
+- Performance benchmarks
+- Optimized queries for card+recipe/list loading
+- Documented baselines
 
 **Acceptance**:
-- `make test-linux && make test-macos` passes
-- Code duplication reduced by >30% (measured by lines)
+- Load 100 cards with recipes <100ms
+- Card reorder <10ms
+- Search 1000 cards <100ms
 
 **Status**: ⬜ Not Started
 
 ---
 
-### 22) Improve Error Messages & Logging ⬜
+### 22) Improved Error Messages & Logging ⬜
 
-**Goal**: Better error messages, structured logging, redaction
+**Goal**: Better errors, structured logging, PII redaction
 
 **Constraints**:
-- Use os.Logger on Apple platforms
-- Lightweight custom logger for Linux
-- Redact PII (user content, IDs in logs)
-- Error context (what operation failed, why)
+- os.Logger on Apple platforms
+- Lightweight logger for Linux
+- Redact PII (user content)
+- Contextual errors ("Failed to attach recipe to card X")
 - No secrets in logs
 
 **Files**:
 - `Packages/Domain/Sources/Domain/Logging.swift` (new)
-- Update all repos and use cases with logging
+- Update all repos and use cases
 
 **Deliverables**:
-- Structured logging throughout codebase
+- Structured logging
 - PII redaction
-- Contextual error messages
+- Contextual errors
 
 **Acceptance**:
 - Logs contain no user content
-- Errors include actionable context
+- Errors include context
 - Works on Linux and macOS
 
 **Status**: ⬜ Not Started
 
 ---
 
-### 23) Performance Optimization ⬜
+### 23) Reduce Repository Duplication ⬜
 
-**Goal**: Profile and optimize hot paths (reorder, search, sync)
+**Goal**: Extract common patterns from GRDB and SwiftData repos
 
 **Constraints**:
-- Benchmark key operations
-- Optimize GRDB queries (indices, joins)
-- Reduce allocations in reorder normalization
-- Profile CloudKit sync batch sizes
-- Document performance baselines
+- Shared utilities for ID/UUID conversion
+- Protocol extensions for common queries
+- Maintain 100% test coverage
 
 **Files**:
-- `Tests/PerformanceTests/ReorderBenchmarks.swift` (new)
-- `Tests/PerformanceTests/SearchBenchmarks.swift` (new)
-- Optimize: Migrations.swift (add missing indices)
+- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/RepositoryHelpers.swift` (new)
+- Refactor: All repository implementations
 
 **Deliverables**:
-- Performance benchmarks
-- Optimized queries
-- Documented baselines
-- <50ms for common operations
+- Extracted helpers
+- Reduced duplication
+- Tests still pass
 
 **Acceptance**:
-- Benchmark suite runs in CI
-- Card reorder <10ms
-- Search <100ms for 1000 cards
+- `make test-linux && make test-macos` passes
+- Code duplication reduced >30%
 
 **Status**: ⬜ Not Started
 
 ---
 
-## Agent Guidance
+## Summary
 
-When working on new features:
+**Architectural Principles (Card-Centric Design)**:
+- ✅ Boards → Columns → Cards is the primary hierarchy
+- ✅ Recipes and Lists are optional card attributes (not standalone entities)
+- ✅ Single navigation entry point: Boards
+- ✅ A card can have 0, 1, or both recipe and list attached
+- ✅ Search finds cards (with filters for "has recipe", "has list")
+- ✅ Intents require board+card context
+- ✅ UI shows recipe/list sections within CardDetailView
 
-1. **Follow the established patterns**:
-   - Pure business logic in UseCases (Linux-compatible)
-   - Repository pattern for all data access
-   - Contract tests for repository implementations
-   - SwiftUI views in App/ with dependency injection
+**Completed (Needs Revision)**:
+- 🔄 Domain models (need card associations)
+- 🔄 Repositories (need card foreign keys)
+- 🔄 Trello importer (attach to cards)
+- 🔄 Backup/restore (preserve associations)
+- 🔄 iOS UI (card-centric redesign)
+- 🔄 App Intents (require board+card)
 
-2. **Use the golden commands**:
-   - `make preflight` before starting work
-   - `make test-linux` for core logic validation
-   - `make test-macos` for iOS app validation
+**Next Priority**:
+1. Update Domain models for card associations (ticket 1)
+2. Update repositories and migrations (ticket 2)
+3. Redesign iOS UI for card-centric navigation (ticket 7)
+4. Update SwiftData adapter (ticket 8)
+5. Revise App Intents (ticket 11)
 
-3. **Maintain the Linux-first approach**:
-   - 80-90% of code should build on Linux
-   - Keep Apple-only code behind adapters
-   - Use protocols to abstract platform-specific APIs
+**Agent Guidance**:
 
-4. **Update documentation**:
-   - Add entries to CHANGELOG.md
-   - Update README.md if user-facing features change
-   - Keep DEVELOPMENT.md current with toolchain requirements
+When working on card-centric redesign:
+
+1. **Domain First**: Start with Domain models - add optional recipe/list references to Card, add required cardID to Recipe and PersonalList
+
+2. **Migrations**: Add migration to create card_id foreign keys in recipes and personal_lists tables
+
+3. **Repositories**: Update interfaces to enforce card associations (create methods require cardID)
+
+4. **Contract Tests**: Verify that recipes/lists cannot be created without a card
+
+5. **UI Redesign**: Remove standalone navigation for recipes/lists; embed in CardDetailView
+
+6. **Search**: Implement card-centric search with "has recipe" / "has list" filters
+
+7. **Use Golden Commands**:
+   - `make preflight` before starting
+   - `make test-linux` for core logic
+   - `make test-macos` for iOS app
+
+8. **Alpha Status**: Don't worry about data migration - breaking changes are expected
+
+---
+
+## Definition of Done
+
+Before considering card-centric redesign complete:
+
+- ✅ Domain models have card associations
+- ✅ Migrations add card_id foreign keys
+- ✅ Cannot create recipe/list without cardID
+- ✅ Contract tests verify associations
+- ✅ UI has single entry point: Boards
+- ✅ CardDetailView shows optional recipe/list sections
+- ✅ Search filters by "has recipe" / "has list"
+- ✅ Intents require board+card context
+- ✅ All tests pass: `make test-linux && make test-macos`
+- ✅ CHANGELOG.md updated
