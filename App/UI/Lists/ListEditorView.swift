@@ -139,8 +139,9 @@ struct ListEditorView: View {
                 items: items
             )
         case .edit(let existing):
-            list = PersonalList(cardID: CardID(), 
+            list = PersonalList(
                 id: existing.id,
+                cardID: CardID(),
                 title: title.trimmingCharacters(in: .whitespaces),
                 items: items,
                 createdAt: existing.createdAt,

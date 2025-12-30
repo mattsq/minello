@@ -203,45 +203,7 @@ private struct ListRow: View {
 
 // MARK: - Previews
 
-#Preview("With Lists") {
-    let container = try! AppDependencyContainer.preview()
-
-    // Add sample lists
-    Task { @MainActor in
-        let repo = container.repositoryProvider.listsRepository
-        try? await repo.createList(PersonalList(cardID: CardID(), 
-            title: "Groceries",
-            items: [
-                ChecklistItem(text: "Milk", isDone: false, quantity: 2, unit: "L"),
-                ChecklistItem(text: "Bread", isDone: true, quantity: 1),
-                ChecklistItem(text: "Eggs", isDone: false, quantity: 12),
-                ChecklistItem(text: "Coffee", isDone: false, quantity: 500, unit: "g")
-            ]
-        ))
-        try? await repo.createList(PersonalList(cardID: CardID(), 
-            title: "Packing List",
-            items: [
-                ChecklistItem(text: "Passport", isDone: true),
-                ChecklistItem(text: "Tickets", isDone: true),
-                ChecklistItem(text: "Sunscreen", isDone: false),
-                ChecklistItem(text: "Hat", isDone: false)
-            ]
-        ))
-        try? await repo.createList(PersonalList(cardID: CardID(), 
-            title: "Hardware Store",
-            items: [
-                ChecklistItem(text: "Screws", isDone: false, quantity: 50),
-                ChecklistItem(text: "Paint", isDone: false, quantity: 2, unit: "L", note: "White matte"),
-                ChecklistItem(text: "Sandpaper", isDone: false)
-            ]
-        ))
-    }
-
-    ListsView()
-        .withDependencies(container)
-}
-
-#Preview("Empty State") {
+#Preview {
     let container = try! AppDependencyContainer.preview()
     ListsView()
         .withDependencies(container)

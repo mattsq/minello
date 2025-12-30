@@ -184,8 +184,9 @@ struct RecipeEditorView: View {
                 tags: tags
             )
         case .edit(let existing):
-            recipe = Recipe(cardID: CardID(), 
+            recipe = Recipe(
                 id: existing.id,
+                cardID: CardID(),
                 title: title.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredients,
                 methodMarkdown: methodMarkdown,
