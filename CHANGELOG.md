@@ -9,6 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Markdown export functionality (ImportExport package):
+  - MarkdownExporter: Export boards, columns, and cards to Markdown format
+    - Exports individual boards or all boards at once
+    - Includes card metadata (due dates, tags, checklists)
+    - Automatically includes attached recipes with ingredients and cooking method
+    - Automatically includes attached personal lists with checklist items
+    - Human-readable format with proper Markdown structure (headers, lists, emphasis)
+    - File export with statistics (boards, columns, cards, recipes, lists exported)
+    - Quantity formatting with automatic trailing zero removal (e.g., "2.5 kg" not "2.50 kg")
+  - Full test coverage (14 tests) including:
+    - Basic board and card export
+    - Card metadata export (tags, due dates, checklists)
+    - Recipe export with ingredients and method
+    - Personal list export with items
+    - Cards with both recipes and lists attached
+    - Multiple boards and columns
+    - File export functionality
+- Test helpers (ImportExportTests):
+  - Shared in-memory repository implementations (BoardsRepository, ListsRepository, RecipesRepository)
+  - Used across BackupRoundTripTests and MarkdownExporterTests
+
 - Personal Lists UI (iOS app):
   - ListsView: Main view showing all personal lists with navigation
     - Add/delete list functionality with swipe-to-delete
