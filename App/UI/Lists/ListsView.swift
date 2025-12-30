@@ -209,7 +209,7 @@ private struct ListRow: View {
     // Add sample lists
     Task { @MainActor in
         let repo = container.repositoryProvider.listsRepository
-        try? await repo.createList(PersonalList(
+        try? await repo.createList(PersonalList(cardID: CardID(), 
             title: "Groceries",
             items: [
                 ChecklistItem(text: "Milk", isDone: false, quantity: 2, unit: "L"),
@@ -218,7 +218,7 @@ private struct ListRow: View {
                 ChecklistItem(text: "Coffee", isDone: false, quantity: 500, unit: "g")
             ]
         ))
-        try? await repo.createList(PersonalList(
+        try? await repo.createList(PersonalList(cardID: CardID(), 
             title: "Packing List",
             items: [
                 ChecklistItem(text: "Passport", isDone: true),
@@ -227,7 +227,7 @@ private struct ListRow: View {
                 ChecklistItem(text: "Hat", isDone: false)
             ]
         ))
-        try? await repo.createList(PersonalList(
+        try? await repo.createList(PersonalList(cardID: CardID(), 
             title: "Hardware Store",
             items: [
                 ChecklistItem(text: "Screws", isDone: false, quantity: 50),
@@ -237,12 +237,12 @@ private struct ListRow: View {
         ))
     }
 
-    return ListsView()
+    ListsView()
         .withDependencies(container)
 }
 
 #Preview("Empty State") {
     let container = try! AppDependencyContainer.preview()
-    return ListsView()
+    ListsView()
         .withDependencies(container)
 }

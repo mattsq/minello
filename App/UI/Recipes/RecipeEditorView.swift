@@ -177,14 +177,14 @@ struct RecipeEditorView: View {
         let recipe: Recipe
         switch mode {
         case .create:
-            recipe = Recipe(
+            recipe = Recipe(cardID: CardID(), 
                 title: title.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredients,
                 methodMarkdown: methodMarkdown,
                 tags: tags
             )
         case .edit(let existing):
-            recipe = Recipe(
+            recipe = Recipe(cardID: CardID(), 
                 id: existing.id,
                 title: title.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredients,
@@ -418,7 +418,7 @@ private struct FlowLayout: Layout {
 }
 
 #Preview("Edit Recipe") {
-    let recipe = Recipe(
+    let recipe = Recipe(cardID: CardID(), 
         title: "Spaghetti Carbonara",
         ingredients: [
             ChecklistItem(text: "Spaghetti", quantity: 400, unit: "g"),
@@ -429,7 +429,7 @@ private struct FlowLayout: Layout {
         tags: ["Italian", "Pasta", "Quick"]
     )
 
-    return RecipeEditorView(mode: .edit(recipe)) { updatedRecipe in
+    RecipeEditorView(mode: .edit(recipe)) { updatedRecipe in
         print("Updated recipe: \(updatedRecipe.title)")
     }
 }

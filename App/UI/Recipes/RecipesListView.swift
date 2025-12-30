@@ -273,7 +273,7 @@ private struct TagChip: View {
     // Add sample recipes
     Task { @MainActor in
         let repo = container.repositoryProvider.recipesRepository
-        try? await repo.createRecipe(Recipe(
+        try? await repo.createRecipe(Recipe(cardID: CardID(), 
             title: "Spaghetti Carbonara",
             ingredients: [
                 ChecklistItem(text: "Spaghetti", quantity: 400, unit: "g"),
@@ -284,7 +284,7 @@ private struct TagChip: View {
             methodMarkdown: "1. Boil pasta\n2. Fry bacon\n3. Mix eggs and cheese\n4. Combine",
             tags: ["Italian", "Pasta", "Quick"]
         ))
-        try? await repo.createRecipe(Recipe(
+        try? await repo.createRecipe(Recipe(cardID: CardID(), 
             title: "Chicken Tikka Masala",
             ingredients: [
                 ChecklistItem(text: "Chicken breast", quantity: 500, unit: "g"),
@@ -296,12 +296,12 @@ private struct TagChip: View {
         ))
     }
 
-    return RecipesListView()
+    RecipesListView()
         .withDependencies(container)
 }
 
 #Preview("Empty State") {
     let container = try! AppDependencyContainer.preview()
-    return RecipesListView()
+    RecipesListView()
         .withDependencies(container)
 }

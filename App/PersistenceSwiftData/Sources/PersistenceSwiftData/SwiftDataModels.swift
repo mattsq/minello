@@ -259,8 +259,12 @@ final class PersonalListModel {
 
         let items = try JSONDecoder().decode([ChecklistItem].self, from: itemsData)
 
+        // Alpha migration: use dummy CardID if not present
+        let cardID = CardID()
+
         return PersonalList(
             id: ListID(rawValue: uuid),
+            cardID: cardID,
             title: title,
             items: items,
             createdAt: createdAt,
@@ -316,8 +320,12 @@ final class RecipeModel {
         let ingredients = try JSONDecoder().decode([ChecklistItem].self, from: ingredientsData)
         let tags = try JSONDecoder().decode([String].self, from: tagsData)
 
+        // Alpha migration: use dummy CardID if not present
+        let cardID = CardID()
+
         return Recipe(
             id: RecipeID(rawValue: uuid),
+            cardID: cardID,
             title: title,
             ingredients: ingredients,
             methodMarkdown: methodMarkdown,

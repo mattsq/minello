@@ -134,12 +134,12 @@ struct ListEditorView: View {
         let list: PersonalList
         switch mode {
         case .create:
-            list = PersonalList(
+            list = PersonalList(cardID: CardID(), 
                 title: title.trimmingCharacters(in: .whitespaces),
                 items: items
             )
         case .edit(let existing):
-            list = PersonalList(
+            list = PersonalList(cardID: CardID(), 
                 id: existing.id,
                 title: title.trimmingCharacters(in: .whitespaces),
                 items: items,
@@ -322,7 +322,7 @@ private struct AddItemSheet: View {
 }
 
 #Preview("Edit List") {
-    let list = PersonalList(
+    let list = PersonalList(cardID: CardID(), 
         title: "Groceries",
         items: [
             ChecklistItem(text: "Milk", quantity: 2, unit: "L"),
@@ -331,7 +331,7 @@ private struct AddItemSheet: View {
         ]
     )
 
-    return ListEditorView(mode: .edit(list)) { updatedList in
+    ListEditorView(mode: .edit(list)) { updatedList in
         print("Updated list: \(updatedList.title)")
     }
 }
