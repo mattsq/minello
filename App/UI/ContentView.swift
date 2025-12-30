@@ -10,6 +10,12 @@ struct ContentView: View {
                 }
                 .accessibilityLabel("Boards tab")
 
+            CardSearchView()
+                .tabItem {
+                    Label("Search", systemImage: "magnifyingglass")
+                }
+                .accessibilityLabel("Search tab")
+
             ListsView()
                 .tabItem {
                     Label("Lists", systemImage: "checklist")

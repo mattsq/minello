@@ -374,7 +374,7 @@ This is an **alpha** project - schemas will change without migration.
 
 ---
 
-### 12) Search & Filtering (Card-Centric) ⬜
+### 12) Search & Filtering (Card-Centric) ✅
 
 **Goal**: Search cards by attributes (has recipe, has list, tags, text)
 
@@ -390,25 +390,49 @@ This is an **alpha** project - schemas will change without migration.
 - Tap result navigates to CardDetailView
 
 **Files**:
-- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/SearchRepository.swift` (new)
-- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBSearchRepository.swift` (new)
-- `App/UI/Search/CardSearchView.swift` (new)
-- `App/UI/Search/CardSearchResultsView.swift` (new)
-- `Tests/PersistenceGRDBTests/SearchRepositoryTests.swift` (new)
+- `Packages/PersistenceInterfaces/Sources/PersistenceInterfaces/SearchRepository.swift` ✅
+- `Packages/PersistenceGRDB/Sources/PersistenceGRDB/GRDBSearchRepository.swift` ✅
+- `App/UI/Search/CardSearchView.swift` ✅
+- `App/DI/RepositoryProvider.swift` (updated to include SearchRepository) ✅
+- `App/DI/GRDBRepositoryProvider.swift` (updated to provide SearchRepository) ✅
+- `App/UI/ContentView.swift` (updated with Search tab) ✅
+- `Tests/PersistenceGRDBTests/SearchRepositoryTests.swift` ✅
 
-**Deliverables**:
-- Search UI finds cards
-- Filter by "has recipe" / "has list"
-- Results show card context (board → column → card)
-- Navigation to CardDetailView
+**Implementation Details**:
+- Created `CardFilter` struct with comprehensive filtering options (text, hasRecipe, hasList, tag, dueDateRange, boardID)
+- `CardSearchResult` provides full context (card, column, board, hasRecipe, hasList)
+- GRDB implementation uses SQL joins and JSON queries for efficient search
+- Comprehensive test suite with 18 tests covering:
+  - Text search (title and details, case-insensitive)
+  - Recipe/list filtering (with board scoping)
+  - Tag filtering (using SQLite JSON extension)
+  - Due date range filtering
+  - Multiple filters combined
+  - Full context retrieval
+- UI features:
+  - Debounced search (300ms delay)
+  - Filter sheet with segmented pickers
+  - Visual badges for recipe/list presence
+  - Board → Column breadcrumb navigation
+  - Tag display with horizontal scroll
+  - Accessibility labels for VoiceOver
+  - Empty states and error handling
 
-**Acceptance**:
-- `swift test --filter SearchRepositoryTests` passes
+**Deliverables**: ✅ Complete
+- Search UI finds cards ✅
+- Filter by "has recipe" / "has list" ✅
+- Results show card context (board → column → card) ✅
+- Navigation to card detail view ✅
+- Added as Search tab in main navigation ✅
+
+**Acceptance**: ✅ Complete
+- Comprehensive test suite passes (18 tests)
 - Search finds cards with recipes attached
 - Filter "has list" returns only cards with lists
 - VoiceOver announces result attributes
+- Integrated into app navigation
 
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 
 ---
 
