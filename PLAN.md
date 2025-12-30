@@ -250,7 +250,7 @@ This is an **alpha** project - schemas will change without migration.
 - ✅ **Updated RecipeEditorView**: Accepts cardID for create mode - RecipeEditorView.swift:10
 - ✅ **Updated ListEditorView**: Accepts cardID for create mode - ListEditorView.swift:10
 - ✅ **Card Actions**: Attach/detach/edit recipes and lists from CardDetailView - CardDetailView.swift:315-430
-- ⚠️ **Deprecated**: RecipesListView and ListsView remain in codebase but not in navigation
+- ✅ **Removed**: RecipesListView and ListsView (incompatible with card-centric model)
 
 **Files**:
 - `App/UI/ContentView.swift` ✅ (removed Lists and Recipes tabs)
@@ -259,8 +259,8 @@ This is an **alpha** project - schemas will change without migration.
 - `App/UI/Components/ListSectionView.swift` ✅ (new - embedded list display)
 - `App/UI/Recipes/RecipeEditorView.swift` ✅ (updated to accept cardID)
 - `App/UI/Lists/ListEditorView.swift` ✅ (updated to accept cardID)
-- `App/UI/Recipes/RecipesListView.swift` ⚠️ (deprecated - not in navigation)
-- `App/UI/Lists/ListsView.swift` ⚠️ (deprecated - not in navigation)
+- `App/UI/Recipes/RecipesListView.swift` ❌ (deleted - incompatible with card-centric model)
+- `App/UI/Lists/ListsView.swift` ❌ (deleted - incompatible with card-centric model)
 
 **Deliverables**: ✅ All Complete
 - Single navigation entry: Boards (+ Search)
