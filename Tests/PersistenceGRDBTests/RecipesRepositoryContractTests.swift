@@ -28,6 +28,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
     func testCreateAndLoadRecipe() async throws {
         let recipe = Recipe(
             id: RecipeID(),
+            cardID: CardID(),
             title: "Spaghetti Carbonara",
             ingredients: [
                 ChecklistItem(text: "Spaghetti", isDone: false, quantity: 400, unit: "g"),
@@ -76,6 +77,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
 
     func testUpdateRecipe() async throws {
         var recipe = Recipe(
+            cardID: CardID(),
             title: "Original Recipe",
             ingredients: [ChecklistItem(text: "Ingredient 1")],
             methodMarkdown: "Original method",
@@ -142,6 +144,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
 
     func testRecipeWithComplexIngredients() async throws {
         let recipe = Recipe(
+            cardID: CardID(),
             title: "Complex Recipe",
             ingredients: [
                 ChecklistItem(
@@ -208,6 +211,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
         """
 
         let recipe = Recipe(
+            cardID: CardID(),
             title: "Chocolate Cake",
             methodMarkdown: markdown
         )
@@ -339,6 +343,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
         let originalID = RecipeID()
         var recipe = Recipe(
             id: originalID,
+            cardID: CardID(),
             title: "Original",
             methodMarkdown: "Method"
         )
@@ -384,6 +389,7 @@ final class RecipesRepositoryContractTests: XCTestCase {
 
     func testRecipeWithUnicodeCharacters() async throws {
         let recipe = Recipe(
+            cardID: CardID(),
             title: "Crème Brûlée",
             ingredients: [
                 ChecklistItem(text: "Crème fraîche", quantity: 500, unit: "ml"),

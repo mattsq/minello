@@ -28,6 +28,7 @@ final class ListsRepositoryContractTests: XCTestCase {
     func testCreateAndLoadList() async throws {
         let list = PersonalList(
             id: ListID(),
+            cardID: CardID(),
             title: "Grocery List",
             items: [
                 ChecklistItem(text: "Milk", isDone: false, quantity: 1, unit: "gallon"),
@@ -65,6 +66,7 @@ final class ListsRepositoryContractTests: XCTestCase {
 
     func testUpdateList() async throws {
         var list = PersonalList(
+            cardID: CardID(),
             title: "Original Title",
             items: [ChecklistItem(text: "Item 1")]
         )
@@ -124,6 +126,7 @@ final class ListsRepositoryContractTests: XCTestCase {
 
     func testListWithComplexItems() async throws {
         let list = PersonalList(
+            cardID: CardID(),
             title: "Complex List",
             items: [
                 ChecklistItem(
@@ -219,6 +222,7 @@ final class ListsRepositoryContractTests: XCTestCase {
 
     func testFindListsWithIncompleteItems() async throws {
         let completeList = PersonalList(
+            cardID: CardID(),
             title: "Complete List",
             items: [
                 ChecklistItem(text: "Item 1", isDone: true),
@@ -227,6 +231,7 @@ final class ListsRepositoryContractTests: XCTestCase {
         )
 
         let incompleteList1 = PersonalList(
+            cardID: CardID(),
             title: "Incomplete List 1",
             items: [
                 ChecklistItem(text: "Item 1", isDone: true),
@@ -235,6 +240,7 @@ final class ListsRepositoryContractTests: XCTestCase {
         )
 
         let incompleteList2 = PersonalList(
+            cardID: CardID(),
             title: "Incomplete List 2",
             items: [
                 ChecklistItem(text: "Item 1", isDone: false),
