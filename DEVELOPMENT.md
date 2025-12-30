@@ -1,5 +1,18 @@
 # HomeCooked Development Guide
 
+## ⚠️ Alpha Status - Breaking Changes Expected
+
+**IMPORTANT**: HomeCooked is currently in **alpha development**. Database schemas and data models are subject to breaking changes without migration paths. Do not use this app for production data.
+
+- Database schemas may change completely between versions
+- No data migration will be provided during alpha
+- Expect to lose data when upgrading
+- Use for testing and development only
+
+This warning will be removed when the app reaches beta status with stable schemas.
+
+---
+
 ## Overview
 
 HomeCooked is a local-first task and collaboration app designed to replace Trello for home use. The project follows a package-first, Linux-first architecture where 80-90% of the code builds and tests on Linux via SwiftPM, with the iOS app serving as a thin shell.

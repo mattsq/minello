@@ -1,6 +1,11 @@
 # Project
 
-"HomeCooked" — a small, local-first task/collab app to replace Trello at home. Core types: Board → Column → Card, ChecklistItem, plus PersonalList (grocery/packing) and Recipe (ingredients + markdown method).
+"HomeCooked" — a small, local-first task/collab app to replace Trello at home.
+
+**⚠️ Alpha Status**: This project is in active redesign. Database schemas may change without migration.
+
+**Card-Centric Architecture**: Core hierarchy is Board → Column → Card. Recipes and PersonalLists are optional attributes that can be attached to cards (not standalone entities). A card can have 0, 1, or both a recipe and a list attached.
+
 Principle: 80–90% of the code builds/tests on Linux via SwiftPM; the iOS app is a thin shell (SwiftUI) with Apple-only adapters (SwiftData/CloudKit).
 
 ⸻
@@ -189,13 +194,17 @@ No continue-on-error. First failure wins, with a concise summary at tail of logs
 
 ## Domain model (Linux-friendly, pure value types)
 
+**Card-Centric Design**: Recipes and PersonalLists are optional attributes attached to cards.
+
 ```swift
-// Packages/Domain/Sources/Domain/Models.swift
+// Packages/Domain/Sources/Domain/Models.swift (Card-Centric)
 import Foundation
 
 public struct BoardID: Hashable, Codable { public let rawValue: UUID }
 public struct ColumnID: Hashable, Codable { public let rawValue: UUID }
 public struct CardID: Hashable, Codable { public let rawValue: UUID }
+public struct RecipeID: Hashable, Codable { public let rawValue: UUID }
+public struct PersonalListID: Hashable, Codable { public let rawValue: UUID }
 
 public struct Board: Codable, Equatable {
   public var id: BoardID
@@ -231,6 +240,31 @@ public struct Card: Codable, Equatable {
   public var tags: [String]
   public var checklist: [ChecklistItem]
   public var sortKey: Double
+
+  // Optional attachments (card-centric design)
+  public var recipeID: RecipeID?     // Optional recipe attached to this card
+  public var listID: PersonalListID? // Optional list attached to this card
+
+  public var createdAt: Date
+  public var updatedAt: Date
+}
+
+public struct Recipe: Codable, Equatable {
+  public var id: RecipeID
+  public var cardID: CardID          // Required - recipe must belong to a card
+  public var title: String
+  public var ingredients: [ChecklistItem]
+  public var methodMarkdown: String
+  public var tags: [String]
+  public var createdAt: Date
+  public var updatedAt: Date
+}
+
+public struct PersonalList: Codable, Equatable {
+  public var id: PersonalListID
+  public var cardID: CardID          // Required - list must belong to a card
+  public var title: String
+  public var items: [ChecklistItem]
   public var createdAt: Date
   public var updatedAt: Date
 }
@@ -239,6 +273,8 @@ public struct Card: Codable, Equatable {
 ⸻
 
 ## Repositories (interfaces → multiple impls)
+
+**Card-Centric Design**: Recipes and Lists repositories enforce card associations.
 
 ```swift
 // Packages/PersistenceInterfaces/.../BoardsRepository.swift
@@ -250,19 +286,36 @@ public protocol BoardsRepository {
   func saveColumns(_ cols: [Column]) async throws
   func saveCards(_ cards: [Card]) async throws
   func deleteBoard(_ id: BoardID) async throws
+
+  // Card-centric queries
+  func loadCardWithRecipe(_ cardID: CardID) async throws -> (Card, Recipe?)
+  func loadCardWithList(_ cardID: CardID) async throws -> (Card, PersonalList?)
+  func findCardsWithRecipes(boardID: BoardID?) async throws -> [Card]
+  func findCardsWithLists(boardID: BoardID?) async throws -> [Card]
 }
 
 public protocol ListsRepository {
-  // CRUD for PersonalList (title + [ChecklistItem])
+  // CRUD for PersonalList - always attached to a card
+  func create(_ list: PersonalList, cardID: CardID) async throws
+  func load(_ id: PersonalListID) async throws -> PersonalList?
+  func save(_ list: PersonalList) async throws
+  func delete(_ id: PersonalListID) async throws
+  func loadForCard(_ cardID: CardID) async throws -> PersonalList?
 }
 
 public protocol RecipesRepository {
-  // CRUD for Recipe (ingredients: [ChecklistItem], methodMarkdown, tags)
+  // CRUD for Recipe - always attached to a card
+  func create(_ recipe: Recipe, cardID: CardID) async throws
+  func load(_ id: RecipeID) async throws -> Recipe?
+  func save(_ recipe: Recipe) async throws
+  func delete(_ id: RecipeID) async throws
+  func loadForCard(_ cardID: CardID) async throws -> Recipe?
 }
 ```
 
 - GRDB implementation (Linux/macOS) is the default repo in CLIs and contract tests.
 - SwiftData implementation (Apple-only) lives in App/PersistenceSwiftData, mapping to/from Domain structs; opt-in for the app build.
+- Both implementations enforce that recipes/lists must have a valid cardID (foreign key constraint).
 
 ⸻
 
@@ -304,11 +357,15 @@ public enum Reorder {
 
 ⸻
 
-## iOS app (thin)
+## iOS app (thin, card-centric)
 
-- **SwiftUI screens**: Boards, BoardDetail (horizontal columns), CardDetail (checklist), Lists, Recipes.
+- **SwiftUI screens**:
+  - Single entry point: **BoardsListView** (list of boards)
+  - **BoardDetailView** (horizontal columns with cards)
+  - **CardDetailView** (card details + optional recipe section + optional list section)
+  - No standalone Lists or Recipes views - these are embedded in cards
 - **Adapters**: PersistenceSwiftData conforms to repository protocols; CloudKit behind SyncCloudKit.
-- **Intents**: Add card/list item via App Intents with fuzzy name lookup (pure Swift logic lives in UseCases).
+- **Intents**: Add card/list item/recipe via App Intents with fuzzy name lookup (requires board+card context; creates card if needed).
 
 ⸻
 
