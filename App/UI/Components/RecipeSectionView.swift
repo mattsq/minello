@@ -49,7 +49,7 @@ struct RecipeSectionView: View {
                                             .padding(.horizontal, 8)
                                             .padding(.vertical, 4)
                                             .background(Color.blue.opacity(0.2))
-                                            .cornerRadius(12)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
                                     }
                                 }
                             }
