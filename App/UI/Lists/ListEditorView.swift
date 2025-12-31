@@ -7,7 +7,7 @@ import Domain
 /// Editor view for creating or editing a personal list
 struct ListEditorView: View {
     enum Mode {
-        case create
+        case create(cardID: CardID)
         case edit(PersonalList)
 
         var title: String {
@@ -133,15 +133,16 @@ struct ListEditorView: View {
     private func saveList() {
         let list: PersonalList
         switch mode {
-        case .create:
-            list = PersonalList(cardID: CardID(), 
+        case .create(let cardID):
+            list = PersonalList(
+                cardID: cardID,
                 title: title.trimmingCharacters(in: .whitespaces),
                 items: items
             )
         case .edit(let existing):
             list = PersonalList(
                 id: existing.id,
-                cardID: CardID(),
+                cardID: existing.cardID,
                 title: title.trimmingCharacters(in: .whitespaces),
                 items: items,
                 createdAt: existing.createdAt,

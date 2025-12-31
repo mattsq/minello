@@ -15,18 +15,6 @@ struct ContentView: View {
                     Label("Search", systemImage: "magnifyingglass")
                 }
                 .accessibilityLabel("Search tab")
-
-            ListsView()
-                .tabItem {
-                    Label("Lists", systemImage: "checklist")
-                }
-                .accessibilityLabel("Lists tab")
-
-            RecipesListView()
-                .tabItem {
-                    Label("Recipes", systemImage: "book.closed")
-                }
-                .accessibilityLabel("Recipes tab")
         }
     }
 }
