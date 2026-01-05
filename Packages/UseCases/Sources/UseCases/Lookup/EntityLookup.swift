@@ -39,6 +39,21 @@ public struct ListLookupResult: Equatable, Sendable {
     }
 }
 
+/// Result of a card lookup operation
+public struct CardLookupResult: Equatable, Sendable {
+    public let card: Card
+    public let column: Column
+    public let board: Board
+    public let score: Double
+
+    public init(card: Card, column: Column, board: Board, score: Double) {
+        self.card = card
+        self.column = column
+        self.board = board
+        self.score = score
+    }
+}
+
 /// Service for looking up entities (boards, columns, lists) by name
 public enum EntityLookup {
 
@@ -182,5 +197,56 @@ public enum EntityLookup {
         threshold: Double = 0.5
     ) -> PersonalList? {
         findLists(query: query, in: lists, threshold: threshold).first?.list
+    }
+
+    // MARK: - Card Lookup
+
+    /// Find cards within a specific board using fuzzy matching
+    /// - Parameters:
+    ///   - query: The search query
+    ///   - board: The board to search within
+    ///   - columns: Available columns
+    ///   - cards: Available cards
+    ///   - threshold: Minimum similarity score (default: 0.5)
+    /// - Returns: Array of card lookup results for the specified board
+    public static func findCards(
+        query: String,
+        inBoard board: Board,
+        columns: [Column],
+        cards: [Card],
+        threshold: Double = 0.5
+    ) -> [CardLookupResult] {
+        let columnsDict = Dictionary(uniqueKeysWithValues: columns.map { ($0.id, $0) })
+        let boardColumnIDs = Set(columns.filter { $0.board == board.id }.map { $0.id })
+
+        return cards.compactMap { card in
+            // Only include cards that belong to columns in this board
+            guard boardColumnIDs.contains(card.column),
+                  let column = columnsDict[card.column] else {
+                return nil
+            }
+            let score = FuzzyMatcher.similarity(query: query, target: card.title)
+            return CardLookupResult(card: card, column: column, board: board, score: score)
+        }
+        .filter { $0.score >= threshold }
+        .sorted { $0.score > $1.score }
+    }
+
+    /// Find the best matching card within a specific board
+    /// - Parameters:
+    ///   - query: The search query
+    ///   - board: The board to search within
+    ///   - columns: Available columns
+    ///   - cards: Available cards
+    ///   - threshold: Minimum similarity score (default: 0.5)
+    /// - Returns: The best matching card result, or nil if no match above threshold
+    public static func findBestCard(
+        query: String,
+        inBoard board: Board,
+        columns: [Column],
+        cards: [Card],
+        threshold: Double = 0.5
+    ) -> CardLookupResult? {
+        findCards(query: query, inBoard: board, columns: columns, cards: cards, threshold: threshold).first
     }
 }

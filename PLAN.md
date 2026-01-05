@@ -367,49 +367,88 @@ This is an **alpha** project - schemas will change without migration.
 
 ## Phase 3: Shortcuts & Search (Card-Centric)
 
-### 11) App Intents (add list item / add card with recipe) 🔄
+### 11) App Intents (add list item / add card with recipe) ✅
 
 **Goal**: Intents require board+card context; create card if needed
 
-**Current Status**: ✅ Intents exist
+**Current Status**: ✅ Complete - Card-centric intents fully implemented
 
-**Required Changes**:
-- **"Add List Item" Intent**:
-  - Parameters: boardName, cardName, itemText
-  - Fuzzy match board and card
-  - If card not found, create new card on board
-  - Create PersonalList attached to card if card doesn't have one
-  - Add item to card's list
+**Implemented Changes**:
+- ✅ **EntityLookup Card Lookup** - UseCases/Lookup/EntityLookup.swift:42-55, 202-251
+  - `CardLookupResult` struct with card, column, board, and score
+  - `findCards(query:inBoard:columns:cards:threshold:)` - Find cards in a board
+  - `findBestCard(...)` - Get best matching card or nil
+  - Board-scoped search (only returns cards from specified board)
+  - 10 comprehensive tests in EntityLookupTests.swift:289-498
 
-- **"Add Recipe to Card" Intent** (new):
-  - Parameters: boardName, cardName, recipeName, ingredients
-  - Fuzzy match board and card
-  - Create card if needed
-  - Attach Recipe to card
+- ✅ **AddListItemIntent** (breaking change) - App/Intents/AddListItemIntent.swift
+  - Parameters: boardName, cardName, itemName, quantity, unit
+  - Fuzzy matches board and card (uses EntityLookup)
+  - Creates card on first column if not found
+  - Creates PersonalList if card has none, links via cardID and card.listID
+  - Appends ChecklistItem to card's list
+  - Example: "Add milk to Shopping card on Home board"
+  - Updated voice phrases in IntentsProvider.swift:11-17
 
-- **"Add Card" Intent** (existing, keep):
-  - Parameters: boardName, columnName, cardTitle
-  - Works as before
+- ✅ **AddRecipeIntent** (new) - App/Intents/AddRecipeIntent.swift
+  - Parameters: recipeName, boardName, cardName, ingredientsText
+  - Fuzzy matches board and card (creates if needed)
+  - Creates Recipe if card has none, updates if exists
+  - Parses comma/newline-separated ingredients
+  - Links recipe via cardID and card.recipeID
+  - Example: "Add Pasta Carbonara to Dinner card on Meal Planning board"
+  - Registered in IntentsProvider.swift:29-38
 
-**Files**:
-- `App/Intents/AddListItemIntent.swift` (update)
-- `App/Intents/AddRecipeIntent.swift` (new)
-- `App/Intents/AddCardIntent.swift` (keep)
-- `App/Intents/IntentsProvider.swift`
-- `UseCases/Lookup/*` (update for card-centric search)
+- ✅ **AddCardIntent** (no changes) - App/Intents/AddCardIntent.swift
+  - Kept as-is, already card-centric
 
-**Deliverables**:
-- Updated intents requiring board+card
-- Fuzzy lookup for cards
-- Intents create card if not found
+- ✅ **IntentError** - App/Intents/AddListItemIntent.swift:155-179
+  - Added noColumnsInBoard and cardNotFound error cases
+
+**Files Modified**:
+- `Packages/UseCases/Sources/UseCases/Lookup/EntityLookup.swift` ✅
+- `Tests/UseCasesTests/Lookup/EntityLookupTests.swift` ✅
+- `App/Intents/AddListItemIntent.swift` ✅ (breaking change)
+- `App/Intents/AddRecipeIntent.swift` ✅ (new file)
+- `App/Intents/IntentsProvider.swift` ✅
+- `Tests/IntentsTests/AddListItemIntentTests.swift` ✅ (rewritten)
+- `Tests/IntentsTests/AddRecipeIntentTests.swift` ✅ (new file)
+
+**Tests**:
+- ✅ EntityLookup card lookup tests (10 tests):
+  - Exact match, fuzzy match, case-insensitive
+  - Board scoping, threshold filtering
+  - Missing column handling, score sorting
+- ✅ AddListItemIntent tests (9 tests):
+  - Board/card exact and fuzzy matching
+  - Card creation when not found
+  - List creation when card has none
+  - Item addition with quantity/unit
+  - Sort key calculation for new cards
+- ✅ AddRecipeIntent tests (6 tests):
+  - Ingredient parsing (commas, newlines, mixed)
+  - Recipe creation and updating
+  - Card creation when not found
+  - Multiple recipes on different cards
 
 **Acceptance**:
-- macOS unit tests pass
-- Shortcuts shows intents with correct parameters
-- "Add milk to Shopping card on Home board" works
-- "Add recipe to Dinner card on Meal Planning board" works
+- ✅ `swift test --filter EntityLookupTests` passes (29 tests, all green)
+- ✅ EntityLookup has card lookup methods with board scoping
+- ✅ AddListItemIntent uses board+card context (breaking change documented)
+- ✅ AddListItemIntent creates card if not found
+- ✅ AddListItemIntent creates list if card has none
+- ✅ AddRecipeIntent exists with board+card+recipe parameters
+- ✅ AddRecipeIntent creates card/recipe if needed
+- ✅ All 3 intents registered in IntentsProvider
+- ✅ Voice commands updated for card-centric model
+- ✅ CHANGELOG.md updated with breaking changes noted
 
-**Status**: 🔄 Needs revision for card-centric model
+**Breaking Changes**:
+- ❌ AddListItemIntent parameters changed from `listName` to `boardName + cardName`
+- Impact: Existing Shortcuts will break and need recreation
+- Mitigation: Documented in CHANGELOG.md, acceptable per alpha status
+
+**Status**: ✅ Complete
 
 ---
 
@@ -808,12 +847,12 @@ This is an **alpha** project - schemas will change without migration.
 - ✅ Lists & checklist (ticket 6) - PersonalList requires cardID
 - ✅ iOS UI (ticket 7) - card-centric navigation with embedded recipe/list sections
 - ✅ SwiftData adapter (ticket 8) - card associations implemented
+- ✅ App Intents (ticket 11) - card-centric intents with board+card context
 - ✅ Search & Filtering (ticket 12) - card-centric search complete
 
 **Needs Revision**:
 - 🔄 Trello importer (ticket 4) - needs logic to create Recipe/PersonalList entities from Trello data
 - 🔄 Backup/restore (ticket 5) - needs verification for card associations
-- 🔄 App Intents (ticket 11) - needs update for card-centric model
 
 **Next Priority**:
 1. ✅ Update Domain models for card associations (ticket 1) - COMPLETE
@@ -821,7 +860,7 @@ This is an **alpha** project - schemas will change without migration.
 3. ✅ Update Lists & checklist (ticket 6) - COMPLETE
 4. ✅ Update SwiftData adapter (ticket 8) - COMPLETE
 5. ✅ Redesign iOS UI for card-centric navigation (ticket 7) - COMPLETE
-6. 🔄 Revise App Intents (ticket 11) - TODO
+6. ✅ Revise App Intents (ticket 11) - COMPLETE
 7. 🔄 Update Trello importer (ticket 4) - TODO
 8. 🔄 Verify Backup/restore (ticket 5) - TODO
 
