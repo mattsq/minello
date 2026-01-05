@@ -67,7 +67,6 @@ struct AddListItemIntent: AppIntent {
 
         // 3. Find the card (or create it if not found)
         var targetCard: Card
-        var targetColumn: Column
 
         if let cardResult = EntityLookup.findBestCard(
             query: cardName,
@@ -78,13 +77,11 @@ struct AddListItemIntent: AppIntent {
         ) {
             // Card found
             targetCard = cardResult.card
-            targetColumn = cardResult.column
         } else {
             // Card not found - create it on the first column
             guard let firstColumn = allColumns.first else {
                 throw IntentError.noColumnsInBoard(board.title)
             }
-            targetColumn = firstColumn
 
             // Calculate sort key for new card (append to end of column)
             let cardsInColumn = allCards.filter { $0.column == firstColumn.id }
