@@ -56,8 +56,14 @@ struct AddListItemIntent: AppIntent {
         }
 
         // 2. Load columns and cards for this board
-        let allColumns = try await boardsRepo.loadColumns(forBoard: board.id)
-        let allCards = try await boardsRepo.loadCards(forBoard: board.id)
+        let allColumns = try await boardsRepo.loadColumns(for: board.id)
+
+        // Load all cards across all columns
+        var allCards: [Card] = []
+        for column in allColumns {
+            let columnCards = try await boardsRepo.loadCards(for: column.id)
+            allCards.append(contentsOf: columnCards)
+        }
 
         // 3. Find the card (or create it if not found)
         var targetCard: Card
