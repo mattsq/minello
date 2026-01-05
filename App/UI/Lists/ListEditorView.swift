@@ -318,7 +318,7 @@ private struct AddItemSheet: View {
 // MARK: - Previews
 
 #Preview("Create List") {
-    ListEditorView(mode: .create) { list in
+    ListEditorView(mode: .create(cardID: CardID())) { list in
         print("Created list: \(list.title)")
     }
 }

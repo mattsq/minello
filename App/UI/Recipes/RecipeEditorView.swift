@@ -414,7 +414,7 @@ private struct FlowLayout: Layout {
 // MARK: - Previews
 
 #Preview("Create Recipe") {
-    RecipeEditorView(mode: .create) { recipe in
+    RecipeEditorView(mode: .create(cardID: CardID())) { recipe in
         print("Created recipe: \(recipe.title)")
     }
 }
