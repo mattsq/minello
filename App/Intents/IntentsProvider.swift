@@ -10,11 +10,10 @@ struct HomeCookedShortcuts: AppShortcutsProvider {
         AppShortcut(
             intent: AddListItemIntent(),
             phrases: [
-                "Add \(.applicationName) item to list",
-                "Add item to \(.applicationName) list",
-                "Add to my list in \(.applicationName)"
+                "Add item to card in \(.applicationName)",
+                "Add to card list in \(.applicationName)"
             ],
-            shortTitle: "Add to List",
+            shortTitle: "Add to Card List",
             systemImageName: "checklist"
         )
         AppShortcut(
@@ -26,6 +25,16 @@ struct HomeCookedShortcuts: AppShortcutsProvider {
             ],
             shortTitle: "Add Card",
             systemImageName: "rectangle.on.rectangle"
+        )
+        AppShortcut(
+            intent: AddRecipeIntent(),
+            phrases: [
+                "Add recipe to \(.applicationName) card",
+                "Create recipe in \(.applicationName)",
+                "Add \(.applicationName) recipe to card"
+            ],
+            shortTitle: "Add Recipe",
+            systemImageName: "book.closed"
         )
     }
 }

@@ -9,6 +9,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Card-centric App Intents (Ticket 11):
+  - **EntityLookup card lookup** (`CardLookupResult`, `findCards`, `findBestCard`):
+    - Find cards within a specific board using fuzzy matching
+    - Returns full context (card, column, board) with similarity score
+    - Board-scoped search to prevent cross-board matches
+    - Follows same fuzzy matching algorithm as board/column/list lookup
+    - Comprehensive tests (10 new tests in EntityLookupTests)
+  - **AddRecipeIntent** (new):
+    - Add or update recipes on cards via Shortcuts
+    - Parameters: recipeName, boardName, cardName, ingredientsText
+    - Creates card if not found (on first column of board)
+    - Creates recipe if card has none, updates if card already has recipe
+    - Parses comma/newline-separated ingredients into ChecklistItems
+    - Voice commands: "Add recipe to card in HomeCooked"
+    - Registered in IntentsProvider with "book.closed" SF Symbol
+  - **AddListItemIntent** (breaking change):
+    - Now requires board+card context instead of global list lookup
+    - New parameters: boardName, cardName (replaces listName parameter)
+    - Creates card if not found (on first column)
+    - Creates PersonalList if card has none
+    - Links list to card via cardID and card.listID
+    - Voice commands updated: "Add item to card in HomeCooked"
+  - All intents registered in HomeCookedShortcuts with updated phrases
+  - Comprehensive tests for both intents (AddListItemIntentTests, AddRecipeIntentTests)
+
+### Changed
+
+- **BREAKING**: AddListItemIntent parameter change from `listName` to `boardName + cardName`
+  - Existing Shortcuts using AddListItemIntent will need to be recreated
+  - This aligns with card-centric architecture where lists belong to cards
+  - Alpha status: Breaking changes are acceptable
+
 - Card-centric search and filtering (Ticket 12):
   - SearchRepository protocol for card search operations:
     - `searchCardsByText(_:)` - Search by title or details with case-insensitive matching

@@ -285,4 +285,215 @@ final class EntityLookupTests: XCTestCase {
         // Exact match should be first
         XCTAssertEqual(results[0].board.title, "Home")
     }
+
+    // MARK: - Card Lookup
+
+    func testFindCardsExactMatch() {
+        let board = Board(title: "Home")
+        let column = Column(board: board.id, title: "To Do", index: 0)
+        let cards = [
+            Card(column: column.id, title: "Buy milk"),
+            Card(column: column.id, title: "Fix bug"),
+            Card(column: column.id, title: "Review PR")
+        ]
+
+        let results = EntityLookup.findCards(
+            query: "Buy milk",
+            inBoard: board,
+            columns: [column],
+            cards: cards
+        )
+
+        XCTAssertEqual(results.count, 1)
+        XCTAssertEqual(results[0].card.title, "Buy milk")
+        XCTAssertEqual(results[0].column.title, "To Do")
+        XCTAssertEqual(results[0].board.title, "Home")
+        XCTAssertEqual(results[0].score, 1.0, accuracy: 0.01)
+    }
+
+    func testFindCardsFuzzyMatch() {
+        let board = Board(title: "Home")
+        let column = Column(board: board.id, title: "To Do", index: 0)
+        let cards = [
+            Card(column: column.id, title: "Shopping"),
+            Card(column: column.id, title: "Shop for groceries"),
+            Card(column: column.id, title: "Fix bug")
+        ]
+
+        let results = EntityLookup.findCards(
+            query: "Shop",
+            inBoard: board,
+            columns: [column],
+            cards: cards
+        )
+
+        XCTAssertGreaterThanOrEqual(results.count, 1)
+        // Exact match "Shopping" should score higher than "Shop for groceries"
+        XCTAssertEqual(results[0].card.title, "Shopping")
+    }
+
+    func testFindCardsNoMatch() {
+        let board = Board(title: "Home")
+        let column = Column(board: board.id, title: "To Do", index: 0)
+        let cards = [
+            Card(column: column.id, title: "Buy milk"),
+            Card(column: column.id, title: "Fix bug")
+        ]
+
+        let results = EntityLookup.findCards(
+            query: "xyz",
+            inBoard: board,
+            columns: [column],
+            cards: cards
+        )
+
+        XCTAssertTrue(results.isEmpty)
+    }
+
+    func testFindBestCard() {
+        let board = Board(title: "Home")
+        let column = Column(board: board.id, title: "To Do", index: 0)
+        let cards = [
+            Card(column: column.id, title: "Shopping"),
+            Card(column: column.id, title: "Fix bug")
+        ]
+
+        let best = EntityLookup.findBestCard(
+            query: "Shopping",
+            inBoard: board,
+            columns: [column],
+            cards: cards
+        )
+
+        XCTAssertNotNil(best)
+        XCTAssertEqual(best?.card.title, "Shopping")
+        XCTAssertEqual(best?.column.title, "To Do")
+        XCTAssertEqual(best?.board.title, "Home")
+    }
+
+    func testFindBestCardNoMatch() {
+        let board = Board(title: "Home")
+        let column = Column(board: board.id, title: "To Do", index: 0)
+        let cards = [
+            Card(column: column.id, title: "Buy milk")
+        ]
+
+        let best = EntityLookup.findBestCard(
+            query: "xyz",
+            inBoard: board,
+            columns: [column],
+            cards: cards
+        )
+
+        XCTAssertNil(best)
+    }
+
+    func testFindCardsOnlyInSpecifiedBoard() {
+        let homeBoard = Board(title: "Home")
+        let workBoard = Board(title: "Work")
+
+        let homeColumn = Column(board: homeBoard.id, title: "To Do", index: 0)
+        let workColumn = Column(board: workBoard.id, title: "To Do", index: 0)
+
+        let cards = [
+            Card(column: homeColumn.id, title: "Shopping"),
+            Card(column: workColumn.id, title: "Shopping List"),
+            Card(column: homeColumn.id, title: "Buy milk")
+        ]
+
+        let results = EntityLookup.findCards(
+            query: "Shopping",
+            inBoard: homeBoard,
+            columns: [homeColumn, workColumn],
+            cards: cards
+        )
+
+        // Should only find the card from Home board
+        XCTAssertEqual(results.count, 1)
+        XCTAssertEqual(results[0].card.title, "Shopping")
+        XCTAssertEqual(results[0].board.id, homeBoard.id)
+    }
+
+    func testFindCardsCaseInsensitive() {
+        let board = Board(title: "Home")
+        let column = Column(board: board.id, title: "To Do", index: 0)
+        let cards = [
+            Card(column: column.id, title: "Shopping")
+        ]
+
+        let results = EntityLookup.findCards(
+            query: "shopping",
+            inBoard: board,
+            columns: [column],
+            cards: cards
+        )
+
+        XCTAssertEqual(results.count, 1)
+        XCTAssertEqual(results[0].card.title, "Shopping")
+    }
+
+    func testFindCardsWithCustomThreshold() {
+        let board = Board(title: "Home")
+        let column = Column(board: board.id, title: "To Do", index: 0)
+        let cards = [
+            Card(column: column.id, title: "Shopping"),
+            Card(column: column.id, title: "Fix bug")
+        ]
+
+        // High threshold - only very close matches
+        let results = EntityLookup.findCards(
+            query: "Shop",
+            inBoard: board,
+            columns: [column],
+            cards: cards,
+            threshold: 0.85
+        )
+
+        XCTAssertGreaterThanOrEqual(results.count, 1)
+        XCTAssertEqual(results[0].card.title, "Shopping")
+    }
+
+    func testFindCardsWithMissingColumn() {
+        let board = Board(title: "Home")
+        let column = Column(board: board.id, title: "To Do", index: 0)
+        let orphanColumn = Column(board: board.id, title: "Done", index: 1)
+        let cards = [
+            Card(column: orphanColumn.id, title: "Shopping") // Column not in provided list
+        ]
+
+        let results = EntityLookup.findCards(
+            query: "Shopping",
+            inBoard: board,
+            columns: [column], // orphanColumn not included
+            cards: cards
+        )
+
+        XCTAssertTrue(results.isEmpty)
+    }
+
+    func testFindCardsSortedByScore() {
+        let board = Board(title: "Home")
+        let column = Column(board: board.id, title: "To Do", index: 0)
+        let cards = [
+            Card(column: column.id, title: "Shopping List"),
+            Card(column: column.id, title: "Shopping"),
+            Card(column: column.id, title: "Shop for groceries")
+        ]
+
+        let results = EntityLookup.findCards(
+            query: "Shopping",
+            inBoard: board,
+            columns: [column],
+            cards: cards,
+            threshold: 0.3
+        )
+
+        // Results should be sorted by score (descending)
+        for i in 0..<(results.count - 1) {
+            XCTAssertGreaterThanOrEqual(results[i].score, results[i + 1].score)
+        }
+
+        // Exact match should be first
+        XCTAssertEqual(results[0].card.title, "Shopping")
+    }
 }
