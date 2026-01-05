@@ -7,7 +7,7 @@ import Domain
 /// Editor view for creating or editing a recipe
 struct RecipeEditorView: View {
     enum Mode {
-        case create
+        case create(cardID: CardID)
         case edit(Recipe)
 
         var title: String {
@@ -176,8 +176,9 @@ struct RecipeEditorView: View {
     private func saveRecipe() {
         let recipe: Recipe
         switch mode {
-        case .create:
-            recipe = Recipe(cardID: CardID(), 
+        case .create(let cardID):
+            recipe = Recipe(
+                cardID: cardID,
                 title: title.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredients,
                 methodMarkdown: methodMarkdown,
@@ -186,7 +187,7 @@ struct RecipeEditorView: View {
         case .edit(let existing):
             recipe = Recipe(
                 id: existing.id,
-                cardID: CardID(),
+                cardID: existing.cardID,
                 title: title.trimmingCharacters(in: .whitespaces),
                 ingredients: ingredients,
                 methodMarkdown: methodMarkdown,
@@ -413,7 +414,7 @@ private struct FlowLayout: Layout {
 // MARK: - Previews
 
 #Preview("Create Recipe") {
-    RecipeEditorView(mode: .create) { recipe in
+    RecipeEditorView(mode: .create(cardID: CardID())) { recipe in
         print("Created recipe: \(recipe.title)")
     }
 }
