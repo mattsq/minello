@@ -88,13 +88,13 @@ pnpm lint
 See [CLAUDE.md](./CLAUDE.md) for detailed task breakdown (T0-T10).
 
 ### Completed
-- ✅ T0: Project scaffold (this setup)
+- ✅ T0: Project scaffold
+- ✅ T1: Supabase client + session plumbing
 
 ### In Progress
-- 🔄 T1: Supabase client + session plumbing
+- 🔄 T2: Database migrations + RLS
 
 ### TODO
-- ⏳ T2: Database migrations + RLS
 - ⏳ T3: Workspace bootstrap
 - ⏳ T4: Boards page
 - ⏳ T5: Board view (lists + cards)
@@ -112,6 +112,8 @@ Required environment variables (see `.env.example`):
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
+
+**Important**: You must replace the placeholder values in `.env.local` with real Supabase credentials from your project to run the app and tests. Get these from your [Supabase project settings](https://supabase.com/dashboard/project/_/settings/api).
 
 ## License
 
