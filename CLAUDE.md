@@ -1,563 +1,409 @@
-# Project
+# FamilyBoard Task Pack (PWA + Supabase)
 
-"HomeCooked" — a small, local-first task/collab app to replace Trello at home.
+## Goal
 
-**⚠️ Alpha Status**: This project is in active redesign. Database schemas may change without migration.
+Build a small Trello-like board app for family use on phones:
+- installable as a PWA
+- secure hosted managed backend via Supabase (Auth + Postgres + RLS)
+- minimal feature set that's hard to regress because Playwright e2e locks golden flows
 
-**🚨 CRITICAL: NO DATABASE MIGRATIONS 🚨**
-**DO NOT CREATE, MODIFY, OR SUGGEST DATABASE MIGRATIONS UNDER ANY CIRCUMSTANCES.**
-The app is in alpha and the schema is still evolving. Creating migrations now will cause data loss and migration conflicts. Users can recreate their databases during alpha.
-
-**IF YOU ARE ASKED TO ADD A FIELD OR CHANGE THE SCHEMA:**
-1. Update the Domain models ONLY
-2. Update the Records in PersistenceGRDB ONLY
-3. Update the SwiftData models ONLY
-4. DO NOT touch Migrations.swift
-5. DO NOT create new migration files
-6. DO NOT add migration logic anywhere
-
-**Card-Centric Architecture**: Core hierarchy is Board → Column → Card. Recipes and PersonalLists are optional attributes that can be attached to cards (not standalone entities). A card can have 0, 1, or both a recipe and a list attached.
-
-Principle: 80–90% of the code builds/tests on Linux via SwiftPM; the iOS app is a thin shell (SwiftUI) with Apple-only adapters (SwiftData/CloudKit).
+Non-goals for V1: attachments, complex permissions, push notifications, multi-workspace UX polish, full realtime.
 
 ⸻
 
-## Architecture (package-first, Linux-first)
+## Tech decisions (fixed)
+- Frontend: Next.js (App Router) + TypeScript
+- UI: minimal CSS (Tailwind optional, but keep it simple)
+- DnD: @dnd-kit/*
+- Backend: Supabase hosted (Auth + Postgres) with Row Level Security
+- Tests: Playwright e2e
+- Deploy: Vercel (or similar)
+
+⸻
+
+## Repo layout
 
 ```
-HomeCooked/
-  Package.swift               # SwiftPM manifest
-  project.yml                 # XcodeGen config (generates .xcodeproj)
-  Makefile                    # Golden commands
-  Packages/                   # Linux-compatible packages
-    Domain/                   # Pure value types, IDs, validators (Linux)
-      Sources/Domain/
-        Models.swift          # Board, Column, Card, ChecklistItem, etc.
-        Helpers.swift         # TagHelpers, ChecklistHelpers, IDFactory
-    UseCases/                 # Business logic (Linux)
-      Sources/UseCases/
-        Reorder/              # CardReorderService with normalization
-        Checklist/            # ChecklistOperations for lists
-        Lookup/               # FuzzyMatcher and EntityLookup
-    PersistenceInterfaces/    # Repository protocols (Linux)
-      Sources/PersistenceInterfaces/
-        BoardsRepository.swift
-        ListsRepository.swift
-        RecipesRepository.swift
-        PersistenceError.swift
-    PersistenceGRDB/          # SQLite/GRDB impl (Linux + Apple)
-      Sources/PersistenceGRDB/
-        GRDBBoardsRepository.swift
-        GRDBListsRepository.swift
-        GRDBRecipesRepository.swift
-        Migrations.swift
-        Records.swift
-    ImportExport/             # Trello import, backup/restore (Linux)
-      Sources/ImportExport/
-        Trello/               # TrelloModels, TrelloMapper, TrelloImporter
-        Backup/               # BackupExporter, BackupRestorer
-    SyncInterfaces/           # Sync protocol (Linux)
-      Sources/SyncInterfaces/
-        SyncClient.swift
-        SyncConflict.swift
-    SyncNoop/                 # No-op sync (Linux)
-    SyncCloudKit/             # CloudKit sync (Apple only)
-  CLIs/                       # Command-line tools (Linux)
-    hc-import/main.swift      # Import Trello boards
-    hc-backup/main.swift      # Backup/restore data
-    hc-migrate/main.swift     # Database migrations
-  App/                        # iOS app (Apple only)
-    HomeCookedApp.swift       # App entry point
-    UI/
-      Boards/BoardsListView.swift
-      BoardDetail/BoardDetailView.swift, ColumnView.swift
-      CardDetail/CardDetailView.swift
-      Settings/SyncStatusView.swift
-      Components/DragDropHandler.swift
-    DI/                       # Dependency injection
-      AppDependencyContainer.swift
-      RepositoryProvider.swift
-    PersistenceSwiftData/     # SwiftData adapter (Apple)
-      Sources/PersistenceSwiftData/
-        SwiftDataBoardsRepository.swift
-        SwiftDataListsRepository.swift
-        SwiftDataModels.swift
-    Intents/                  # App Intents for Shortcuts
-      AddCardIntent.swift
-      AddListItemIntent.swift
-      IntentsProvider.swift
-  Tests/                      # Test suites
-    DomainTests/
-    UseCasesTests/
-    PersistenceGRDBTests/     # Contract tests (Linux)
-    PersistenceSwiftDataTests/# Contract tests (macOS)
-    ImportExportTests/
-    IntentsTests/
-    SyncCloudKitTests/
-    UITests/
-    Fixtures/                 # Test data
-      trello_minimal.json
-      trello_full.json
-  scripts/
-    preflight.sh              # Verification + auto-fix
-  .github/workflows/
-    ci.yml                    # Linux + macOS CI
-  .xcode-version              # Pin Xcode (16.1)
-  .swift-version              # Pin Swift (6.0)
-  README.md
-  PLAN.md                     # Implementation tickets
-  CHANGELOG.md
-  DEVELOPMENT.md
-```
-
-**Key Design Decisions**:
-
-1. **Linux-First**: Domain, UseCases, Import/Export, GRDB, and CLIs build on Linux
-2. **Repository Pattern**: All data access through protocol interfaces
-3. **Multiple Backends**: GRDB (Linux/macOS) and SwiftData (macOS) both implement same contracts
-4. **Contract Tests**: Same test suite verifies all repository implementations
-5. **Dependency Injection**: App uses RepositoryProvider to swap implementations
-6. **XcodeGen**: Xcode project generated from project.yml, not committed to repo
-7. **Actor-Based Services**: Thread-safe services using Swift actors (CardReorderService, ChecklistOperations, etc.)
-
-⸻
-
-## Ground rules
-
-- **🚨 NO DATABASE MIGRATIONS**: Absolutely forbidden during alpha. DO NOT create, modify, or suggest migrations. Schema changes = update models only, never touch Migrations.swift.
-- **Privacy**: no secrets, provisioning profiles, or personal data in repo or logs.
-- **Deps**: no new third-party deps without an explicit ticket.
-- **Warnings as errors**. Keep public APIs documented.
-- **Commits/PRs**: Conventional Commits (feat:, fix:, refactor:, test:). Include screenshots for UI.
-- **Tests**: Unit + contract tests on Linux; UI/snapshot only on macOS.
-- **Accessibility**: all interactive UI has VoiceOver labels; drag/drop exposes position updates.
-
-⸻
-
-## Environment & toolchain
-
-- **Swift**: 6.0 (see `.swift-version`)
-- **Xcode**: 16.1 (macOS only, see `.xcode-version`)
-- **XcodeGen**: Used to generate Xcode project from `project.yml`
-- **GRDB**: 6.29.0+ (SQLite with custom build flags on Linux CI)
-- SwiftPM builds work on Linux and macOS
-- Make targets (golden commands):
-  - `make preflight` → scripts/preflight.sh (auto-fix skeleton, verify toolchains)
-  - `make test-linux` → swift build/test all Linux targets
-  - `make test-macos` → xcodebuild build/test app + UI tests
-  - `make import-sample` → run hc-import on fixtures
-  - `make backup-sample` → run hc-backup to tmp
-
-Preflight script (runs on Linux and macOS):
-- Verifies Swift toolchain, SwiftPM build, presence of Package targets.
-- If App/ is missing boot files, autogenerates:
-  - HomeCookedApp.swift, ContentView.swift, Assets.xcassets, Bundle ID placeholder.
-- Validates Xcode version (macOS), xcodebuild -list on workspace.
-- Prints a single-line failure summary and exits non-zero if checks fail.
-- If the same CI/job fails on the same step 3×, the loop-breaker instructs to run `make preflight --autofix`.
-
-Skeleton creation snippet (excerpt):
-
-```bash
-# scripts/preflight.sh (excerpt)
-if [ ! -f "App/HomeCookedApp.swift" ]; then
-  mkdir -p App/UI
-  cat > App/HomeCookedApp.swift <<'SWIFT'
-import SwiftUI
-@main struct HomeCookedApp: App {
-  var body: some Scene { WindowGroup { ContentView() } }
-}
-SWIFT
-  cat > App/UI/ContentView.swift <<'SWIFT'
-import SwiftUI
-struct ContentView: View { var body: some View { Text("HomeCooked") } }
-#Preview { ContentView() }
-SWIFT
-fi
+/
+  app/                    # Next.js App Router
+    (auth)/
+      login/
+    app/
+      boards/
+      board/[boardId]/
+  components/
+    Board/
+    Lists/
+    Cards/
+    Invite/
+  lib/
+    supabase/
+    db/
+    positions.ts
+  supabase/
+    migrations/
+    seed.sql
+    rls.sql
+  tests/
+    e2e/
+      auth.spec.ts
+      board.spec.ts
+  package.json
+  playwright.config.ts
+  next.config.js
+  public/
+    manifest.webmanifest
+    icons/
+  TASKPACK.md (this doc)
 ```
 
 ⸻
 
-## CI (fail-fast, artifacts)
+## Data model (fixed)
 
-- **Linux job** (swift container):
-  1. `make preflight`
-  2. `swift build && swift test --parallel`
-  3. Upload artifacts: test logs, any generated JSON fixtures.
-- **macOS job**:
-  1. `make preflight`
-  2. `xcodebuild -scheme HomeCooked -destination 'platform=iOS Simulator,name=iPhone 15' build`
-  3. `xcodebuild ... test` (unit + UI/snapshot)
-  4. Upload artifacts: XCTest logs, failure screenshots.
+Use sortable position for lists/cards (numeric, allow fractional inserts).
 
-No continue-on-error. First failure wins, with a concise summary at tail of logs.
+### Tables
+- `workspaces(id uuid pk, name text, created_by uuid, created_at timestamptz)`
+- `workspace_members(workspace_id uuid fk, user_id uuid fk, role text, created_at timestamptz, pk(workspace_id,user_id))`
+- `boards(id uuid pk, workspace_id uuid fk, name text, created_by uuid, created_at timestamptz)`
+- `lists(id uuid pk, board_id uuid fk, name text, position numeric, created_by uuid, created_at timestamptz)`
+- `cards(id uuid pk, list_id uuid fk, title text, description text, due_at timestamptz null, assignee_id uuid null, position numeric, created_by uuid, updated_at timestamptz, created_at timestamptz)`
 
-⸻
-
-## Test strategy
-
-- **Contract tests** against repository protocols (run on Linux & macOS). Same suite runs against:
-  - PersistenceGRDB (Linux/macOS)
-  - PersistenceSwiftData (macOS)
-- **🚨 Migration fixtures/tests: FORBIDDEN during alpha.** (Future: keep a frozen V0 store in Tests/Fixtures/Persistence/V0/.)
-- **Property tests** for reorder/normalization (edge cases, concurrency).
-- **UI snapshot tests** (macOS only) for primary screens; record mode behind RECORD_SNAPSHOTS=1.
+Optional V1.1
+- `events(id uuid pk, workspace_id, actor_id, type, payload jsonb, created_at)`
 
 ⸻
 
-## Domain model (Linux-friendly, pure value types)
+## Security model (fixed)
+- Login via Supabase Auth magic link (email).
+- Every data row is gated by workspace membership via RLS.
+- Roles exist but V1 treats all members as editors.
 
-**Card-Centric Design**: Recipes and PersonalLists are optional attributes attached to cards.
+⸻
 
-```swift
-// Packages/Domain/Sources/Domain/Models.swift (Card-Centric)
-import Foundation
+## Environment variables
 
-public struct BoardID: Hashable, Codable { public let rawValue: UUID }
-public struct ColumnID: Hashable, Codable { public let rawValue: UUID }
-public struct CardID: Hashable, Codable { public let rawValue: UUID }
-public struct RecipeID: Hashable, Codable { public let rawValue: UUID }
-public struct PersonalListID: Hashable, Codable { public let rawValue: UUID }
+Create `.env.local`:
 
-public struct Board: Codable, Equatable {
-  public var id: BoardID
-  public var title: String
-  public var columns: [ColumnID]
-  public var createdAt: Date
-  public var updatedAt: Date
-}
-
-public struct Column: Codable, Equatable {
-  public var id: ColumnID
-  public var board: BoardID
-  public var title: String
-  public var index: Int
-  public var cards: [CardID]
-}
-
-public struct ChecklistItem: Codable, Equatable {
-  public var id: UUID
-  public var text: String
-  public var isDone: Bool
-  public var quantity: Double?
-  public var unit: String?
-  public var note: String?
-}
-
-public struct Card: Codable, Equatable {
-  public var id: CardID
-  public var column: ColumnID
-  public var title: String
-  public var details: String
-  public var due: Date?
-  public var tags: [String]
-  public var checklist: [ChecklistItem]
-  public var sortKey: Double
-
-  // Optional attachments (card-centric design)
-  public var recipeID: RecipeID?     // Optional recipe attached to this card
-  public var listID: PersonalListID? // Optional list attached to this card
-
-  public var createdAt: Date
-  public var updatedAt: Date
-}
-
-public struct Recipe: Codable, Equatable {
-  public var id: RecipeID
-  public var cardID: CardID          // Required - recipe must belong to a card
-  public var title: String
-  public var ingredients: [ChecklistItem]
-  public var methodMarkdown: String
-  public var tags: [String]
-  public var createdAt: Date
-  public var updatedAt: Date
-}
-
-public struct PersonalList: Codable, Equatable {
-  public var id: PersonalListID
-  public var cardID: CardID          // Required - list must belong to a card
-  public var title: String
-  public var items: [ChecklistItem]
-  public var createdAt: Date
-  public var updatedAt: Date
-}
+```
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...   # only if you add server-side admin tasks; avoid if possible
 ```
 
-⸻
+For tests (CI), either:
+- use a dedicated Supabase project + test user credentials
+- or run Supabase locally (optional; only if you want fully hermetic tests)
 
-## Repositories (interfaces → multiple impls)
-
-**Card-Centric Design**: Recipes and Lists repositories enforce card associations.
-
-```swift
-// Packages/PersistenceInterfaces/.../BoardsRepository.swift
-import Domain
-
-public protocol BoardsRepository {
-  func createBoard(_ b: Board) async throws
-  func loadBoards() async throws -> [Board]
-  func saveColumns(_ cols: [Column]) async throws
-  func saveCards(_ cards: [Card]) async throws
-  func deleteBoard(_ id: BoardID) async throws
-
-  // Card-centric queries
-  func loadCardWithRecipe(_ cardID: CardID) async throws -> (Card, Recipe?)
-  func loadCardWithList(_ cardID: CardID) async throws -> (Card, PersonalList?)
-  func findCardsWithRecipes(boardID: BoardID?) async throws -> [Card]
-  func findCardsWithLists(boardID: BoardID?) async throws -> [Card]
-}
-
-public protocol ListsRepository {
-  // CRUD for PersonalList - always attached to a card
-  func create(_ list: PersonalList, cardID: CardID) async throws
-  func load(_ id: PersonalListID) async throws -> PersonalList?
-  func save(_ list: PersonalList) async throws
-  func delete(_ id: PersonalListID) async throws
-  func loadForCard(_ cardID: CardID) async throws -> PersonalList?
-}
-
-public protocol RecipesRepository {
-  // CRUD for Recipe - always attached to a card
-  func create(_ recipe: Recipe, cardID: CardID) async throws
-  func load(_ id: RecipeID) async throws -> Recipe?
-  func save(_ recipe: Recipe) async throws
-  func delete(_ id: RecipeID) async throws
-  func loadForCard(_ cardID: CardID) async throws -> Recipe?
-}
-```
-
-- GRDB implementation (Linux/macOS) is the default repo in CLIs and contract tests.
-- SwiftData implementation (Apple-only) lives in App/PersistenceSwiftData, mapping to/from Domain structs; opt-in for the app build.
-- Both implementations enforce that recipes/lists must have a valid cardID (foreign key constraint).
+Keep V1 simple: hosted Supabase project + test account(s).
 
 ⸻
 
-## Reorder & normalization (UseCases)
-
-```swift
-public enum Reorder {
-  public static func midpoint(after a: Double?, before b: Double?) -> Double {
-    switch (a, b) {
-    case let (.some(x), .some(y)): return (x + y) / 2
-    case let (.some(x), .none):    return x + 1
-    case let (.none, .some(y)):    return y - 1
-    default:                       return 0
-    }
-  }
-  public static func normalize(_ keys: inout [Double]) {
-    for i in keys.indices { keys[i] = Double(i) }
-  }
-}
-```
-
-- Background normalization: debounce on idle; never block UI.
+## Commands
+- Dev: `pnpm dev`
+- Lint: `pnpm lint`
+- E2E: `pnpm test:e2e`
 
 ⸻
 
-## Import/Export
+## UX scope (V1)
 
-- **Trello importer** maps: lists → Columns, cards → Cards, checklists → ChecklistItem, labels → tags, markdown desc → Card.details.
-- **Backup/restore JSON**: { version, exportedAt, boards, lists, recipes } with merge/overwrite modes.
-- **CLIs** provide end-to-end Linux workflows: hc-import, hc-backup, hc-migrate.
+### Pages
+- `/login` — email input → sends magic link
+- `/app/boards` — list boards, create board
+- `/app/board/[boardId]` — Trello-ish view: lists horizontally, cards vertically
 
-⸻
+### Core actions
+- Create list
+- Create card
+- Edit card (title, description, due date, assignee)
+- Drag card within a list to reorder
+- Drag card between lists
+- Invite member by email (adds membership when they sign up / confirm)
 
-## Sync (optional, Apple-only)
-
-- SyncInterfaces defines a minimal protocol.
-- SyncNoop satisfies Linux builds.
-- SyncCloudKit (Apple) implements private DB + sharing (Board-scoped).
-
-⸻
-
-## iOS app (thin, card-centric)
-
-- **SwiftUI screens**:
-  - Single entry point: **BoardsListView** (list of boards)
-  - **BoardDetailView** (horizontal columns with cards)
-  - **CardDetailView** (card details + optional recipe section + optional list section)
-  - No standalone Lists or Recipes views - these are embedded in cards
-- **Adapters**: PersistenceSwiftData conforms to repository protocols; CloudKit behind SyncCloudKit.
-- **Intents**: Add card/list item/recipe via App Intents with fuzzy name lookup (requires board+card context; creates card if needed).
+### Nice-to-have (only if cheap)
+- Search within current board
+- "Updated just now" toast, optimistic UI
 
 ⸻
 
-## Agent runbook add-ons
+## Golden acceptance tests (Playwright)
 
-- **Root-cause vs Symptom checklist** (prepend to every PR):
-  1. Does `make preflight` pass (or did it auto-fix)?
-  2. Failure type? (compile/link/test/lint) Attach the first failing log block.
-  3. Repo invariants checked? (Package targets present, workspace sync for macOS)
-- **Loop-breaker**: If the same failure repeats 3×, run `make preflight --autofix` then rebase.
-- **Golden commands**: Every ticket shows the exact commands to run locally/CI to verify.
+These tests define "done." Agents must not merge code that breaks them.
 
-⸻
+1. **Auth**
+   - can visit /login, request magic link (stub or real test inbox)
+   - once authenticated, redirected to /app/boards
 
-## Current Implementation Status
+2. **Board basics**
+   - create board
+   - create list
+   - create card
+   - edit card title + description
 
-The HomeCooked project has completed all planned tickets. See [PLAN.md](./PLAN.md) for detailed ticket information and implementation history.
+3. **DnD**
+   - drag card from list A to list B
+   - card appears in list B and persists after refresh
 
-**Completed Features**:
-- ✅ Domain models with type-safe IDs and helpers
-- ✅ Repository pattern with GRDB and SwiftData implementations
-- ✅ Contract tests ensuring implementation consistency
-- ✅ Card reordering with midpoint algorithm and normalization
-- ✅ Trello importer with deduplication
-- ✅ Backup/restore with merge and overwrite modes
-- ✅ Personal lists with checklist operations
-- ✅ iOS UI with boards, columns, cards, and detail views
-- ✅ Drag & drop with haptics and accessibility
-- ✅ CloudKit private sync with LWW conflict resolution
-- ✅ CloudKit sharing per board
-- ✅ App Intents for Shortcuts integration (fuzzy name lookup)
-- ✅ CI/CD with fail-fast Linux and macOS stages
-- ✅ Comprehensive accessibility support
+4. **Access control**
+   - user who is NOT a member of a workspace cannot load its board data (expect empty/403-ish behavior in UI)
+   - member can load
 
-**What's Working**:
-- Linux builds and tests for all core packages
-- macOS iOS app builds with XcodeGen
-- CLI tools: hc-import, hc-backup, hc-migrate
-- Contract tests running against both GRDB and SwiftData
-- GitHub Actions CI with artifact uploads
+5. **Invites**
+   - owner invites a second user email
+   - second user signs in and sees the shared board
+
+Pragmatic note: If inbox automation is too heavy for V1, you can:
+- implement invites purely server-side (membership row created for email via RPC) and test via Supabase admin API in CI
+- OR for local dev, temporarily allow a "dev accept invite" flow behind `NODE_ENV !== 'production'`.
+But aim to land the real flow.
 
 ⸻
 
-## Coding standards
+## Task list (ordered tickets)
 
-- Swift API Guidelines; prefer small, composable types.
-- Error handling: typed errors in repo interfaces; avoid fatalError.
-- Logging: lightweight, redacted; no PII in logs or test artifacts.
-- Normalization: run after idle; never block UI thread.
-- **🚨 Migrations: FORBIDDEN during alpha.** (Future: each adds indices; never drop columns in place—use shadow tables if needed.)
+Each ticket: Definition of Done, key files, and test expectations.
 
 ⸻
 
-## Working with This Codebase
+### T0 — Project scaffold
 
-### For AI Agents and Developers
+Goal: Next.js app with TS, lint, Playwright wired.
 
-You are working with a mature Swift codebase following Linux-first architecture. The project is feature-complete for its initial scope. When making changes:
+**Tasks**
+- Create Next.js (App Router) project
+- Add Playwright + config
+- Add basic layout and routes placeholders
 
-**Core Principles**:
-- **🚨 NEVER CREATE DATABASE MIGRATIONS** - The app is in alpha, schema is evolving, migrations are forbidden
-- Target Linux (SwiftPM) for business logic
-- Keep Apple-only code behind adapters
-- Produce small, tested changes
-- No new dependencies without explicit approval
-- Keep public APIs documented
-- Warnings are errors
-
-**Before You Start**:
-1. Run `make preflight` to verify environment
-2. Review [PLAN.md](./PLAN.md) to understand what's implemented
-3. Check [CHANGELOG.md](./CHANGELOG.md) for recent changes
-4. Read [DEVELOPMENT.md](./DEVELOPMENT.md) for toolchain setup
-
-**Making Changes**:
-1. Understand existing patterns in the codebase
-2. Write tests alongside your code (contract tests for repos, unit tests for logic)
-3. Use golden commands to validate:
-   - `make preflight` - verify environment and structure
-   - `make test-linux` - run Linux tests (fastest feedback)
-   - `make test-macos` - run iOS tests (macOS only)
-4. Update CHANGELOG.md with your changes
-5. Include reproduction steps for bug fixes
-
-**What's on Each Platform**:
-
-✅ **Linux & macOS** (via SwiftPM):
-- Domain models and helpers
-- UseCases (reorder, checklist, fuzzy lookup)
-- Import/Export (Trello, backup/restore)
-- GRDB persistence and migrations
-- CLIs (hc-import, hc-backup, hc-migrate)
-- Contract tests for repositories
-- Unit and property tests
-
-🍎 **macOS Only**:
-- iOS app UI (SwiftUI)
-- SwiftData adapter
-- CloudKit sync
-- App Intents
-- UI/snapshot tests
-- Xcode project generation (via XcodeGen)
-
-**Loop Breaker**: If the same failure repeats 3 times, run `make preflight ARGS="--autofix"` then commit.
+**DoD**
+- `pnpm dev` runs
+- `pnpm test:e2e` runs a trivial smoke test (homepage loads)
 
 ⸻
 
-## Common Tasks
+### T1 — Supabase client + session plumbing
 
-### 🚨 Changing the Database Schema (FORBIDDEN IN ALPHA)
+Goal: Working Supabase client in browser, session persisted, protected routes.
 
-**DO NOT CREATE MIGRATIONS.** If you need to add/modify/remove a field:
+**Tasks**
+- Add `lib/supabase/client.ts` for browser client
+- Add auth-aware layout for `/app/*` that redirects to `/login` when unauthenticated
+- Add a basic header showing logged-in email + logout button
 
-1. **Update Domain models** (Packages/Domain/Sources/Domain/Models.swift)
-   - Add/modify/remove the field in the struct
-2. **Update GRDB Records** (Packages/PersistenceGRDB/Sources/PersistenceGRDB/Records.swift)
-   - Update the Record type to match
-   - Update the mapping to/from Domain models
-3. **Update SwiftData models** (App/PersistenceSwiftData/Sources/PersistenceSwiftData/SwiftDataModels.swift)
-   - Update the SwiftData model to match
-   - Update the mapping to/from Domain models
-4. **Update tests** as needed
-5. **DO NOT TOUCH** Migrations.swift
-6. **DO NOT CREATE** migration logic anywhere
-
-Users in alpha will delete and recreate their databases. Migrations will be added post-alpha.
-
-### Adding a New Feature
-
-1. **Decide where it belongs**:
-   - Pure logic → UseCases (Linux-compatible)
-   - Data access → Repository protocol + implementations
-   - UI → App/UI (macOS only)
-
-2. **Follow established patterns**:
-   - Use repository protocols for data access
-   - Keep business logic in UseCases
-   - Use actors for thread-safe services
-   - Write contract tests for repositories
-
-3. **Test thoroughly**:
-   - Unit tests for logic
-   - Contract tests for repositories
-   - UI tests for user-facing changes
-
-4. **Update documentation**:
-   - CHANGELOG.md for all changes
-   - README.md if user-facing
-   - PLAN.md if adding major features
-
-### Fixing a Bug
-
-1. Write a failing test that reproduces the bug
-2. Fix the bug
-3. Verify the test passes
-4. Document the fix in CHANGELOG.md
-5. Include reproduction steps in PR/commit
-
-### Adding a New CLI Tool
-
-1. Create directory: `CLIs/new-tool/`
-2. Add `main.swift` with your implementation
-3. Update Package.swift to add executable target
-4. Add tests under Tests/
-5. Update Makefile if needed
-6. Document usage in README.md
+**DoD**
+- Manual: login works, can access /app/boards
+- Test: auth smoke test passes (can load app when authenticated)
 
 ⸻
 
-## Definition of Done
+### T2 — Database migrations + RLS skeleton
 
-Before considering work complete:
+Goal: Schema exists in Supabase + RLS enforced.
 
-- ✅ **NO database migrations created** (absolutely forbidden in alpha)
-- ✅ Preflight passes locally (`make preflight`)
-- ✅ Code compiles with warnings as errors
-- ✅ Tests pass on target platform(s)
-  - `make test-linux` for core logic
-  - `make test-macos` for iOS features
-- ✅ CHANGELOG.md updated
-- ✅ Screenshots attached for UI changes
-- ✅ Documentation updated if needed
+**Tasks**
+- Write SQL migration(s) in `supabase/migrations/` for tables
+- Enable RLS on all tables
+- Implement RLS policies that enforce workspace membership
+- Add `supabase/seed.sql` with one workspace/board/lists/cards for local sanity
+- Add `supabase/rls.sql` describing policies (for review)
+
+**DoD**
+- Running the SQL in Supabase creates schema cleanly
+- A non-member cannot select boards/lists/cards from another workspace
+
+RLS policy pattern (reference, not copy-paste gospel):
+- A helper `is_member(workspace_id uuid)` implemented as a SQL function or inline `exists(...)`
+- Boards: allow select if member of `boards.workspace_id`
+- Lists: select if member of workspace via join to board
+- Cards: select if member via list→board→workspace
+- Writes: same predicate
+
+⸻
+
+### T3 — Workspace bootstrap on first login
+
+Goal: First user gets a workspace automatically.
+
+**Tasks**
+- On first authenticated visit:
+  - check if user is in `workspace_members`
+  - if not, create workspace + membership
+- Implement via:
+  - a server action or API route that uses Supabase user session (no service role if possible)
+  - OR a Supabase SQL function (RPC) callable by the user to create their workspace and membership
+
+**DoD**
+- New user signs in and ends up with a workspace + membership
+- Existing user doesn't get duplicates
+
+**Test**
+- Can be covered indirectly by board tests (user sees /app/boards without manual setup)
+
+⸻
+
+### T4 — Boards page
+
+Goal: List boards for the current user's workspace and create new board.
+
+**Tasks**
+- `/app/boards`:
+  - query boards
+  - create board modal/form
+- Minimal UI, fast.
+
+**DoD**
+- Create board → shows immediately, persists after refresh
+- Playwright: create board test
+
+⸻
+
+### T5 — Board view (lists + cards)
+
+Goal: Render the board with columns and cards.
+
+**Tasks**
+- `/app/board/[boardId]` loads:
+  - board metadata
+  - lists ordered by position
+  - cards per list ordered by position
+- Add create-list and create-card flows
+- Use optimistic updates for snappy feel (optional but nice)
+
+**DoD**
+- Can create list & card; reload persists
+- Playwright: create list, create card
+
+⸻
+
+### T6 — Card edit modal
+
+Goal: Edit card title/description/due date/assignee.
+
+**Tasks**
+- Card click opens modal
+- Editable fields
+- Save persists
+- Updated timestamps maintained
+
+**DoD**
+- Playwright: edit card title/description
+
+⸻
+
+### T7 — Drag & drop reorder and move
+
+Goal: DnD works and persists.
+
+**Tasks**
+- Use dnd-kit
+- Implement:
+  - reorder within list (update position)
+  - move between lists (update list_id + position)
+- position strategy:
+  - when inserting between items, pick midpoint
+  - if list gets "too dense," renormalize (optional; can defer)
+
+**DoD**
+- Drag card A from list 1 to list 2, refresh, remains moved
+- Playwright: DnD test passes
+
+⸻
+
+### T8 — Invites (simple, secure)
+
+Goal: Owner can invite family by email; invited user gains access after login.
+
+Implementation options (pick one, but commit):
+
+**Option 1 (recommended): "Invite table + auto-claim"**
+- Create `workspace_invites(workspace_id, email, invited_by, created_at, claimed_at)`
+- When a user logs in, server checks invites for their email and adds `workspace_members`, marks invite claimed.
+- No need to send email from your app; you just tell family "log in with this email and you'll be added."
+
+**Option 2: Supabase Auth admin invite**
+- More complex; requires service role usage and email delivery settings.
+
+**DoD**
+- Owner enters email → invite row created
+- Second user logs in with that email → membership created automatically
+- Playwright: invite flow test
+
+⸻
+
+### T9 — PWA polish
+
+Goal: Installable on phones.
+
+**Tasks**
+- Add `manifest.webmanifest`, icons, theme color
+- Ensure proper `apple-touch-icon` tags
+- Basic offline shell caching optional; don't get stuck here
+
+**DoD**
+- iOS "Add to Home Screen" results in standalone app-like launch
+- Lighthouse PWA checks mostly green (don't chase perfection)
+
+⸻
+
+### T10 — Access control UI states
+
+Goal: Friendly failure modes.
+
+**Tasks**
+- If board not found / not permitted: show "You don't have access" rather than crashing
+- Handle auth expiry gracefully
+
+**DoD**
+- Playwright: access control test
+
+⸻
+
+## Implementation notes (to prevent agent thrash)
+
+### Positioning helper (use this)
+
+Create `lib/positions.ts`:
+- `between(a: number | null, b: number | null) -> number`
+  - if a null, return b - 1
+  - if b null, return a + 1
+  - else midpoint (a+b)/2
+  - If midpoint equals a or b due to precision, trigger renormalization (can be TODO for V1)
+
+Use `numeric` in Postgres; in TS treat as `number` but be mindful converting strings.
+
+### Data fetching approach
+
+Keep it simple:
+- For board page: fetch lists and cards with a couple queries, then group client-side.
+- Avoid premature realtime; add later if desired.
+
+### Don't use service role unless unavoidable
+
+If you do need it (e.g. for invite emailing), isolate to server routes only and never expose to client.
+
+⸻
+
+## Agent execution instructions (copy/paste into agent)
+
+### Operating rules
+- Always keep Playwright tests green.
+- Don't introduce new libraries unless necessary.
+- Keep UX minimal, functional, stable on mobile Safari.
+- For each ticket: implement + update tests + update docs.
+
+### Per-ticket output
+- Summary of changes
+- How to run
+- What tests cover it
+- Any follow-ups as separate TODOs (not "hidden work")
+
+⸻
+
+## Suggested first PR breakdown
+1. T0 + T1 (scaffold + auth skeleton)
+2. T2 + T3 (schema + RLS + workspace bootstrap)
+3. T4 + T5 (boards + board view CRUD)
+4. T6 + T7 (edit + DnD)
+5. T8 (invites)
+6. T9 + T10 (PWA + access UX)
