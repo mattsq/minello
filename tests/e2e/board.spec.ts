@@ -141,16 +141,169 @@ test.describe('Board operations', () => {
     })
   })
 
-  // Placeholder tests for T5-T7
+  // T5: List and card operations
   test.describe('List operations', () => {
-    test.skip('can create list', async ({ page }) => {
-      // TODO: Implement in T5
+    test('can create list', async ({ page }) => {
+      // Skip test if no auth tokens available
+      const hasAuthTokens = process.env.TEST_ACCESS_TOKEN && process.env.TEST_REFRESH_TOKEN
+      if (!hasAuthTokens) {
+        test.skip()
+        return
+      }
+
+      await page.goto('/app/boards')
+
+      // Create a board first
+      const boardName = `Test Board ${Date.now()}`
+      await page.getByRole('button', { name: 'Create Board' }).click()
+      await page.getByLabel('Board Name').fill(boardName)
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      // Navigate to the board
+      await page.getByRole('link', { name: boardName }).click()
+      await expect(page).toHaveURL(/\/app\/board\/[a-f0-9-]+/)
+
+      // Should see the board name
+      await expect(page.getByRole('heading', { name: boardName })).toBeVisible()
+
+      // Click "Add a list" button
+      await page.getByRole('button', { name: '+ Add a list' }).click()
+
+      // Should show list name input
+      await expect(page.getByLabel('List Name')).toBeVisible()
+
+      // Fill in list name
+      const listName = `Test List ${Date.now()}`
+      await page.getByLabel('List Name').fill(listName)
+
+      // Submit the form
+      await page.getByRole('button', { name: 'Add List' }).click()
+
+      // Should see the new list
+      await expect(page.getByRole('heading', { name: listName })).toBeVisible()
+    })
+
+    test('list persists after refresh', async ({ page }) => {
+      // Skip test if no auth tokens available
+      const hasAuthTokens = process.env.TEST_ACCESS_TOKEN && process.env.TEST_REFRESH_TOKEN
+      if (!hasAuthTokens) {
+        test.skip()
+        return
+      }
+
+      await page.goto('/app/boards')
+
+      // Create a board
+      const boardName = `Persistent List Board ${Date.now()}`
+      await page.getByRole('button', { name: 'Create Board' }).click()
+      await page.getByLabel('Board Name').fill(boardName)
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      // Navigate to the board
+      await page.getByRole('link', { name: boardName }).click()
+
+      // Create a list
+      const listName = `Persistent List ${Date.now()}`
+      await page.getByRole('button', { name: '+ Add a list' }).click()
+      await page.getByLabel('List Name').fill(listName)
+      await page.getByRole('button', { name: 'Add List' }).click()
+
+      // Verify it appears
+      await expect(page.getByRole('heading', { name: listName })).toBeVisible()
+
+      // Reload the page
+      await page.reload()
+
+      // List should still be there
+      await expect(page.getByRole('heading', { name: listName })).toBeVisible()
     })
   })
 
   test.describe('Card operations', () => {
-    test.skip('can create card', async ({ page }) => {
-      // TODO: Implement in T5
+    test('can create card', async ({ page }) => {
+      // Skip test if no auth tokens available
+      const hasAuthTokens = process.env.TEST_ACCESS_TOKEN && process.env.TEST_REFRESH_TOKEN
+      if (!hasAuthTokens) {
+        test.skip()
+        return
+      }
+
+      await page.goto('/app/boards')
+
+      // Create a board
+      const boardName = `Card Test Board ${Date.now()}`
+      await page.getByRole('button', { name: 'Create Board' }).click()
+      await page.getByLabel('Board Name').fill(boardName)
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      // Navigate to the board
+      await page.getByRole('link', { name: boardName }).click()
+
+      // Create a list
+      const listName = `Card Test List ${Date.now()}`
+      await page.getByRole('button', { name: '+ Add a list' }).click()
+      await page.getByLabel('List Name').fill(listName)
+      await page.getByRole('button', { name: 'Add List' }).click()
+
+      // Wait for list to appear
+      await expect(page.getByRole('heading', { name: listName })).toBeVisible()
+
+      // Click "Add a card" button
+      await page.getByRole('button', { name: '+ Add a card' }).click()
+
+      // Should show card title input
+      await expect(page.getByLabel('Card Title')).toBeVisible()
+
+      // Fill in card title
+      const cardTitle = `Test Card ${Date.now()}`
+      await page.getByLabel('Card Title').fill(cardTitle)
+
+      // Submit the form
+      await page.getByRole('button', { name: 'Add Card' }).click()
+
+      // Should see the new card
+      await expect(page.getByText(cardTitle)).toBeVisible()
+    })
+
+    test('card persists after refresh', async ({ page }) => {
+      // Skip test if no auth tokens available
+      const hasAuthTokens = process.env.TEST_ACCESS_TOKEN && process.env.TEST_REFRESH_TOKEN
+      if (!hasAuthTokens) {
+        test.skip()
+        return
+      }
+
+      await page.goto('/app/boards')
+
+      // Create a board
+      const boardName = `Persistent Card Board ${Date.now()}`
+      await page.getByRole('button', { name: 'Create Board' }).click()
+      await page.getByLabel('Board Name').fill(boardName)
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      // Navigate to the board
+      await page.getByRole('link', { name: boardName }).click()
+
+      // Create a list
+      const listName = `Persistent Card List ${Date.now()}`
+      await page.getByRole('button', { name: '+ Add a list' }).click()
+      await page.getByLabel('List Name').fill(listName)
+      await page.getByRole('button', { name: 'Add List' }).click()
+
+      // Create a card
+      const cardTitle = `Persistent Card ${Date.now()}`
+      await page.getByRole('button', { name: '+ Add a card' }).click()
+      await page.getByLabel('Card Title').fill(cardTitle)
+      await page.getByRole('button', { name: 'Add Card' }).click()
+
+      // Verify it appears
+      await expect(page.getByText(cardTitle)).toBeVisible()
+
+      // Reload the page
+      await page.reload()
+
+      // Card should still be there
+      await expect(page.getByText(cardTitle)).toBeVisible()
     })
 
     test.skip('can edit card', async ({ page }) => {
