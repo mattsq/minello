@@ -10,6 +10,10 @@ test.describe('Authentication', () => {
   })
 
   test('can submit email for magic link', async ({ page }) => {
+    // Capture console messages for debugging
+    const consoleMessages: string[] = []
+    page.on('console', msg => consoleMessages.push(`${msg.type()}: ${msg.text()}`))
+
     await page.goto('/login')
 
     const emailInput = page.getByPlaceholder('Enter your email')
@@ -17,8 +21,30 @@ test.describe('Authentication', () => {
 
     await page.getByRole('button', { name: 'Send Magic Link' }).click()
 
-    // Should show success message
-    await expect(page.getByText('Check your email for the login link!')).toBeVisible()
+    // Wait a bit for the response
+    await page.waitForTimeout(2000)
+
+    // Check if there's a success or error message
+    const successMessage = page.getByText('Check your email for the login link!')
+    const errorMessage = page.locator('div').filter({ hasText: /error|invalid|failed/i })
+
+    const hasSuccess = await successMessage.isVisible().catch(() => false)
+    const hasError = await errorMessage.first().isVisible().catch(() => false)
+
+    // Log console messages and page content for debugging
+    if (!hasSuccess) {
+      console.log('Console messages:', consoleMessages)
+      const bodyText = await page.locator('body').textContent()
+      console.log('Page body text:', bodyText)
+    }
+
+    // Should show success message OR we need to understand why it failed
+    if (!hasSuccess && hasError) {
+      const errorText = await errorMessage.first().textContent()
+      throw new Error(`Auth failed with error: ${errorText}. Console: ${consoleMessages.join(', ')}`)
+    }
+
+    await expect(successMessage).toBeVisible()
 
     // Email input should be cleared
     await expect(emailInput).toHaveValue('')
