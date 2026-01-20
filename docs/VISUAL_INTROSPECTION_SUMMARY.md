@@ -130,7 +130,7 @@ pnpm visual:generate-docs
 - Reference visual states when making changes
 - Verify changes match existing design patterns
 
-### 3. Example Test Suite (`tests/e2e/visual-example.spec.ts`)
+### 3. Example Test Suite (`docs/examples/visual-example.spec.ts`)
 
 Comprehensive examples demonstrating all features:
 
@@ -489,7 +489,7 @@ await captureVisualState(page, 'name', { fullPage: true });  // Slower
 
 ### Code
 - **Helper Libraries:** `tests/helpers/{visual,accessibility,debug}.ts`
-- **Example Tests:** `tests/e2e/visual-example.spec.ts`
+- **Example Tests:** `docs/examples/visual-example.spec.ts`
 - **Doc Generator:** `scripts/generate-visual-docs.ts`
 
 ### External

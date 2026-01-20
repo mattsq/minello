@@ -416,7 +416,7 @@ await captureComponentState(element, 'name');  // Faster
 - **Full Design:** [docs/VISUAL_INTROSPECTION.md](docs/VISUAL_INTROSPECTION.md)
 - **Quick Start:** [docs/VISUAL_INTROSPECTION_QUICKSTART.md](docs/VISUAL_INTROSPECTION_QUICKSTART.md)
 - **Summary:** [docs/VISUAL_INTROSPECTION_SUMMARY.md](docs/VISUAL_INTROSPECTION_SUMMARY.md)
-- **Examples:** [tests/e2e/visual-example.spec.ts](tests/e2e/visual-example.spec.ts)
+- **Examples:** [docs/examples/visual-example.spec.ts](docs/examples/visual-example.spec.ts)
 - **Helpers:** [tests/helpers/](tests/helpers/)
 - **Generator:** [scripts/generate-visual-docs.ts](scripts/generate-visual-docs.ts)
 

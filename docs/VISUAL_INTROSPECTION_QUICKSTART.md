@@ -370,7 +370,7 @@ git lfs track "tests/e2e/**/*-snapshots/*.png"
 ## Resources
 
 - Full documentation: `docs/VISUAL_INTROSPECTION.md`
-- Example tests: `tests/e2e/visual-example.spec.ts`
+- Example tests: `docs/examples/visual-example.spec.ts`
 - Playwright docs: https://playwright.dev/docs/test-snapshots
 
 ## Getting Help
