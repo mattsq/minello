@@ -17,7 +17,8 @@ test.describe('Authentication', () => {
     await page.goto('/login')
 
     const emailInput = page.getByPlaceholder('Enter your email')
-    await emailInput.fill('test@example.com')
+    // Use a real domain - Supabase blocks test domains like example.com
+    await emailInput.fill('playwright-test@gmail.com')
 
     await page.getByRole('button', { name: 'Send Magic Link' }).click()
 
