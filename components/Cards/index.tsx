@@ -4,12 +4,74 @@ import { useState } from 'react'
 import type { Card } from '@/lib/db/types'
 import { createClient } from '@/lib/supabase/client'
 import { between } from '@/lib/positions'
+import { useDraggable, useDroppable } from '@dnd-kit/core'
+import { CSS } from '@dnd-kit/utilities'
 
 interface CardsProps {
   listId: string
   cards: Card[]
   onCardCreated: (card: Card) => void
   onCardClick: (card: Card) => void
+}
+
+interface DraggableCardProps {
+  card: Card
+  onCardClick: (card: Card) => void
+}
+
+function DraggableCard({ card, onCardClick }: DraggableCardProps) {
+  const { attributes, listeners, setNodeRef: setDraggableRef, transform, isDragging } = useDraggable({
+    id: card.id,
+  })
+
+  const { setNodeRef: setDroppableRef } = useDroppable({
+    id: card.id,
+  })
+
+  // Combine refs
+  const setRefs = (element: HTMLDivElement | null) => {
+    setDraggableRef(element)
+    setDroppableRef(element)
+  }
+
+  const style = {
+    transform: CSS.Translate.toString(transform),
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <div
+      ref={setRefs}
+      {...listeners}
+      {...attributes}
+      onClick={(e) => {
+        // Only trigger click if not dragging
+        if (!isDragging) {
+          onCardClick(card)
+        }
+      }}
+      style={{
+        backgroundColor: '#fff',
+        border: '1px solid #e5e7eb',
+        borderRadius: '4px',
+        padding: '0.5rem',
+        cursor: isDragging ? 'grabbing' : 'grab',
+        fontSize: '0.875rem',
+        ...style,
+      }}
+    >
+      <div style={{ fontWeight: '500' }}>{card.title}</div>
+      {card.description && (
+        <div style={{
+          fontSize: '0.75rem',
+          color: '#6b7280',
+          marginTop: '0.25rem'
+        }}>
+          {card.description}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default function Cards({ listId, cards, onCardCreated, onCardClick }: CardsProps) {
@@ -75,29 +137,11 @@ export default function Cards({ listId, cards, onCardCreated, onCardClick }: Car
     }}>
       {/* Render existing cards */}
       {cards.map(card => (
-        <div
+        <DraggableCard
           key={card.id}
-          onClick={() => onCardClick(card)}
-          style={{
-            backgroundColor: '#fff',
-            border: '1px solid #e5e7eb',
-            borderRadius: '4px',
-            padding: '0.5rem',
-            cursor: 'pointer',
-            fontSize: '0.875rem'
-          }}
-        >
-          <div style={{ fontWeight: '500' }}>{card.title}</div>
-          {card.description && (
-            <div style={{
-              fontSize: '0.75rem',
-              color: '#6b7280',
-              marginTop: '0.25rem'
-            }}>
-              {card.description}
-            </div>
-          )}
-        </div>
+          card={card}
+          onCardClick={onCardClick}
+        />
       ))}
 
       {/* Create new card */}
