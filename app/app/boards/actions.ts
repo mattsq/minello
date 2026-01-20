@@ -131,8 +131,17 @@ export async function inviteToWorkspace(
       }
     }
 
+    // TEMPORARY DEBUG: Return debug info in success response
+    const debugInfo = {
+      redirectTo: `${getSiteUrl()}/auth/callback`,
+      NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL || 'NOT_SET',
+      VERCEL_URL: process.env.VERCEL_URL || 'NOT_SET',
+    }
+
     return {
       success: true,
+      // @ts-ignore - temporary debug field
+      _debug: debugInfo,
     }
   } catch (err) {
     console.error('Exception in inviteToWorkspace:', err)
