@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Board as BoardType, List, Card } from '@/lib/db/types'
 import Lists from '@/components/Lists'
+import CardEditModal from '@/components/CardEditModal'
 
 interface BoardProps {
   boardData: {
@@ -16,6 +17,7 @@ export default function Board({ boardData }: BoardProps) {
   const { board, lists: initialLists, cards: initialCards } = boardData
   const [lists, setLists] = useState(initialLists)
   const [cards, setCards] = useState(initialCards)
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null)
 
   // Group cards by list_id for easy access
   const cardsByListId = cards.reduce((acc, card) => {
@@ -32,6 +34,18 @@ export default function Board({ boardData }: BoardProps) {
 
   const handleCardCreated = (newCard: Card) => {
     setCards([...cards, newCard])
+  }
+
+  const handleCardClick = (card: Card) => {
+    setSelectedCard(card)
+  }
+
+  const handleCardSave = (updatedCard: Card) => {
+    setCards(cards.map(c => c.id === updatedCard.id ? updatedCard : c))
+  }
+
+  const handleModalClose = () => {
+    setSelectedCard(null)
   }
 
   return (
@@ -60,8 +74,19 @@ export default function Board({ boardData }: BoardProps) {
           cardsByListId={cardsByListId}
           onListCreated={handleListCreated}
           onCardCreated={handleCardCreated}
+          onCardClick={handleCardClick}
         />
       </div>
+
+      {/* Card edit modal */}
+      {selectedCard && (
+        <CardEditModal
+          card={selectedCard}
+          boardId={board.id}
+          onClose={handleModalClose}
+          onSave={handleCardSave}
+        />
+      )}
     </div>
   )
 }

@@ -306,8 +306,76 @@ test.describe('Board operations', () => {
       await expect(page.getByText(cardTitle)).toBeVisible()
     })
 
-    test.skip('can edit card', async ({ page }) => {
-      // TODO: Implement in T6
+    test('can edit card', async ({ page }) => {
+      // Skip test if no auth tokens available
+      const hasAuthTokens = process.env.TEST_ACCESS_TOKEN && process.env.TEST_REFRESH_TOKEN
+      if (!hasAuthTokens) {
+        test.skip()
+        return
+      }
+
+      await page.goto('/app/boards')
+
+      // Create a board
+      const boardName = `Edit Card Board ${Date.now()}`
+      await page.getByRole('button', { name: 'Create Board' }).click()
+      await page.getByLabel('Board Name').fill(boardName)
+      await page.getByRole('button', { name: 'Create' }).click()
+
+      // Navigate to the board
+      await page.getByRole('link', { name: boardName }).click()
+
+      // Create a list
+      const listName = `Edit Card List ${Date.now()}`
+      await page.getByRole('button', { name: '+ Add a list' }).click()
+      await page.getByLabel('List Name').fill(listName)
+      await page.getByRole('button', { name: 'Add List' }).click()
+
+      // Create a card
+      const originalCardTitle = `Original Title ${Date.now()}`
+      await page.getByRole('button', { name: '+ Add a card' }).click()
+      await page.getByLabel('Card Title').fill(originalCardTitle)
+      await page.getByRole('button', { name: 'Add Card' }).click()
+
+      // Verify card appears
+      await expect(page.getByText(originalCardTitle)).toBeVisible()
+
+      // Click the card to open edit modal
+      await page.getByText(originalCardTitle).click()
+
+      // Should see the edit modal
+      await expect(page.getByRole('heading', { name: 'Edit Card' })).toBeVisible()
+
+      // Verify title input has the original title
+      const titleInput = page.locator('#title')
+      await expect(titleInput).toHaveValue(originalCardTitle)
+
+      // Edit the title
+      const newCardTitle = `Updated Title ${Date.now()}`
+      await titleInput.fill(newCardTitle)
+
+      // Edit the description
+      const descriptionText = 'This is a test description for the card'
+      await page.locator('#description').fill(descriptionText)
+
+      // Save the changes
+      await page.getByRole('button', { name: 'Save' }).click()
+
+      // Modal should close
+      await expect(page.getByRole('heading', { name: 'Edit Card' })).not.toBeVisible()
+
+      // Should see the updated card title
+      await expect(page.getByText(newCardTitle)).toBeVisible()
+
+      // Should see the description
+      await expect(page.getByText(descriptionText)).toBeVisible()
+
+      // Reload the page to verify persistence
+      await page.reload()
+
+      // Card should still have the updated values
+      await expect(page.getByText(newCardTitle)).toBeVisible()
+      await expect(page.getByText(descriptionText)).toBeVisible()
     })
   })
 
