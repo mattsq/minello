@@ -4,37 +4,77 @@ A Trello-like family task board PWA built with Next.js and Supabase.
 
 ## Project Status
 
-Repository structure initialized (T0). See [CLAUDE.md](./CLAUDE.md) for full project specification and task breakdown.
+**All core features complete!** ✅
+
+This is a fully functional Trello-like family task board PWA with:
+- 🔐 Magic link authentication via Supabase
+- 📱 PWA support for mobile installation
+- 🎯 Drag & drop task management
+- 👥 Workspace invites and access control
+- 🔒 Row-level security (RLS)
+- ✅ Full e2e test coverage with Playwright
+
+See [CLAUDE.md](./CLAUDE.md) for full project specification and implementation details.
+
+## Features
+
+- 📋 **Task Boards** - Create multiple boards for different family projects
+- 📝 **Lists & Cards** - Organize tasks in customizable lists
+- 🎯 **Drag & Drop** - Intuitively move cards within and between lists
+- ✏️ **Rich Cards** - Add descriptions, due dates, and assignees
+- 👥 **Family Sharing** - Invite family members by email
+- 🔐 **Secure Auth** - Magic link authentication (no passwords!)
+- 🔒 **Private Workspaces** - Data isolated with row-level security
+- 📱 **Mobile First** - Installable PWA for iOS and Android
+- ⚡ **Real-time Updates** - See changes persist instantly
 
 ## Tech Stack
 
 - **Frontend**: Next.js 14 (App Router) + TypeScript
-- **UI**: Minimal CSS (inline styles for now)
-- **Drag & Drop**: @dnd-kit/*
+- **UI**: Minimal CSS (inline styles for simplicity)
+- **Drag & Drop**: @dnd-kit/* (sortable, sensors, utilities)
 - **Backend**: Supabase (Auth + Postgres with RLS)
-- **Testing**: Playwright e2e
+- **Testing**: Playwright e2e (full coverage)
 - **Deploy**: Vercel (or similar)
+
+## Quick Start
+
+1. **Clone and install**
+   ```bash
+   git clone <repo-url>
+   cd minello
+   pnpm install
+   ```
+
+2. **Set up Supabase**
+   - Create a new project at [supabase.com](https://supabase.com)
+   - Run the migrations in `supabase/migrations/` via the Supabase SQL editor
+   - Copy your project URL and anon key
+
+3. **Configure environment**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your Supabase credentials
+   ```
+
+4. **Run the app**
+   ```bash
+   pnpm dev
+   # Visit http://localhost:3000
+   ```
+
+5. **Run tests** (optional)
+   ```bash
+   pnpm exec playwright install --with-deps
+   pnpm test:e2e
+   ```
 
 ## Setup
 
 ### Prerequisites
 
 - Node.js 18+ and pnpm
-- Supabase account (for T1+)
-
-### Installation
-
-```bash
-# Install dependencies
-pnpm install
-
-# Install Playwright browsers (for testing)
-pnpm exec playwright install --with-deps
-
-# Copy environment template
-cp .env.example .env.local
-# Then add your Supabase credentials to .env.local
-```
+- Supabase account (free tier works fine)
 
 ### Development
 
@@ -85,24 +125,41 @@ pnpm lint
 
 ## Implementation Tasks
 
-See [CLAUDE.md](./CLAUDE.md) for detailed task breakdown (T0-T10).
+See [CLAUDE.md](./CLAUDE.md) for detailed task breakdown and specifications.
 
-### Completed
-- ✅ T0: Project scaffold
-- ✅ T1: Supabase client + session plumbing
+### All Tasks Completed ✅
 
-### In Progress
-- 🔄 T2: Database migrations + RLS
+- ✅ **T0**: Project scaffold - Next.js + TypeScript + Playwright setup
+- ✅ **T1**: Supabase client + session plumbing - Auth flow and protected routes
+- ✅ **T2**: Database migrations + RLS - Full schema with Row Level Security policies
+- ✅ **T3**: Workspace bootstrap - Auto-create workspace on first login
+- ✅ **T4**: Boards page - List and create boards
+- ✅ **T5**: Board view - Lists and cards with CRUD operations
+- ✅ **T6**: Card edit modal - Edit title, description, due date, assignee
+- ✅ **T7**: Drag & drop - Reorder cards within/between lists using @dnd-kit
+- ✅ **T8**: Workspace invites - Email-based invite system with auto-claim
+- ✅ **T9**: PWA polish - Installable with manifest and icons
+- ✅ **T10**: Access control UI - Graceful handling of unauthorized access
 
-### TODO
-- ⏳ T3: Workspace bootstrap
-- ⏳ T4: Boards page
-- ⏳ T5: Board view (lists + cards)
-- ⏳ T6: Card edit modal
-- ⏳ T7: Drag & drop
-- ⏳ T8: Invites
-- ⏳ T9: PWA polish
-- ⏳ T10: Access control UI
+### Test Coverage
+
+All golden acceptance tests passing:
+- ✅ Authentication flow (magic link)
+- ✅ Board CRUD operations
+- ✅ Drag & drop persistence
+- ✅ Access control enforcement
+- ✅ Workspace invite flow
+
+## Usage
+
+1. **First Login**: Visit `/login` and enter your email - you'll receive a magic link
+2. **Auto Workspace**: On first login, a workspace is automatically created for you
+3. **Create Boards**: Start by creating a board for a project (e.g., "House Chores", "Vacation Planning")
+4. **Add Lists**: Create lists to organize your workflow (e.g., "To Do", "In Progress", "Done")
+5. **Add Cards**: Create cards for individual tasks with details, due dates, and assignments
+6. **Drag & Drop**: Move cards between lists or reorder within a list
+7. **Invite Family**: Use the invite feature to add family members by email
+8. **Mobile**: Add to your phone's home screen for app-like experience
 
 ## Environment Variables
 
