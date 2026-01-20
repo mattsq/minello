@@ -92,6 +92,11 @@ export async function inviteToWorkspace(
       const admin = createAdminClient()
       const redirectTo = `${getSiteUrl()}/auth/callback`
 
+      // Debug logging to identify the redirect URL being sent
+      console.log('[INVITE DEBUG] Sending invite with redirectTo:', redirectTo)
+      console.log('[INVITE DEBUG] NEXT_PUBLIC_SITE_URL:', process.env.NEXT_PUBLIC_SITE_URL)
+      console.log('[INVITE DEBUG] VERCEL_URL:', process.env.VERCEL_URL)
+
       const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(
         email.toLowerCase(),
         { redirectTo }
