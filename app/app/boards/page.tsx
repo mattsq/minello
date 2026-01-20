@@ -2,7 +2,14 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { ensureUserWorkspace } from '@/lib/workspace'
+import {
+  ensureUserWorkspace,
+  getWorkspaceMembers,
+  getWorkspaceInvites,
+  type WorkspaceMember,
+  type WorkspaceInvite,
+} from '@/lib/workspace'
+import { inviteToWorkspace, revokeInvite } from './actions'
 import Link from 'next/link'
 
 type Board = {
@@ -18,8 +25,24 @@ export default function BoardsPage() {
   const [showForm, setShowForm] = useState(false)
   const [newBoardName, setNewBoardName] = useState('')
   const [workspaceId, setWorkspaceId] = useState<string | null>(null)
+  const [showInviteSection, setShowInviteSection] = useState(false)
+  const [members, setMembers] = useState<WorkspaceMember[]>([])
+  const [invites, setInvites] = useState<WorkspaceInvite[]>([])
+  const [inviteEmail, setInviteEmail] = useState('')
+  const [inviting, setInviting] = useState(false)
+  const [inviteError, setInviteError] = useState<string | null>(null)
+  const [inviteSuccess, setInviteSuccess] = useState<string | null>(null)
 
   const supabase = createClient()
+
+  const loadMembersAndInvites = useCallback(async (wsId: string) => {
+    const [membersData, invitesData] = await Promise.all([
+      getWorkspaceMembers(supabase, wsId),
+      getWorkspaceInvites(supabase, wsId),
+    ])
+    setMembers(membersData)
+    setInvites(invitesData)
+  }, [supabase])
 
   const loadBoards = useCallback(async () => {
     setLoading(true)
@@ -45,12 +68,15 @@ export default function BoardsPage() {
       } else {
         setBoards(data || [])
       }
+
+      // Load members and invites
+      await loadMembersAndInvites(wsId)
     } catch (err) {
       console.error('Exception loading boards:', err)
     } finally {
       setLoading(false)
     }
-  }, [supabase])
+  }, [supabase, loadMembersAndInvites])
 
   useEffect(() => {
     loadBoards()
@@ -95,6 +121,54 @@ export default function BoardsPage() {
     }
   }
 
+  async function handleInvite(e: React.FormEvent) {
+    e.preventDefault()
+    if (!inviteEmail.trim() || !workspaceId) return
+
+    setInviting(true)
+    setInviteError(null)
+    setInviteSuccess(null)
+
+    try {
+      const result = await inviteToWorkspace(workspaceId, inviteEmail.trim())
+
+      if (result.success) {
+        setInviteSuccess('Invite sent successfully!')
+        setInviteEmail('')
+        // Reload invites
+        if (workspaceId) {
+          await loadMembersAndInvites(workspaceId)
+        }
+        // Clear success message after 3 seconds
+        setTimeout(() => setInviteSuccess(null), 3000)
+      } else {
+        setInviteError(result.error || 'Failed to send invite')
+      }
+    } catch (err) {
+      console.error('Exception sending invite:', err)
+      setInviteError('An unexpected error occurred')
+    } finally {
+      setInviting(false)
+    }
+  }
+
+  async function handleRevokeInvite(inviteId: string) {
+    if (!workspaceId) return
+
+    try {
+      const result = await revokeInvite(inviteId)
+
+      if (result.success) {
+        // Reload invites
+        await loadMembersAndInvites(workspaceId)
+      } else {
+        console.error('Failed to revoke invite:', result.error)
+      }
+    } catch (err) {
+      console.error('Exception revoking invite:', err)
+    }
+  }
+
   if (loading) {
     return (
       <div style={{ padding: '2rem' }}>
@@ -114,21 +188,37 @@ export default function BoardsPage() {
         }}
       >
         <h1 style={{ margin: 0 }}>My Boards</h1>
-        {!showForm && (
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          {!showForm && (
+            <button
+              onClick={() => setShowForm(true)}
+              style={{
+                padding: '0.5rem 1rem',
+                backgroundColor: '#0070f3',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              Create Board
+            </button>
+          )}
           <button
-            onClick={() => setShowForm(true)}
+            onClick={() => setShowInviteSection(!showInviteSection)}
             style={{
               padding: '0.5rem 1rem',
-              backgroundColor: '#0070f3',
+              backgroundColor: showInviteSection ? '#666' : '#0070f3',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
             }}
+            data-testid="invite-toggle-btn"
           >
-            Create Board
+            {showInviteSection ? 'Hide Members' : 'Invite Members'}
           </button>
-        )}
+        </div>
       </div>
 
       {showForm && (
@@ -201,6 +291,184 @@ export default function BoardsPage() {
             </button>
           </div>
         </form>
+      )}
+
+      {showInviteSection && (
+        <div
+          style={{
+            marginBottom: '2rem',
+            padding: '1.5rem',
+            border: '1px solid #ddd',
+            borderRadius: '4px',
+            backgroundColor: '#f9f9f9',
+          }}
+        >
+          <h2 style={{ marginTop: 0, marginBottom: '1rem' }}>
+            Workspace Members
+          </h2>
+
+          {/* Invite form */}
+          <form
+            onSubmit={handleInvite}
+            style={{
+              marginBottom: '1.5rem',
+              padding: '1rem',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
+              backgroundColor: '#fff',
+            }}
+          >
+            <label
+              htmlFor="invite-email"
+              style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}
+            >
+              Invite by Email
+            </label>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <input
+                id="invite-email"
+                type="email"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+                placeholder="email@example.com"
+                required
+                data-testid="invite-email-input"
+                style={{
+                  flex: 1,
+                  padding: '0.5rem',
+                  fontSize: '1rem',
+                  border: '1px solid #ddd',
+                  borderRadius: '4px',
+                }}
+              />
+              <button
+                type="submit"
+                disabled={inviting || !inviteEmail.trim()}
+                data-testid="send-invite-btn"
+                style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: '#0070f3',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: inviting || !inviteEmail.trim() ? 'not-allowed' : 'pointer',
+                  opacity: inviting || !inviteEmail.trim() ? 0.6 : 1,
+                }}
+              >
+                {inviting ? 'Sending...' : 'Send Invite'}
+              </button>
+            </div>
+            {inviteError && (
+              <p
+                style={{
+                  marginTop: '0.5rem',
+                  marginBottom: 0,
+                  color: '#d32f2f',
+                  fontSize: '0.875rem',
+                }}
+                data-testid="invite-error"
+              >
+                {inviteError}
+              </p>
+            )}
+            {inviteSuccess && (
+              <p
+                style={{
+                  marginTop: '0.5rem',
+                  marginBottom: 0,
+                  color: '#2e7d32',
+                  fontSize: '0.875rem',
+                }}
+                data-testid="invite-success"
+              >
+                {inviteSuccess}
+              </p>
+            )}
+          </form>
+
+          {/* Members list */}
+          <div style={{ marginBottom: '1.5rem' }}>
+            <h3 style={{ marginTop: 0, marginBottom: '0.75rem', fontSize: '1rem' }}>
+              Current Members ({members.length})
+            </h3>
+            {members.length === 0 ? (
+              <p style={{ color: '#666', margin: 0 }}>No members found</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {members.map((member) => (
+                  <div
+                    key={member.user_id}
+                    style={{
+                      padding: '0.75rem',
+                      backgroundColor: '#fff',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontWeight: 500 }}>
+                        {member.users?.email || 'Unknown'}
+                      </div>
+                      <div style={{ fontSize: '0.875rem', color: '#666' }}>
+                        {member.role}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Pending invites */}
+          {invites.length > 0 && (
+            <div>
+              <h3 style={{ marginTop: 0, marginBottom: '0.75rem', fontSize: '1rem' }}>
+                Pending Invites ({invites.length})
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                {invites.map((invite) => (
+                  <div
+                    key={invite.id}
+                    style={{
+                      padding: '0.75rem',
+                      backgroundColor: '#fff',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                    data-testid="pending-invite"
+                  >
+                    <div>
+                      <div style={{ fontWeight: 500 }}>{invite.email}</div>
+                      <div style={{ fontSize: '0.875rem', color: '#666' }}>
+                        Invited {new Date(invite.created_at).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleRevokeInvite(invite.id)}
+                      style={{
+                        padding: '0.25rem 0.75rem',
+                        backgroundColor: '#fff',
+                        color: '#d32f2f',
+                        border: '1px solid #d32f2f',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontSize: '0.875rem',
+                      }}
+                    >
+                      Revoke
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       )}
 
       {boards.length === 0 ? (

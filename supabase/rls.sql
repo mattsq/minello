@@ -76,6 +76,33 @@
 --   Note: V1 doesn't distinguish between owner/member roles for this
 
 -- ============================================================================
+-- TABLE: workspace_invites (T8)
+-- ============================================================================
+
+-- SELECT Policy: "Members can view workspace invites"
+--   Members can view all invites for workspaces they belong to
+--   Predicate: is_workspace_member(workspace_id)
+
+-- INSERT Policy: "Members can create invites"
+--   Members can create invites for their workspaces
+--   Predicate: is_workspace_member(workspace_id) AND auth.uid() = invited_by
+--   Note: Allows any member to invite others to the workspace
+
+-- UPDATE Policy: "Members can update invites"
+--   Members can update invites in their workspaces (for manual claim operations)
+--   Predicate: is_workspace_member(workspace_id)
+
+-- UPDATE Policy: "Users can claim their own invites"
+--   Authenticated users can claim invites sent to their email
+--   Predicate: email = (SELECT email FROM auth.users WHERE id = auth.uid())
+--              AND claimed_at IS NULL
+--   Note: This allows the auto-claim flow in T8 to work
+
+-- DELETE Policy: "Members can revoke invites"
+--   Members can delete (revoke) invites from their workspaces
+--   Predicate: is_workspace_member(workspace_id)
+
+-- ============================================================================
 -- TABLE: boards
 -- ============================================================================
 
@@ -176,6 +203,13 @@
 -- 6. Attempt to access as User B (should succeed)
 -- 7. Remove User B from workspace
 -- 8. Attempt to access as User B (should fail again)
+--
+-- To test invite flow (T8):
+-- 1. User A creates an invite for userb@example.com
+-- 2. User B logs in with userb@example.com
+-- 3. claim_pending_invites() is called during bootstrap
+-- 4. User B is automatically added to workspace_members
+-- 5. User B can now access the workspace data
 
 -- Example test queries (run as User B after User A creates data):
 --
