@@ -9,9 +9,10 @@ interface CardsProps {
   listId: string
   cards: Card[]
   onCardCreated: (card: Card) => void
+  onCardClick: (card: Card) => void
 }
 
-export default function Cards({ listId, cards, onCardCreated }: CardsProps) {
+export default function Cards({ listId, cards, onCardCreated, onCardClick }: CardsProps) {
   const [isCreatingCard, setIsCreatingCard] = useState(false)
   const [newCardTitle, setNewCardTitle] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -76,6 +77,7 @@ export default function Cards({ listId, cards, onCardCreated }: CardsProps) {
       {cards.map(card => (
         <div
           key={card.id}
+          onClick={() => onCardClick(card)}
           style={{
             backgroundColor: '#fff',
             border: '1px solid #e5e7eb',

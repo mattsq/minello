@@ -12,6 +12,7 @@ interface ListsProps {
   cardsByListId: Record<string, Card[]>
   onListCreated: (list: List) => void
   onCardCreated: (card: Card) => void
+  onCardClick: (card: Card) => void
 }
 
 export default function Lists({
@@ -20,6 +21,7 @@ export default function Lists({
   cardsByListId,
   onListCreated,
   onCardCreated,
+  onCardClick,
 }: ListsProps) {
   const [isCreatingList, setIsCreatingList] = useState(false)
   const [newListName, setNewListName] = useState('')
@@ -111,6 +113,7 @@ export default function Lists({
             listId={list.id}
             cards={cardsByListId[list.id] || []}
             onCardCreated={onCardCreated}
+            onCardClick={onCardClick}
           />
         </div>
       ))}
