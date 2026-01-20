@@ -5,6 +5,7 @@ import type { List, Card } from '@/lib/db/types'
 import Cards from '@/components/Cards'
 import { createClient } from '@/lib/supabase/client'
 import { between } from '@/lib/positions'
+import { useDroppable } from '@dnd-kit/core'
 
 interface ListsProps {
   boardId: string
@@ -13,6 +14,54 @@ interface ListsProps {
   onListCreated: (list: List) => void
   onCardCreated: (card: Card) => void
   onCardClick: (card: Card) => void
+}
+
+interface ListColumnProps {
+  list: List
+  cards: Card[]
+  onCardCreated: (card: Card) => void
+  onCardClick: (card: Card) => void
+}
+
+function ListColumn({ list, cards, onCardCreated, onCardClick }: ListColumnProps) {
+  const { setNodeRef } = useDroppable({
+    id: list.id,
+  })
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        backgroundColor: '#fff',
+        borderRadius: '8px',
+        padding: '0.75rem',
+        minWidth: '280px',
+        maxWidth: '280px',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        display: 'flex',
+        flexDirection: 'column',
+        maxHeight: 'calc(100vh - 180px)'
+      }}
+    >
+      {/* List header */}
+      <h2 style={{
+        fontSize: '0.875rem',
+        fontWeight: '600',
+        margin: '0 0 0.75rem 0',
+        padding: '0.25rem 0.5rem'
+      }}>
+        {list.name}
+      </h2>
+
+      {/* Cards in this list */}
+      <Cards
+        listId={list.id}
+        cards={cards}
+        onCardCreated={onCardCreated}
+        onCardClick={onCardClick}
+      />
+    </div>
+  )
 }
 
 export default function Lists({
@@ -84,38 +133,13 @@ export default function Lists({
     }}>
       {/* Render existing lists */}
       {lists.map(list => (
-        <div
+        <ListColumn
           key={list.id}
-          style={{
-            backgroundColor: '#fff',
-            borderRadius: '8px',
-            padding: '0.75rem',
-            minWidth: '280px',
-            maxWidth: '280px',
-            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-            display: 'flex',
-            flexDirection: 'column',
-            maxHeight: 'calc(100vh - 180px)'
-          }}
-        >
-          {/* List header */}
-          <h2 style={{
-            fontSize: '0.875rem',
-            fontWeight: '600',
-            margin: '0 0 0.75rem 0',
-            padding: '0.25rem 0.5rem'
-          }}>
-            {list.name}
-          </h2>
-
-          {/* Cards in this list */}
-          <Cards
-            listId={list.id}
-            cards={cardsByListId[list.id] || []}
-            onCardCreated={onCardCreated}
-            onCardClick={onCardClick}
-          />
-        </div>
+          list={list}
+          cards={cardsByListId[list.id] || []}
+          onCardCreated={onCardCreated}
+          onCardClick={onCardClick}
+        />
       ))}
 
       {/* Create new list */}
