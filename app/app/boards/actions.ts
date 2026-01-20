@@ -1,6 +1,21 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
+
+function getSiteUrl() {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL
+  if (configured) {
+    return configured.replace(/\/$/, '')
+  }
+
+  const vercelUrl = process.env.VERCEL_URL
+  if (vercelUrl) {
+    return `https://${vercelUrl}`
+  }
+
+  return 'http://localhost:3000'
+}
 
 export type InviteResult = {
   success: boolean
@@ -55,7 +70,7 @@ export async function inviteToWorkspace(
       }
     }
 
-    // Create the invite
+    // Create the invite record
     const { error: insertError } = await supabase
       .from('workspace_invites')
       .insert({
@@ -69,6 +84,45 @@ export async function inviteToWorkspace(
       return {
         success: false,
         error: 'Failed to create invite',
+      }
+    }
+
+    // Send Supabase invite email with a redirect to the app
+    try {
+      const admin = createAdminClient()
+      const redirectTo = `${getSiteUrl()}/auth/callback`
+
+      const { error: inviteError } = await admin.auth.admin.inviteUserByEmail(
+        email.toLowerCase(),
+        { redirectTo }
+      )
+
+      if (inviteError) {
+        await supabase
+          .from('workspace_invites')
+          .delete()
+          .eq('workspace_id', workspaceId)
+          .eq('email', email.toLowerCase())
+          .is('claimed_at', null)
+
+        console.error('Error sending invite email:', inviteError)
+        return {
+          success: false,
+          error: 'Failed to send invite email',
+        }
+      }
+    } catch (err) {
+      await supabase
+        .from('workspace_invites')
+        .delete()
+        .eq('workspace_id', workspaceId)
+        .eq('email', email.toLowerCase())
+        .is('claimed_at', null)
+
+      console.error('Exception sending invite email:', err)
+      return {
+        success: false,
+        error: 'Failed to send invite email',
       }
     }
 

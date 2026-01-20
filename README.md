@@ -168,9 +168,67 @@ Required environment variables (see `.env.example`):
 ```
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+NEXT_PUBLIC_SITE_URL=https://your-app.vercel.app
 ```
 
-**Important**: You must replace the placeholder values in `.env.local` with real Supabase credentials from your project to run the app and tests. Get these from your [Supabase project settings](https://supabase.com/dashboard/project/_/settings/api).
+**Important**: You must replace the placeholder values in `.env.local` with real Supabase credentials from your project to run the app and tests. Get these from your [Supabase project settings](https://supabase.com/dashboard/project/_/settings/api). `SUPABASE_SERVICE_ROLE_KEY` is required for sending invite emails.
+
+## Deployment
+
+The app is configured for deployment to Vercel with automatic deploys.
+
+### One-Time Setup
+
+1. **Create Vercel Project**
+   - Go to [vercel.com](https://vercel.com) → New Project → Import from GitHub
+   - Select the repository
+   - Vercel auto-detects Next.js
+
+2. **Configure Environment Variables in Vercel Dashboard**
+   - Go to Project Settings → Environment Variables
+   - Add:
+     - `NEXT_PUBLIC_SUPABASE_URL` = your production Supabase URL
+     - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = your production anon key
+     - `SUPABASE_SERVICE_ROLE_KEY` = your Supabase service role key (for invite emails)
+     - `NEXT_PUBLIC_SITE_URL` = `https://your-app.vercel.app`
+
+3. **Get Vercel IDs for GitHub Secrets**
+   ```bash
+   # Link your local project to Vercel
+   npx vercel link
+
+   # Copy orgId and projectId from .vercel/project.json
+   ```
+
+4. **Add GitHub Repository Secrets**
+   - Go to GitHub repo → Settings → Secrets and variables → Actions
+   - Add the following secrets:
+     - `VERCEL_TOKEN` - Create at [vercel.com/account/tokens](https://vercel.com/account/tokens)
+     - `VERCEL_ORG_ID` - From `.vercel/project.json`
+     - `VERCEL_PROJECT_ID` - From `.vercel/project.json`
+
+5. **Configure Supabase Auth Redirects**
+   - In Supabase Dashboard → Authentication → URL Configuration
+   - Add your Vercel domain to "Redirect URLs": `https://your-app.vercel.app/**`
+
+### Deployment Flow
+
+- **PRs**: When you open a PR, CI runs lint/build/tests, then deploys a preview. A comment is posted with the preview URL.
+- **Main**: When you merge to main, CI runs all checks, then deploys to production.
+
+### Running Migrations on Production
+
+To run database migrations on your production Supabase:
+
+1. Go to your Supabase project dashboard
+2. Navigate to SQL Editor
+3. Paste and run the migration SQL from `supabase/migrations/`
+
+Alternatively, use the Supabase CLI:
+```bash
+supabase db push --linked
+```
 
 ## License
 
