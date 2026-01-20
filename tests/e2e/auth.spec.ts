@@ -18,7 +18,9 @@ test.describe('Authentication', () => {
 
     const emailInput = page.getByPlaceholder('Enter your email')
     // Use a real domain - Supabase blocks test domains like example.com
-    await emailInput.fill('playwright-test@gmail.com')
+    // In CI, this comes from the TEST_EMAIL_ACCOUNT secret
+    const testEmail = process.env.TEST_EMAIL_ACCOUNT || 'playwright-test@gmail.com'
+    await emailInput.fill(testEmail)
 
     await page.getByRole('button', { name: 'Send Magic Link' }).click()
 

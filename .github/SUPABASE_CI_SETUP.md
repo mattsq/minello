@@ -8,7 +8,8 @@ The following secrets must be configured in your GitHub repository:
 
 - `NEXT_PUBLIC_SUPABASE_URL` - Your Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Your Supabase anonymous/public key
-- `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key (optional for basic tests)
+- `SUPABASE_SERVICE_ROLE_KEY` - Your Supabase service role key (for admin operations)
+- `TEST_EMAIL_ACCOUNT` - A valid email address for E2E auth tests (must use a real domain like Gmail)
 
 ## Supabase Project Configuration
 
@@ -73,7 +74,25 @@ For CI tests to work, you must either:
 
 ## Test User Setup
 
-For comprehensive E2E tests, create a dedicated test user:
+### Email Account for Testing
+
+The `TEST_EMAIL_ACCOUNT` secret should contain a valid email address with a real domain:
+
+**✅ Good examples:**
+- `your-test-account@gmail.com`
+- `ci-testing@yourdomain.com`
+- `automated-tests@outlook.com`
+
+**❌ Bad examples (will be blocked by Supabase):**
+- `test@example.com` - example.com is a reserved domain
+- `user@test.com` - test.com is blocked
+- `temp@mailinator.com` - disposable email domains are blocked
+
+**Note:** The tests only verify that Supabase accepts the email and sends a magic link. The email doesn't need to be actively monitored or accessible during test runs.
+
+### User Creation
+
+For comprehensive E2E tests, test users are handled automatically:
 
 ```sql
 -- In Supabase SQL Editor
