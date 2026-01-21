@@ -86,8 +86,11 @@ export function useRealtimeBoard({
     let listsChannel: RealtimeChannel
     let cardsChannel: RealtimeChannel
 
+    console.log('[Realtime] Initializing subscriptions for board:', boardId)
+
     // Handler for list changes
     const handleListChange = (payload: RealtimePostgresChangesPayload<List>) => {
+      console.log('[Realtime] List change event:', payload.eventType, payload)
       // Skip if this is our own recent operation
       if (payload.new && 'id' in payload.new && isInFlight(`list-${payload.new.id}`)) {
         return
@@ -122,8 +125,11 @@ export function useRealtimeBoard({
 
     // Handler for card changes
     const handleCardChange = (payload: RealtimePostgresChangesPayload<Card>) => {
+      console.log('[Realtime] Card change event:', payload.eventType, payload)
+
       // Skip if this is our own recent operation
       if (payload.new && 'id' in payload.new && isInFlight(`card-${payload.new.id}`)) {
+        console.log('[Realtime] Skipping own operation for card:', payload.new.id)
         return
       }
 
@@ -184,9 +190,12 @@ export function useRealtimeBoard({
         handleListChange
       )
       .subscribe((status) => {
+        console.log('[Realtime] Lists channel status:', status)
         if (status === 'SUBSCRIBED') {
+          console.log('[Realtime] ✓ Lists channel CONNECTED')
           setIsConnected(true)
         } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+          console.log('[Realtime] ✗ Lists channel ERROR/CLOSED')
           setIsConnected(false)
         }
       })
@@ -205,7 +214,14 @@ export function useRealtimeBoard({
         },
         handleCardChange
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('[Realtime] Cards channel status:', status)
+        if (status === 'SUBSCRIBED') {
+          console.log('[Realtime] ✓ Cards channel CONNECTED')
+        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+          console.log('[Realtime] ✗ Cards channel ERROR/CLOSED')
+        }
+      })
 
     // Cleanup subscriptions on unmount
     return () => {
