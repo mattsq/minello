@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Board as BoardType, List, Card } from '@/lib/db/types'
 import Lists from '@/components/Lists'
 import CardEditModal from '@/components/CardEditModal'
 import { DndContext, DragEndEvent, DragOverlay, PointerSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { between } from '@/lib/positions'
 import { updateCardPosition } from '@/app/app/board/[boardId]/actions'
+import { useRealtimeBoard } from '@/lib/hooks/useRealtimeBoard'
+import ConnectionStatus from '@/components/ConnectionStatus'
 
 interface BoardProps {
   boardData: {
@@ -18,8 +20,14 @@ interface BoardProps {
 
 export default function Board({ boardData }: BoardProps) {
   const { board, lists: initialLists, cards: initialCards } = boardData
-  const [lists, setLists] = useState(initialLists)
-  const [cards, setCards] = useState(initialCards)
+
+  // Use realtime hook instead of plain useState
+  const { lists, cards, setLists, setCards, isConnected } = useRealtimeBoard({
+    boardId: board.id,
+    initialLists,
+    initialCards,
+  })
+
   const [selectedCard, setSelectedCard] = useState<Card | null>(null)
   const [activeCard, setActiveCard] = useState<Card | null>(null)
 
@@ -31,6 +39,20 @@ export default function Board({ boardData }: BoardProps) {
       },
     })
   )
+
+  // Close modal if selected card is deleted, or update it if changed
+  useEffect(() => {
+    if (selectedCard) {
+      const currentCard = cards.find(c => c.id === selectedCard.id)
+      if (!currentCard) {
+        // Card was deleted, close modal
+        setSelectedCard(null)
+      } else if (currentCard.updated_at !== selectedCard.updated_at) {
+        // Card was updated by someone else, update the modal data
+        setSelectedCard(currentCard)
+      }
+    }
+  }, [cards, selectedCard])
 
   // Group cards by list_id for easy access
   const cardsByListId = cards.reduce((acc, card) => {
@@ -153,11 +175,15 @@ export default function Board({ boardData }: BoardProps) {
         <div style={{
           padding: '1rem 2rem',
           borderBottom: '1px solid #e5e7eb',
-          backgroundColor: '#fff'
+          backgroundColor: '#fff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
         }}>
           <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', margin: 0 }}>
             {board.name}
           </h1>
+          <ConnectionStatus isConnected={isConnected} />
         </div>
 
         {/* Board content - horizontal scrolling lists */}
