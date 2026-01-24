@@ -9,7 +9,12 @@
     "start": "next start",
     "lint": "next lint",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:update-snapshots": "playwright test --update-snapshots",
+    "test:e2e:debug": "playwright test --debug",
+    "visual:generate-docs": "tsx scripts/generate-visual-docs.ts",
+    "visual:open-report": "playwright show-report",
+    "visual:open-trace": "playwright show-trace"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -24,11 +29,16 @@
   "devDependencies": {
     "@playwright/test": "^1.41.2",
     "@types/node": "^20.11.16",
+    "@types/pixelmatch": "^5.2.6",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^18.2.52",
     "@types/react-dom": "^18.2.18",
     "dotenv": "^17.2.3",
     "eslint": "^8.56.0",
     "eslint-config-next": "^14.1.0",
+    "pixelmatch": "^6.0.0",
+    "pngjs": "^7.0.0",
+    "tsx": "^4.7.1",
     "typescript": "^5.3.3"
   }
 }

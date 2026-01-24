@@ -9,6 +9,10 @@
 /test-results
 /blob-report
 
+# Keep visual baselines - these should be committed
+# Tests use these for visual regression testing
+!/tests/e2e/**/*-snapshots/
+
 # Next.js
 /.next/
 /out/
